@@ -1,76 +1,158 @@
 # FHIRPath for Ruby
 
-This repository is the foundation for a Ruby implementation of the [HL7 FHIRPath](https://hl7.org/fhirpath/) expression language.
+A Ruby-native implementation of the [HL7 FHIRPath](https://hl7.org/fhirpath/) expression language.
 
-The project is an intentionally small prototype at this stage. It provides a Ruby-native first parity slice with stable boundaries for the public API, lexer/parser, immutable AST, collections, evaluation context, model navigation, values, errors, and function registry. It does not claim complete FHIRPath conformance; the target and limitations below are explicit.
+This repository is an intentionally small, pre-release implementation. It provides a tested compatibility slice with stable boundaries for the public API, lexer/parser, immutable AST, collections, evaluation context, plain-model navigation, values, structured errors, and function registration. It does not claim complete FHIRPath conformance or FHIR release-model support.
 
-## Requirements
+## Status at a glance
 
-- Ruby 2.6 or newer
-- Bundler
+- Version: `0.1.0.pre1`
+- Normative language target: FHIRPath `2.0.0`
+- Ruby support policy: Ruby `3.2` and `3.3` are tested in CI; newer Ruby versions are supported only after CI coverage is added.
+- Release status: pre-release; not published to RubyGems.
+- License: [MIT](LICENSE).
 
-## Setup
+## Installation
+
+The gem is not yet published. To use a checkout:
 
 ```sh
+git clone https://github.com/niccoreyes/fhirpath-ruby.git
+cd fhirpath-ruby
 bundle install
-```
-
-## Development commands
-
-Run the test suite:
-
-```sh
 bundle exec rake test
 ```
 
-Run the formatter/linter:
+Once a release is published, the intended consumer workflow will be:
+
+```ruby
+# Gemfile
+gem "fhirpath"
+```
+
+The pre-release status and incomplete conformance scope still apply; review the
+documented limitations before using this implementation in production.
+
+## Quick start
+
+```ruby
+require "fhirpath"
+
+patient = {
+  "resourceType" => "Patient",
+  "name" => [
+    { "use" => "official", "family" => "Lovelace", "given" => ["Ada", "Augusta"] },
+    { "use" => "nickname", "given" => ["Addie"] }
+  ]
+}
+
+FHIRPath.evaluate(patient, "Patient.name.where(use = 'official').given").to_a
+# => ["Ada", "Augusta"]
+
+FHIRPath.evaluate_first(patient, "Patient.name.family")
+# => "Lovelace"
+```
+
+`FHIRPath.evaluate` always returns a `FHIRPath::Collection`, including for a singleton and for an empty result. `evaluate_first` is an explicit convenience that returns the first Ruby value or `nil`; it does not change the evaluator's collection semantics.
+
+## Public API
+
+The API is intentionally Ruby-native rather than source-compatible with `fhirpath-py`:
+
+```ruby
+FHIRPath.parse(expression, capability: FHIRPath::Capability.current)
+FHIRPath.compile(expression, model: nil, capability: ..., functions: ...)
+FHIRPath.evaluate(resource, expression, variables: {}, model: nil,
+                 capability: ..., functions: ..., options: {}, host: nil)
+FHIRPath.evaluate_first(resource, expression, variables: {}, model: nil,
+                        capability: ..., functions: ..., options: {}, host: nil)
+```
+
+A compiled expression is immutable and reusable:
+
+```ruby
+program = FHIRPath.compile("Patient.name.family")
+program.evaluate({ "resourceType" => "Patient", "name" => [{ "family" => "Lovelace" }] }).to_a
+# => ["Lovelace"]
+program.call({ "resourceType" => "Patient", "name" => [{ "family" => "Hopper" }] }).to_a
+# => ["Hopper"]
+```
+
+See [API reference](docs/api.md) for result, error, extension, and immutability contracts, and [architecture](docs/architecture.md) for the implementation boundaries.
+
+## Supported slice
+
+The current tested slice includes:
+
+- primitive string, Boolean, integer, decimal, and scientific-notation literals;
+- empty and comma-separated collections;
+- plain Ruby Hash/Array and simple object navigation, including resource-type roots such as `Patient`;
+- unary and numeric arithmetic (`+`, `-`, `*`, `/`, `div`, and `mod`), plus string `+` when both operands are strings;
+- numeric/string relational comparison, collection-aware equality, equivalence, and empty-aware Boolean operators;
+- union, string concatenation (`+` and `&`), membership (`in`/`contains`), and primitive type operators (`is`/`as`);
+- indexers with non-negative integer indexes;
+- `where`, `select`, `first`, `exists`, `count`, `empty`, `not`, `all`, and Boolean aggregate functions;
+- `$this`, `$index`, and `$total` focus variables;
+- explicitly supplied external constants through `variables:`; and
+- immutable parse/compile boundaries with structured errors and source spans.
+
+The [feature matrix](docs/feature-matrix.md) is the executable-scope companion to this list. If a behavior is not listed as supported, callers should handle a specific `FHIRPath::Error` rather than assume permissive fallback.
+
+## Explicit limitations
+
+This is not yet a complete FHIRPath engine. The following remain deferred or host-dependent:
+
+- official HL7 shared-suite import and complete FHIRPath 2.0 conformance;
+- FHIR R4/R5 model adapters, choice-element metadata, primitive extensions, terminology, and `resolve()`;
+- date/time and quantity/UCUM values;
+- advanced conversion, math, string, regular-expression, navigation, and aggregate functions;
+- complex literals and additional standard value types;
+- standard environment variables beyond explicitly supplied external constants;
+- FHIRPath 3.0 STU3 features; capability recognition does not enable them silently;
+- network I/O from pure evaluation and global evaluator state; and
+- production support guarantees, until the support matrix and release gates are complete.
+
+Unsupported operations raise `UnsupportedFeatureError`, `UnknownFunctionError`, or another specific `FHIRPath::Error`. Malformed or trailing source raises `ParseError`; the parser does not accept a valid prefix and silently ignore trailing input.
+
+## Development and verification
+
+Install development dependencies and run the complete local checks:
 
 ```sh
+bundle install
+bundle exec rake test
 bundle exec rubocop
+bundle exec rake vectors
+bundle exec rake build
+bundle exec ./script/verify_gem_install.sh pkg/fhirpath-*.gem
 ```
 
-Build the gem locally:
+The optional vector workflow is deterministic and does not require Python:
 
 ```sh
-bundle exec rake build
+bundle exec ruby script/run_vectors.rb conformance/core.jsonl
 ```
 
-The default Rake task runs the test suite, so `bundle exec rake` is also supported.
+It reports `pass`, `defect`, `unsupported`, `host-dependent`, and `not-run` separately. These hand-authored JSONL vectors are compatibility evidence, not a replacement for the official HL7 shared suite. See [Conformance workflow](docs/conformance.md).
 
-## Current scope
+Coverage is opt-in and uses Ruby's standard `Coverage` library:
 
-The normative default capability is FHIRPath 2.0.0. The API returns a `FHIRPath::Collection` for every evaluation, including a singleton; use `evaluate_first` when an explicit first-item convenience is wanted.
+```sh
+COVERAGE=1 bundle exec rake test
+bundle exec ruby script/check_coverage.rb coverage/summary.json
+```
 
-Supported prototype behavior:
+For a clean-checkout reproduction, use the exact commands in [CONTRIBUTING.md](CONTRIBUTING.md). CI runs the supported Ruby matrix, tests, RuboCop, vectors, package build, gem-install smoke test, and coverage report generation.
 
-- `require "fhirpath"`, `FHIRPath::VERSION`, and `FHIRPath.version`
-- `FHIRPath.parse`, with immutable AST nodes and source spans
-- `FHIRPath.compile`, reusable compiled expressions, and `CompiledExpression#call`
-- `FHIRPath.evaluate` and `FHIRPath.evaluate_first`
-- plain Ruby Hash/Array navigation, including resource-type roots such as `Patient`
-- string, Boolean, integer, decimal, and scientific-notation numeric literals
-- empty and comma-separated collection literals
-- unary arithmetic and numeric arithmetic (`+`, `-`, `*`, `/`, `div`, and `mod`)
-- numeric/string relational comparison, equality, equivalence, and empty-aware Boolean operators
-- expression indexers with non-negative integer indexes
-- `where`, `select`, `first`, `exists`, and `count` collection functions
-- `$this`, `$index`, and `$total` focus variables for delayed predicates
-- external constants through `variables:`, including false and empty values
-- explicit `Capability`, `EvaluationContext`, `PlainModel`, `HostServices`, `FunctionRegistry`, `TypeInfo`, and `Value::*` extension boundaries
-- structured errors derived from `FHIRPath::Error`, including codes, source spans, and expressions
+## Contributing
 
-Explicitly unsupported or deferred:
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. New language behavior should be delivered as a small vertical slice: add a focused failing test, implement the smallest change, run the complete checks, and update the feature matrix and limitations when scope changes.
 
-- complete FHIRPath 2.0 conformance and official shared-suite coverage
-- FHIR release adapters, choice-element metadata, terminology, and `resolve()`
-- date/time, quantity/UCUM, advanced type/conversion, math functions, regex, and remaining standard functions
-- evaluation of union and string-concatenation operators, plus complex literals
-- variables beyond `$this`, `$index`, `$total`, and explicitly supplied external constants
-- FHIRPath 3.0 STU3 features; capability recognition does not enable them silently
-- network I/O from pure evaluation and global evaluator state
-
-Unsupported operations raise a structured `UnsupportedFeatureError`, `UnknownFunctionError`, or another specific `FHIRPath::Error`; malformed or trailing source raises `ParseError`. See `docs/architecture.md`, `docs/roadmap.md`, and `docs/first-slice.md` for the staged conformance plan and this slice's intentional deviations.
+Security reports should follow [SECURITY.md](SECURITY.md). Release readiness and
+remaining conformance gates are recorded in [docs/release-checklist.md](docs/release-checklist.md).
 
 ## License
 
-No redistribution license has been selected yet. See `LICENSE`; the source is not currently offered for reuse under an open-source license.
+This project is licensed under the [MIT License](LICENSE). The gem is still a
+pre-release and does not claim complete FHIRPath conformance; those limitations
+are independent of the license.

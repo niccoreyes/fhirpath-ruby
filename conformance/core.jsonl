@@ -1,0 +1,8 @@
+{"id":"collection-equality-001","target":"2.0.0","expression":"left = same","resource":{"left":[1,2],"same":[1,2]},"variables":{},"expected":[true],"origin":{"suite":"fhirpath-py","commit":"19f6316","case":"manual"}}
+{"id":"collection-equivalence-001","target":"2.0.0","expression":"left ~ permuted","resource":{"left":[1,2],"permuted":[2,1]},"variables":{},"expected":[true],"origin":{"suite":"fhirpath-py","commit":"19f6316","case":"manual"}}
+{"id":"string-equivalence-001","target":"2.0.0","expression":"'ab c' ~ 'Ab  C'","resource":{},"variables":{},"expected":[true],"origin":{"suite":"fhirpath-py","commit":"19f6316","case":"manual"}}
+{"id":"empty-function-001","target":"2.0.0","expression":"{}.empty()","resource":{},"variables":{},"expected":[true],"origin":{"suite":"fhirpath-py","commit":"19f6316","case":"manual"}}
+{"id":"string-addition-001","target":"2.0.0","expression":"'a' + 'b'","resource":{},"variables":{},"expected":["ab"],"origin":{"suite":"fhirpath-py","commit":"19f6316","case":"manual"}}
+{"id":"type-operator-001","target":"2.0.0","expression":"1 as integer","resource":{},"variables":{},"expected":[1],"origin":{"suite":"fhirpath-py","commit":"19f6316","case":"manual"}}
+{"id":"string-concat-empty-001","target":"2.0.0","expression":"'a' & {}","resource":{},"variables":{},"expected":["a"],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"string-concatenation"}}
+{"id":"type-union-precedence-001","target":"2.0.0","expression":"1 as integer | 2","resource":{},"variables":{},"expected":[1,2],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"operator-precedence"}}

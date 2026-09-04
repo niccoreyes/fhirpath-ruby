@@ -1,10 +1,29 @@
 # frozen_string_literal: true
 
 AllCops:
-  TargetRubyVersion: 2.6
+  TargetRubyVersion: 3.2
   NewCops: enable
   Exclude:
     - "vendor/**/*"
+
+Style/ArgumentsForwarding:
+  Enabled: false
+
+Style/SuperArguments:
+  Enabled: false
+
+Style/ReduceToHash:
+  Enabled: false
+
+Style/SelectByKind:
+  Enabled: false
+
+Style/FormatStringToken:
+  Enabled: false
+
+# The project keeps development dependencies grouped by purpose in Gemfile.
+Bundler/OrderedGems:
+  Enabled: false
 
 Style/Documentation:
   Enabled: false

@@ -30,7 +30,7 @@ module FHIRPath
       '!~' => :not_equivalent
     }.freeze
 
-    KEYWORD_OPERATORS = %w[and or xor implies div mod].freeze
+    KEYWORD_OPERATORS = %w[and or xor implies div mod in contains is as].freeze
 
     def initialize(source)
       @source = source
@@ -40,7 +40,7 @@ module FHIRPath
     def tokens
       result = []
       until eof?
-        skip_whitespace
+        skip_ignored
         break if eof?
 
         result << next_token
@@ -55,8 +55,24 @@ module FHIRPath
       @index >= @source.length
     end
 
-    def skip_whitespace
-      @index += 1 while !eof? && @source[@index] =~ /\s/
+    def skip_ignored
+      loop do
+        @index += 1 while !eof? && @source[@index] =~ /\s/
+        return if eof?
+
+        if @source[@index, 2] == '//'
+          @index += 2
+          @index += 1 while !eof? && @source[@index] != "\n"
+        elsif @source[@index, 2] == '/*'
+          start = @index
+          closing = @source.index('*/', @index + 2)
+          raise_error('unterminated block comment', start) unless closing
+
+          @index = closing + 2
+        else
+          return
+        end
+      end
     end
 
     def next_token
@@ -106,17 +122,45 @@ module FHIRPath
       simple = { 'b' => "\b", 'f' => "\f", 'n' => "\n", 'r' => "\r",
                  't' => "\t", '\\' => '\\', "'" => "'", '/' => '/' }
       return simple.fetch(escaped) if simple.key?(escaped)
-      return unicode_escape if %w[u U].include?(escaped)
+      return unicode_escape if escaped == 'u'
 
-      escaped
+      raise_error("unsupported string escape \\#{escaped}", @index - 1, code: :invalid_escape)
     end
 
     def unicode_escape
-      digits = @source[@index, 4]
-      raise_error('invalid unicode escape', @index - 1) unless digits&.match?(/\A[0-9A-Fa-f]{4}\z/)
+      length = 4
+      digits = @source[@index, length]
+      unless digits&.match?(/\A[0-9A-Fa-f]{#{length}}\z/)
+        raise_error('invalid unicode escape', @index - 1, code: :invalid_escape)
+      end
 
-      @index += 4
-      [digits.to_i(16)].pack('U')
+      @index += length
+      codepoint = digits.to_i(16)
+      if codepoint.between?(0xD800, 0xDBFF)
+        unless @source[@index, 2] == '\\u'
+          raise_error('high surrogate must be followed by a low surrogate', @index, code: :invalid_escape)
+        end
+
+        @index += 2
+        low_digits = @source[@index, length]
+        unless low_digits&.match?(/\A[0-9A-Fa-f]{#{length}}\z/)
+          raise_error('invalid unicode surrogate pair', @index - 2, code: :invalid_escape)
+        end
+
+        low = low_digits.to_i(16)
+        unless low.between?(0xDC00, 0xDFFF)
+          raise_error('high surrogate must be followed by a low surrogate', @index, code: :invalid_escape)
+        end
+
+        @index += length
+        codepoint = 0x10000 + ((codepoint - 0xD800) * 0x400) + (low - 0xDC00)
+      elsif codepoint.between?(0xDC00, 0xDFFF)
+        raise_error('low surrogate must follow a high surrogate', @index - length, code: :invalid_escape)
+      end
+
+      [codepoint].pack('U')
+    rescue RangeError
+      raise_error('invalid unicode code point', @index - length, code: :invalid_escape)
     end
 
     def external_token(start)
@@ -171,8 +215,8 @@ module FHIRPath
                 span: SourceSpan.new(offset: start, length: @index - start))
     end
 
-    def raise_error(message, start)
-      raise ParseError.new(message, code: :invalid_token,
+    def raise_error(message, start, code: :invalid_token)
+      raise ParseError.new(message, code: code,
                                     span: SourceSpan.new(offset: start, length: [@index - start, 1].max),
                                     expression: @source)
     end
@@ -211,10 +255,13 @@ module FHIRPath
       implies: 1,
       or: 2, xor: 2,
       and: 3,
-      equals: 4, not_equals: 4, equivalent: 4, not_equivalent: 4, union: 4,
-      less_than: 5, less_or_equal: 5, greater_than: 5, greater_or_equal: 5,
-      plus: 6, minus: 6, concatenate: 6,
-      multiply: 7, divide: 7, div: 7, mod: 7
+      in: 4, contains: 4,
+      equals: 5, not_equals: 5, equivalent: 5, not_equivalent: 5,
+      less_than: 6, less_or_equal: 6, greater_than: 6, greater_or_equal: 6,
+      union: 7,
+      is: 8, as: 8,
+      plus: 9, minus: 9, concatenate: 9,
+      multiply: 10, divide: 10, div: 10, mod: 10
     }.freeze
 
     BINARY_TOKENS = PRECEDENCE.keys.freeze

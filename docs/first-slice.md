@@ -10,27 +10,29 @@ This slice exercises the complete Ruby path from source text through lexer/parse
 - Boolean, string, integer, decimal, and scientific-notation numeric literals
 - Empty and comma-separated collection literals (`{}` and `{1, 2}`)
 - Parentheses and unary `+`/`-`
-- Numeric `+`, `-`, `*`, `/`, `div`, and `mod`
+- Numeric `+`, `-`, `*`, `/`, `div`, and `mod`; string `+` and `&` concatenation semantics
 - Numeric and string relational comparisons (`<`, `<=`, `>`, `>=`)
-- Equality (`=`, `!=`) and basic equivalence (`~`, `!~`)
+- Collection-aware equality (`=`, `!=`) and equivalence (`~`, `!~`), including order-independent duplicate matching
+- Union (`|`) and string concatenation (`+` propagates empty operands; `&` treats empty operands as `''`)
+- Membership (`in`, `contains`) and built-in primitive type operators (`is`, `as`)
 - Empty-aware `and`, `or`, `xor`, and `implies`
 - Plain Hash/Array/object member navigation with collection flattening
 - Expression indexers, including empty, out-of-range, and singleton/type checks
-- `where`, `select`, `first`, `exists`, and `count`
+- `where`, `select`, `first`, `exists`, `count`, `empty`, `not`, `all`, and Boolean aggregate functions
 - `$this`, `$index`, and `$total` focus variables inside delayed predicates
 - `%name` external constants through the existing variable/host boundary
-- Complete-input parsing with source spans on syntax and evaluation errors
+- Complete-input parsing with source spans on syntax and evaluation errors, comments, and strict Unicode escapes
 - Reusable compiled expressions with no retained resource or evaluation context
 
 Every public evaluation returns `FHIRPath::Collection`; `evaluate_first` remains the explicit scalar convenience API.
 
 ## Intentional deviations and deferrals
 
-- Union (`|`) and string concatenation (`&`) are lexed and represented so unsupported syntax is reported as a structured `UnsupportedFeatureError`; their evaluation is not implemented in this slice.
-- Equivalence uses case-insensitive, trimmed string comparison and numeric value comparison. Full equivalence semantics for all FHIRPath types remain deferred with the broader value system.
+- Union, string concatenation, membership, and primitive type operators are implemented for the supported built-in value subset; complex types and FHIR model metadata remain deferred.
+- Equivalence normalizes case and runs of whitespace for strings and rounds numeric operands to their least precise decimal place. Full equivalence semantics for all FHIRPath types remain deferred with the broader value system.
 - Division always produces an exact `BigDecimal`; temporal, quantity, UCUM, and advanced numeric semantics are deferred.
 - Empty arithmetic and relational operands return the empty collection. Empty equality follows FHIRPath's empty-aware result policy; equivalence of two empty collections returns `true`.
-- FHIR-specific model metadata, choice elements, terminology, `resolve()`, type operators, advanced functions, and the official shared-suite importer remain deferred.
+- FHIR-specific model metadata, choice elements, terminology, `resolve()`, temporal/quantity values, advanced functions, and the official shared-suite importer remain deferred.
 - Trial-use FHIRPath 3.0 features remain disabled by the normative 2.0.0 capability.
 
 ## Verification

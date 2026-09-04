@@ -1,6 +1,6 @@
 # FHIRPath Ruby architecture
 
-Status: architecture proposal
+Status: implementation contract for the current pre-release slice
 Date: 2026-09-04
 Repository: `fhirpath-ruby`
 Decision scope: architecture and compatibility contract only; this document does not claim that the scaffold implements FHIRPath.

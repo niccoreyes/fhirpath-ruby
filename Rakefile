@@ -10,4 +10,9 @@ Rake::TestTask.new(:test) do |task|
   task.verbose = true
 end
 
+desc 'Run the checked-in compatibility vectors'
+task :vectors do
+  ruby 'script/run_vectors.rb', 'conformance/core.jsonl'
+end
+
 task default: :test

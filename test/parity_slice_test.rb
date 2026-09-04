@@ -77,8 +77,7 @@ class FHIRPathParitySliceTest < Minitest::Test
     assert_equal 3, incomplete.span.offset
   end
 
-  def test_known_unsupported_operator_is_rejected_at_evaluation
-    error = assert_raises(FHIRPath::UnsupportedFeatureError) { FHIRPath.evaluate({}, '1 | 2') }
-    assert_equal :unsupported_operator, error.code
+  def test_union_operator_is_evaluated
+    assert_equal [1, 2], FHIRPath.evaluate({}, '1 | 2').to_a
   end
 end

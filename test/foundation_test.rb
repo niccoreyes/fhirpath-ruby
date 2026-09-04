@@ -143,10 +143,11 @@ class FHIRPathFoundationTest < Minitest::Test
     refute dangerous.called
   end
 
-  def test_equality_requires_singleton_operands
-    error = assert_raises(FHIRPath::SingletonError) { FHIRPath.evaluate({}, '{1, 2} = 1') }
+  def test_equality_is_collection_aware
+    resource = { 'left' => [1, 2], 'same' => [1, 2], 'short' => [1] }
 
-    assert_equal :singleton_required, error.code
+    assert_equal [true], FHIRPath.evaluate(resource, 'left = same').to_a
+    assert_equal [false], FHIRPath.evaluate(resource, 'left = short').to_a
   end
 
   def test_custom_functions_receive_eagerly_evaluated_collection_arguments

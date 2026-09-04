@@ -23,7 +23,39 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+      - name: Check patch whitespace
+        run: git diff --check
       - name: Run tests
         run: bundle exec rake test
       - name: Run RuboCop
         run: bundle exec rubocop
+      - name: Run compatibility vectors
+        run: bundle exec rake vectors
+      - name: Build gem
+        run: bundle exec rake build
+      - name: Smoke-test installed gem
+        run: bundle exec ./script/verify_gem_install.sh pkg/fhirpath-*.gem
+
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+      - name: Run tests with coverage
+        env:
+          COVERAGE: "1"
+        run: bundle exec rake test
+      - name: Validate coverage summary
+        run: bundle exec ruby script/check_coverage.rb coverage/summary.json
+      - name: Upload coverage summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ruby-coverage
+          path: coverage/summary.json
+          if-no-files-found: error

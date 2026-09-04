@@ -156,6 +156,14 @@ module FHIRPath
         exists(receiver, node.arguments.first, context)
       when 'count'
         Collection.new([receiver.count])
+      when 'empty'
+        Collection.new([receiver.empty?])
+      when 'not'
+        negate(receiver, node)
+      when 'all'
+        all(receiver, node.arguments.first, context)
+      when 'allTrue', 'anyTrue', 'allFalse', 'anyFalse'
+        boolean_aggregate(receiver, node.name, node)
       else
         invoke_registered(node, receiver, context, spec)
       end
@@ -165,6 +173,45 @@ module FHIRPath
       return Collection.new([!receiver.empty?]) unless expression
 
       Collection.new([!filter(receiver, expression, context).empty?])
+    end
+
+    def negate(receiver, node)
+      return Collection.empty if receiver.empty?
+
+      value = require_singleton(receiver, node.receiver ? node.receiver.span : node.span)
+      unless [true, false].include?(value)
+        raise TypeError.new('expected a Boolean value', code: :expected_boolean, span: node.span)
+      end
+
+      Collection.new([!value])
+    end
+
+    def all(receiver, predicate, context)
+      result = receiver.items.each_with_index.all? do |item, position|
+        predicate_result = evaluate(
+          predicate,
+          context.derive(focus: Collection.new([item]), index: position, total: receiver.count)
+        )
+        boolean_value(predicate_result, predicate.span) == true
+      end
+      Collection.new([result])
+    end
+
+    def boolean_aggregate(receiver, name, node)
+      values = receiver.items.map do |value|
+        unless [true, false].include?(value)
+          raise TypeError.new('expected a Boolean value', code: :expected_boolean, span: node.span)
+        end
+
+        value
+      end
+      result = case name
+               when 'allTrue' then values.all?
+               when 'anyTrue' then values.any?
+               when 'allFalse' then values.all?(&:!)
+               when 'anyFalse' then values.any?(&:!)
+               end
+      Collection.new([result])
     end
 
     def invoke_registered(node, receiver, context, spec)
@@ -228,11 +275,16 @@ module FHIRPath
         logic(node, context)
       when :plus, :minus, :multiply, :divide, :div, :mod
         arithmetic(node, context)
+      when :concatenate
+        concatenate(node, context)
+      when :union
+        union(node, context)
+      when :in, :contains
+        membership(node, context)
+      when :is, :as
+        type_operator(node, context)
       when :less_than, :less_or_equal, :greater_than, :greater_or_equal
         comparison(node, context)
-      when :union, :concatenate
-        raise UnsupportedFeatureError.new("operator #{node.operator} is not supported yet",
-                                          code: :unsupported_operator, span: node.span)
       else
         raise UnsupportedFeatureError.new("operator #{node.operator} is not supported",
                                           code: :unsupported_operator, span: node.span)
@@ -248,15 +300,32 @@ module FHIRPath
       return Collection.new([node.operator == :not_equivalent]) if equivalent && (left.empty? || right.empty?)
       return Collection.empty if left.empty? || right.empty?
 
-      left_value = require_singleton(left, node.left.span)
-      right_value = require_singleton(right, node.right.span)
       equal = if equivalent
-                equivalent?(left_value, right_value)
+                collection_equivalent?(left, right)
               else
-                equal?(left_value, right_value)
+                collection_equal?(left, right)
               end
       equal = !equal if %i[not_equals not_equivalent].include?(node.operator)
       Collection.new([equal])
+    end
+
+    def collection_equal?(left, right)
+      return false unless left.count == right.count
+
+      left.items.zip(right.items).all? { |a, b| equal?(a, b) }
+    end
+
+    def collection_equivalent?(left, right)
+      return false unless left.count == right.count
+
+      remaining = right.items.dup
+      left.items.all? do |left_value|
+        match = remaining.index { |right_value| equivalent?(left_value, right_value) }
+        next false unless match
+
+        remaining.delete_at(match)
+        true
+      end
     end
 
     def logic(node, context)
@@ -296,6 +365,10 @@ module FHIRPath
 
       left_value = require_singleton(left, node.left.span)
       right_value = require_singleton(right, node.right.span)
+      if left_value.is_a?(::String) && right_value.is_a?(::String) && node.operator == :plus
+        return Collection.new([left_value + right_value])
+      end
+
       unless numeric?(left_value) && numeric?(right_value)
         raise TypeError.new('arithmetic requires numeric values', code: :expected_number,
                                                                   span: node.span)
@@ -332,6 +405,77 @@ module FHIRPath
       Collection.new([result])
     end
 
+    def concatenate(node, context)
+      left = evaluate(node.left, context)
+      right = evaluate(node.right, context)
+      left_value = left.empty? ? '' : require_singleton(left, node.left.span)
+      right_value = right.empty? ? '' : require_singleton(right, node.right.span)
+      unless left_value.is_a?(::String) && right_value.is_a?(::String)
+        raise TypeError.new('concatenation requires strings', code: :expected_string, span: node.span)
+      end
+
+      Collection.new([left_value + right_value])
+    end
+
+    def union(node, context)
+      left = evaluate(node.left, context)
+      right = evaluate(node.right, context)
+      result = left.items.dup
+      right.items.each do |candidate|
+        result << candidate unless result.any? { |existing| equal?(existing, candidate) }
+      end
+      Collection.new(result)
+    end
+
+    def membership(node, context)
+      left = evaluate(node.left, context)
+      right = evaluate(node.right, context)
+      if node.operator == :in
+        return Collection.empty if left.empty?
+
+        value = require_singleton(left, node.left.span)
+        return Collection.new([false]) if right.empty?
+
+        return Collection.new([right.items.any? { |candidate| equal?(value, candidate) }])
+      end
+
+      return Collection.new([false]) if left.empty?
+      return Collection.empty if right.empty?
+
+      value = require_singleton(right, node.right.span)
+      Collection.new([left.items.any? { |candidate| equal?(candidate, value) }])
+    end
+
+    def type_operator(node, context)
+      left = evaluate(node.left, context)
+      type_name = type_name_from(node.right, node.span)
+      return Collection.empty if left.empty?
+
+      value = require_singleton(left, node.left.span)
+      matches = logical_type?(value, type_name)
+      return Collection.new([matches]) if node.operator == :is
+
+      matches ? Collection.new([value]) : Collection.empty
+    end
+
+    def type_name_from(node, span)
+      return node.name.downcase if node.is_a?(AST::Identifier)
+
+      raise TypeError.new('type operator requires a type name', code: :expected_type, span: span)
+    end
+
+    def logical_type?(value, type_name)
+      case type_name
+      when 'any' then true
+      when 'boolean' then [true, false].include?(value)
+      when 'integer' then value.is_a?(::Integer)
+      when 'decimal' then value.is_a?(BigDecimal)
+      when 'number' then numeric?(value)
+      when 'string' then value.is_a?(::String)
+      else false
+      end
+    end
+
     def compare_values(left, right, span)
       if numeric?(left) && numeric?(right)
         decimal(left) <=> decimal(right)
@@ -352,10 +496,27 @@ module FHIRPath
 
     def equivalent?(left, right)
       if left.is_a?(::String) && right.is_a?(::String)
-        left.strip.casecmp?(right.strip)
+        normalize_string(left) == normalize_string(right)
+      elsif numeric?(left) && numeric?(right)
+        decimal_equivalent?(left, right)
       else
         equal?(left, right)
       end
+    end
+
+    def normalize_string(value)
+      value.strip.downcase.gsub(/\s+/, ' ')
+    end
+
+    def decimal_equivalent?(left, right)
+      precision = [decimal_places(left), decimal_places(right)].min
+      decimal(left).round(precision) == decimal(right).round(precision)
+    end
+
+    def decimal_places(value)
+      text = decimal(value).to_s('F')
+      fraction = text.split('.', 2)[1]
+      fraction ? fraction.sub(/0+\z/, '').length : 0
     end
 
     def numeric?(value)
