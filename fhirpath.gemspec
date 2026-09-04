@@ -28,9 +28,5 @@ Gem::Specification.new do |spec|
     '.rubocop.yml'
   ].select { |path| File.file?(path) }
 
-  spec.add_development_dependency 'minitest', '~> 5.16'
-  spec.add_development_dependency 'rake', '~> 13.0'
-  # RuboCop 1.50 is the last line compatible with Ruby 2.6.
-  spec.add_development_dependency 'rubocop', '~> 1.50'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end
