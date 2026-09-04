@@ -1,0 +1,14 @@
+# Ruby build artifacts
+/.bundle/
+/Gemfile.lock
+/pkg/
+
+# Coverage and local tooling
+/coverage/
+/.yardoc/
+/_yardoc/
+/doc/
+
+# Editor and OS files
+.DS_Store
+*.swp
