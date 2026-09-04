@@ -7,7 +7,9 @@ Gem::Specification.new do |spec|
   spec.version = FHIRPath::VERSION
   spec.authors = ['Nicco Reyes']
   spec.summary = 'A Ruby foundation for FHIRPath'
-  spec.description = 'An initial Ruby foundation for a future implementation of the HL7 FHIRPath expression language.'
+  spec.description =
+    'A prototype Ruby-native scaffold for the HL7 FHIRPath expression language, ' \
+    'with a deliberately limited supported surface.'
   spec.homepage = 'https://github.com/niccoreyes/fhirpath-ruby'
   spec.required_ruby_version = '>= 2.6.0'
   spec.require_paths = ['lib']
