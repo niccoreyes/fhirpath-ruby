@@ -13,3 +13,5 @@
 {"id":"membership-both-empty-001","target":"2.0.0","expression":"{} in {}","resource":{},"variables":{},"expected":[],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"membership-empty-singleton"}}
 {"id":"contains-both-empty-001","target":"2.0.0","expression":"{} contains {}","resource":{},"variables":{},"expected":[],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"membership-empty-singleton"}}
 {"id":"float-as-decimal-001","target":"2.0.0","expression":"value > 1","resource":{"value":1.5},"variables":{},"expected":[true],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"decimal-literal"}}
+{"id":"last-function-001","target":"2.0.0","expression":"(1 | 2 | 3).last()","resource":{},"variables":{},"expected":[3],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"last-function"}}
+{"id":"last-function-empty-001","target":"2.0.0","expression":"{}.last()","resource":{},"variables":{},"expected":[],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"last-function"}}

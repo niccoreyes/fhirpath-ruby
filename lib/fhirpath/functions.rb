@@ -12,7 +12,7 @@ module FHIRPath
   end
 
   class FunctionRegistry
-    STANDARD_NAMES = %w[where select first exists count empty not all allTrue anyTrue allFalse anyFalse].freeze
+    STANDARD_NAMES = %w[where select first last exists count empty not all allTrue anyTrue allFalse anyFalse].freeze
     DELAYED_NAMES = %w[where select exists all].freeze
 
     def self.standard
