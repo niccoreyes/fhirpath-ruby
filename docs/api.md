@@ -88,7 +88,7 @@ FHIRPath.evaluate({}, '%tenant', host: host).to_a
 # => ["example"]
 ```
 
-`ConstantProvider#fetch(name, mode:, context:)` is the only provider boundary used by this slice. The engine does not discover constants or perform filesystem/network I/O. `variables:` takes precedence over the provider. Without a provider, `%name` raises `UnknownConstantError` with code `:unknown_constant`. Provider failures raise a generic `HostError` and retain the original exception in `original_cause`; provider detail is omitted from the public error message and `to_h` serialization. Reference resolution, terminology, tracing, and cache ownership remain deferred host-service slices.
+`ConstantProvider#fetch(name, mode:, context:)` is the only provider boundary used by this slice. The engine does not discover constants or perform filesystem/network I/O. `variables:` takes precedence over the provider. Without a provider, `%name` raises `UnknownConstantError` with code `:unknown_constant`. Constant-provider failures raise a generic `HostError`; exceptions raised by the constant provider are not retained as public causes, and their detail is omitted from the public error message, `full_message`, and `to_h` serialization. Reference resolution, terminology, tracing, and cache ownership remain deferred host-service slices.
 
 ### `FHIRPath.evaluate_first`
 

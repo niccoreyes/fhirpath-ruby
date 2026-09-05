@@ -26,7 +26,7 @@ This matrix is deliberately conservative. `Supported` means the behavior is exer
 | `$this`, `$index`, `$total` | Supported | parity tests |
 | Explicit external constants | Supported | foundation/core compatibility tests; values may come from `variables:` or an explicitly injected `HostServices` constant provider |
 | Missing external constant provider | Supported | `test/host_services_test.rb`; raises `UnknownConstantError` with code `:unknown_constant` and performs no fallback I/O |
-| Constant-provider failures and redaction | Supported | `test/host_services_test.rb`; raises generic `HostError` while retaining `original_cause` outside public serialization |
+| Constant-provider failures and redaction | Supported | `test/host_services_test.rb`; raises generic `HostError` without retaining constant-provider exceptions as public causes or exposing their detail in diagnostics |
 | Host callback configuration/reentrancy | Supported | `test/host_services_test.rb`; `HostServices` is immutable and each evaluation receives a fresh context |
 | Custom registered functions | Supported | API/foundation tests |
 | Compiled-expression reuse | Supported | API/foundation tests |

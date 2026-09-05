@@ -43,8 +43,8 @@ module FHIRPath
 
       begin
         constants.call(name, mode: mode, context: context)
-      rescue StandardError => e
-        raise HostError.new('constant provider failed', code: :host_error, cause: e)
+      rescue StandardError
+        raise HostError.new('constant provider failed', code: :host_error), cause: nil
       end
     end
     # rubocop:enable Metrics/ParameterLists

@@ -127,7 +127,7 @@ FHIRPath.evaluate({}, '%tenant', host: host).to_a
 # => ["example"]
 ```
 
-`ConstantProvider#fetch` is the only boundary at which an embedding application may perform external work. The engine does not discover constants, read files, or make network requests. If no provider is supplied, an external constant raises `UnknownConstantError` with code `:unknown_constant`. Provider failures raise a generic `HostError`; the original exception is retained in `original_cause` for controlled diagnostics but provider messages are excluded from the public error serialization. `variables:` takes precedence over the provider, so explicitly supplied values do not trigger provider work.
+`ConstantProvider#fetch` is the only boundary at which an embedding application may perform external work. The engine does not discover constants, read files, or make network requests. If no provider is supplied, an external constant raises `UnknownConstantError` with code `:unknown_constant`. Constant-provider failures raise a generic `HostError`; exceptions raised by the constant provider are not retained as public causes, and their messages are excluded from the public error serialization and `full_message`. `variables:` takes precedence over the provider, so explicitly supplied values do not trigger provider work.
 
 ## Supported slice
 

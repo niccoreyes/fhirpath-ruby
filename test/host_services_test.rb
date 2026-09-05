@@ -2,39 +2,81 @@
 
 require 'test_helper'
 
-class FHIRPathHostServicesTest < Minitest::Test
-  def test_constant_provider_failure_is_generic_and_retains_original_cause
-    provider_error = RuntimeError.new('provider leaked sensitive-provider-value-123456789')
-    provider = ->(_name, **_kwargs) { raise provider_error }
-    host = FHIRPath::HostServices.new(constants: provider)
+module FHIRPathHostServicesAssertions
+  private
 
-    error = assert_raises(FHIRPath::HostError) do
-      FHIRPath.evaluate({}, '%api_key', host: host)
+  def assert_no_provider_secret(error, secret)
+    diagnostics = [error.message, error.full_message, error.inspect, error.to_h.inspect]
+    refute(diagnostics.any? { |diagnostic| diagnostic.include?(secret) })
+
+    causes = []
+    current = error
+    while current
+      causes << current
+      current = current.cause
     end
+    refute(causes.any? { |cause| cause.message.include?(secret) })
+    causes
+  end
+end
 
-    assert_equal :host_error, error.code
-    assert_equal 'constant provider failed', error.message
-    refute_includes error.message, 'sensitive-provider-value-123456789'
-    refute_includes error.to_h[:message], 'sensitive-provider-value-123456789'
-    assert_same provider_error, error.original_cause
+class FHIRPathHostServicesTest < Minitest::Test
+  include FHIRPathHostServicesAssertions
+
+  def test_constant_provider_failures_are_sanitized_at_the_direct_boundary
+    secret = 'synthetic-provider-secret-123456789'
+    provider_errors = [
+      RuntimeError.new("provider failed with #{secret}"),
+      FHIRPath::HostError.new("provider failed with #{secret}", code: :provider_detail)
+    ]
+
+    provider_errors.each do |provider_error|
+      host = FHIRPath::HostServices.new(
+        constants: ->(_name, **_kwargs) { raise provider_error }
+      )
+
+      error = assert_raises(FHIRPath::HostError) do
+        host.constant('api_key')
+      end
+
+      assert_equal :host_error, error.code
+      assert_equal 'constant provider failed', error.message
+      assert_nil error.span
+      assert_nil error.expression
+      assert_nil error.original_cause
+      assert_equal({ code: :host_error, message: 'constant provider failed' }, error.to_h)
+      causes = assert_no_provider_secret(error, secret)
+      assert(causes.all?(FHIRPath::HostError))
+    end
   end
 
-  def test_constant_provider_error_messages_are_redacted_even_for_fhirpath_errors
-    provider_error = FHIRPath::HostError.new(
-      'hard-coded sensitive-provider-value-123456789', code: :provider_detail
-    )
-    host = FHIRPath::HostServices.new(
-      constants: ->(_name, **_kwargs) { raise provider_error }
-    )
+  def test_constant_provider_failures_are_sanitized_through_evaluation
+    secret = 'synthetic-provider-secret-123456789'
+    provider_errors = [
+      RuntimeError.new("provider failed with #{secret}"),
+      FHIRPath::HostError.new("provider failed with #{secret}", code: :provider_detail)
+    ]
 
-    error = assert_raises(FHIRPath::HostError) do
-      FHIRPath.evaluate({}, '%api_key', host: host)
+    provider_errors.each do |provider_error|
+      host = FHIRPath::HostServices.new(
+        constants: ->(_name, **_kwargs) { raise provider_error }
+      )
+
+      error = assert_raises(FHIRPath::HostError) do
+        FHIRPath.evaluate({}, '%api_key', host: host)
+      end
+
+      assert_equal :host_error, error.code
+      assert_equal 'constant provider failed', error.message
+      assert_equal '%api_key', error.expression
+      assert_equal 0, error.span.offset
+      assert_equal 8, error.span.length
+      assert_nil error.original_cause
+      assert_equal({ code: :host_error, message: 'constant provider failed',
+                     span: { offset: 0, length: 8, end_offset: 8 }, expression: '%api_key' }, error.to_h)
+      causes = assert_no_provider_secret(error, secret)
+      assert(causes.all?(FHIRPath::HostError))
     end
-
-    assert_equal :host_error, error.code
-    assert_equal 'constant provider failed', error.message
-    refute_includes error.to_h[:message], 'sensitive-provider-value-123456789'
-    assert_same provider_error, error.original_cause
   end
 
   def test_missing_constant_provider_returns_a_predictable_unknown_constant_error
