@@ -35,6 +35,29 @@ class FHIRPathFoundationTest < Minitest::Test
                    span: span.to_h, expression: 'ab?cd' }, error.to_h)
   end
 
+  def test_error_cause_keyword_and_original_cause_remain_public_api
+    cause = RuntimeError.new('synthetic model detail')
+    error = FHIRPath::Error.new('evaluation failed', code: :evaluation_error, cause: cause)
+
+    assert_same cause, error.original_cause
+  end
+
+  def test_model_navigation_preserves_the_established_original_cause
+    model = Class.new(FHIRPath::ModelProvider) do
+      def property(_element, _logical_name)
+        raise NoMethodError, 'synthetic model detail'
+      end
+    end.new
+
+    error = assert_raises(FHIRPath::ModelError) do
+      FHIRPath.evaluate({}, 'value', model: model)
+    end
+
+    assert_equal :model_navigation, error.code
+    assert_equal 0, error.span.offset
+    assert_instance_of NoMethodError, error.original_cause
+  end
+
   def test_collection_keeps_empty_and_singleton_semantics_explicit
     empty = FHIRPath::Collection.empty
     singleton = FHIRPath::Collection.new(['Ada'])

@@ -12,6 +12,7 @@ All notable changes to this project are documented here. The project is pre-1.0;
   `FHIRPath::FHIR::R4::ModelProvider` and advertised by the capability API.
   Resource-type and release matching accept symbol/string and any-case forms.
 - Add the `last()` member function (FHIRPath 2.0.0, existence/navigation functions): it returns the last item in the input collection, an empty collection when the input is empty, and requires zero arguments.
+- Harden the external constant boundary with an injectable `ConstantProvider`, predictable `UnknownConstantError` behavior when absent, generic redacted `HostError` messages without retaining constant-provider exceptions as public causes, and no implicit provider I/O; resolve, terminology, tracing, and cache behavior remain deferred.
 - Correct numeric arithmetic with a zero right operand: `+`, `-`, `*` treat zero as a normal operand, while `/`, `div`, `mod` divide and a zero divisor returns an empty collection (never an error).
 - Correct `union` (`|`) to eliminate duplicate values from both operands using `=` equality in first-seen order, including numerically-equal integers and decimals.
 - Accept a finite JSON `Float` as a `Decimal` for comparison, equality, arithmetic, and the `is Decimal` type test; reject `NaN`/`Infinity` as non-numeric.
