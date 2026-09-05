@@ -4,6 +4,8 @@ All notable changes to this project are documented here. The project is pre-1.0;
 
 ## [Unreleased]
 
+## [0.2.0.pre1] - 2026-09-05
+
 - Resolve the FHIR logical type of a choice value for the `is`/`as` type
   operators when a model provider is active. `ModelProvider` gains an optional
   `property_logical_type` accessor (safe `nil` default on the base class and
@@ -46,5 +48,6 @@ All notable changes to this project are documented here. The project is pre-1.0;
 - Added a small JSONL differential-vector runner and six checked-in compatibility vectors.
 - Documented the prototype scope, architecture, limitations, and staged conformance plan.
 
-[Unreleased]: https://github.com/niccoreyes/fhirpath-ruby/compare/v0.1.0.pre1...HEAD
+[Unreleased]: https://github.com/niccoreyes/fhirpath-ruby/compare/v0.2.0.pre1...HEAD
+[0.2.0.pre1]: https://github.com/niccoreyes/fhirpath-ruby/releases/tag/v0.2.0.pre1
 [0.1.0.pre1]: https://github.com/niccoreyes/fhirpath-ruby/releases/tag/v0.1.0.pre1

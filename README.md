@@ -11,7 +11,7 @@ This repository is an intentionally small, pre-release implementation. It provid
 
 ## Status at a glance
 
-- Version: `0.1.0.pre1`
+- Version: `0.2.0.pre1`
 - Normative language target: FHIRPath `2.0.0`
 - Ruby support policy: Ruby `3.2` and `3.3` are tested in CI; newer Ruby versions are supported only after CI coverage is added.
 - Release status: pre-release; not published to RubyGems.

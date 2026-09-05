@@ -2,7 +2,7 @@
 
 This checklist is the gate for a reusable public release. It is intentionally explicit because a successful gem build is not the same as a legally releasable or conformant package.
 
-## Current assessment (`0.1.0.pre1`)
+## Current assessment (`0.2.0.pre1`)
 
 | Criterion | Status | Evidence / rationale |
 |---|---|---|
@@ -44,7 +44,7 @@ Verification on Homebrew Ruby 4.0.4 (the repository's local bundle contains nati
 - `bundle exec rake test`: 50 runs, 191 assertions, 0 failures, 0 errors, 0 skips;
 - `bundle exec rubocop`: 31 files inspected, no offenses;
 - `bundle exec rake vectors`: 8 total, 8 pass, 0 defect, 0 unsupported, 0 host-dependent, 0 not-run;
-- `bundle exec rake build`: `pkg/fhirpath-0.1.0.pre1.gem` built;
+- `bundle exec rake build`: `pkg/fhirpath-0.2.0.pre1.gem` built;
 - `script/verify_gem_install.sh`: clean isolated install and `1 + 2` smoke test passed;
 - `COVERAGE=1 bundle exec rake test` plus `script/check_coverage.rb`: 88.9% (829/932 executable lines); and
 - `git diff --check`: passed.
