@@ -1,5 +1,10 @@
 # FHIRPath for Ruby
 
+[![CI](https://github.com/niccoreyes/fhirpath-ruby/actions/workflows/ci.yml/badge.svg)](https://github.com/niccoreyes/fhirpath-ruby/actions/workflows/ci.yml)
+[![Release](https://github.com/niccoreyes/fhirpath-ruby/actions/workflows/release.yml/badge.svg)](https://github.com/niccoreyes/fhirpath-ruby/actions/workflows/release.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/niccoreyes/fhirpath-ruby/blob/main/LICENSE)
+[![Ruby](https://img.shields.io/badge/Ruby-3.2%20%7C%203.3-blue.svg)](https://github.com/niccoreyes/fhirpath-ruby/blob/main/.github/workflows/ci.yml)
+
 A Ruby-native implementation of the [HL7 FHIRPath](https://hl7.org/fhirpath/) expression language.
 
 This repository is an intentionally small, pre-release implementation. It provides a tested compatibility slice with stable boundaries for the public API, lexer/parser, immutable AST, collections, evaluation context, plain-model navigation, values, structured errors, and function registration. It does not claim complete FHIRPath conformance or FHIR release-model support.
