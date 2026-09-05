@@ -90,9 +90,9 @@ The current tested slice includes:
 - primitive string, Boolean, integer, decimal, and scientific-notation literals;
 - empty and comma-separated collections;
 - plain Ruby Hash/Array and simple object navigation, including resource-type roots such as `Patient`;
-- unary and numeric arithmetic (`+`, `-`, `*`, `/`, `div`, and `mod`), plus string `+` when both operands are strings;
-- numeric/string relational comparison, collection-aware equality, equivalence, and empty-aware Boolean operators;
-- union, string concatenation (`+` and `&`), membership (`in`/`contains`), and primitive type operators (`is`/`as`);
+- unary and numeric arithmetic (`+`, `-`, `*`, `/`, `div`, and `mod`), plus string `+` when both operands are strings; a zero divisor for `/`, `div`, `mod` returns an empty collection, while `+`, `-`, `*` treat zero as a normal operand;
+- numeric/string relational comparison, collection-aware equality, equivalence, and empty-aware Boolean operators; a finite JSON `Float` is treated as a `Decimal`;
+- union, string concatenation (`+` and `&`), membership (`in`/`contains`), and primitive type operators (`is`/`as`); union removes duplicate values from both operands using `=` equality in first-seen order, and `in`/`contains` require a singleton operand; and
 - indexers with non-negative integer indexes;
 - `where`, `select`, `first`, `exists`, `count`, `empty`, `not`, `all`, and Boolean aggregate functions;
 - `$this`, `$index`, and `$total` focus variables;

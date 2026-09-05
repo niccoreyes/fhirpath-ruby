@@ -6,3 +6,10 @@
 {"id":"type-operator-001","target":"2.0.0","expression":"1 as integer","resource":{},"variables":{},"expected":[1],"origin":{"suite":"fhirpath-py","commit":"19f6316","case":"manual"}}
 {"id":"string-concat-empty-001","target":"2.0.0","expression":"'a' & {}","resource":{},"variables":{},"expected":["a"],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"string-concatenation"}}
 {"id":"type-union-precedence-001","target":"2.0.0","expression":"1 as integer | 2","resource":{},"variables":{},"expected":[1,2],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"operator-precedence"}}
+{"id":"union-dedupe-001","target":"2.0.0","expression":"(1 | 1) | 2","resource":{},"variables":{},"expected":[1,2],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"union-distinct"}}
+{"id":"union-numeric-equality-001","target":"2.0.0","expression":"(1 | 1.0)","resource":{},"variables":{},"expected":[1],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"union-numeric-equality"}}
+{"id":"division-by-zero-empty-001","target":"2.0.0","expression":"5 div 0","resource":{},"variables":{},"expected":[],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"division-by-zero"}}
+{"id":"membership-empty-001","target":"2.0.0","expression":"1 in {}","resource":{},"variables":{},"expected":[false],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"membership-empty"}}
+{"id":"membership-both-empty-001","target":"2.0.0","expression":"{} in {}","resource":{},"variables":{},"expected":[],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"membership-empty-singleton"}}
+{"id":"contains-both-empty-001","target":"2.0.0","expression":"{} contains {}","resource":{},"variables":{},"expected":[],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"membership-empty-singleton"}}
+{"id":"float-as-decimal-001","target":"2.0.0","expression":"value > 1","resource":{"value":1.5},"variables":{},"expected":[true],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"decimal-literal"}}

@@ -159,7 +159,7 @@ The API must not mutate the caller's resource to add engine metadata. `fhirpath-
 
 All public errors derive from `FHIRPath::Error` and carry a stable code, message, and optional source span:
 
-- `ParseError`: invalid characters, malformed tokens, unexpected token, or trailing input;
+- `ParseError`: invalid characters, malformed tokens, unexpected token, trailing input, or expression nesting exceeding the parser depth budget (code `nesting_depth_exceeded`);
 - `EvaluationError`: a valid expression cannot be evaluated for the current focus or collection;
 - `SingletonError`: an operation requiring one item received multiple items;
 - `TypeError`: an argument or value is not compatible with the required FHIRPath type;
