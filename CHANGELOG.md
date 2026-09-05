@@ -4,6 +4,7 @@ All notable changes to this project are documented here. The project is pre-1.0;
 
 ## [Unreleased]
 
+## [0.2.0.pre1] - 2026-09-05
 - Add the `sum()`, `avg()`, `max()`, and `min()` aggregate functions to the
   standard registry. These are FHIRPath 3.0.0 STU3 aggregate additions
   (published 2026-07-28) and the first STU3-subset functions this project
@@ -29,7 +30,6 @@ All notable changes to this project are documented here. The project is pre-1.0;
   frozen `Collection`; the general-purpose `aggregate()` function remains
   deferred.
 
-## [0.2.0.pre1] - 2026-09-05
 - Resolve the FHIR logical type of a choice value for the `is`/`as` type
   operators when a model provider is active. `ModelProvider` gains an optional
   `property_logical_type` accessor (safe `nil` default on the base class and
