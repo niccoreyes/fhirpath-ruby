@@ -40,22 +40,26 @@ skipped case is a hard failure.
 
 ## RubyGems publication
 
-The repository uses RubyGems Trusted Publishing rather than a long-lived API
-key. Before the first publication, configure a pending trusted publisher (for a
-new gem) or a trusted publisher (for an existing gem) with:
+The `publish` job supports two authentication modes:
+
+1. **Repository API key (default when configured):** store the owner's RubyGems
+   API key as the `RUBYGEMS_API_KEY` repository secret (`gh secret set
+   RUBYGEMS_API_KEY --repo niccoreyes/fhirpath-ruby`). The workflow passes it as
+   `GEM_HOST_API_KEY` and runs `gem push` directly.
+2. **RubyGems Trusted Publishing (fallback):** when the secret is absent, the
+   workflow configures short-lived OIDC credentials and pushes with them.
+   Configure a pending trusted publisher (for a new gem) or a trusted publisher
+   (for an existing gem) with:
 
 - owner: `niccoreyes`;
 - repository: `fhirpath-ruby`;
-- workflow filename: `release.yml`; and
-- GitHub Actions environment: `release`.
+- workflow name: `Release`;
+- environment: `release`.
 
 The workflow's `publish` job has only `id-token: write` and read access to
 repository contents. It downloads the exact artifact produced by the gated
-package job, configures short-lived RubyGems credentials, runs `gem push`, and
-reads the RubyGems API back until the exact version is visible.
-
-Do not add a `RUBYGEMS_API_KEY` repository secret. If trusted publishing is not
-configured, stop at the environment gate rather than weakening the workflow.
+package job, pushes the exact gem, and reads the RubyGems API back until the
+exact version is visible.
 
 ## GitHub release publication
 
