@@ -123,7 +123,9 @@ jobs:
     env:
       # Empty when the owner has not stored a key; the trusted-publishing
       # fallback then applies. Kept in env so steps can branch on presence.
-      RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+      # Gate value for auth-mode selection. Named differently from the
+      # RubyGems vars the configure action may set so its value cannot drift.
+      HAS_RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
     steps:
       - name: Check out tagged source
         uses: actions/checkout@v5
@@ -141,15 +143,15 @@ jobs:
           name: release-assets
           path: pkg
       - name: Push the exact gated gem (stored API key)
-        if: env.RUBYGEMS_API_KEY != ''
+        if: env.HAS_RUBYGEMS_API_KEY != ''
         env:
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
         run: gem push pkg/fhirpath-*.gem
       - name: Configure RubyGems Trusted Publishing
-        if: env.RUBYGEMS_API_KEY == ''
+        if: env.HAS_RUBYGEMS_API_KEY == ''
         uses: rubygems/configure-rubygems-credentials@dc5a8d8553e6ee01fc26761a49e99e733d17954a
       - name: Push the exact gated gem (trusted publishing)
-        if: env.RUBYGEMS_API_KEY == ''
+        if: env.HAS_RUBYGEMS_API_KEY == ''
         run: gem push pkg/fhirpath-*.gem
       - name: Verify the published version
         env:
