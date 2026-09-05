@@ -82,7 +82,10 @@ class FHIRPathHostServicesTest < Minitest::Test
   def test_constant_provider_interface_can_be_injected_without_any_implicit_io
     fetched = nil
     provider = Class.new(FHIRPath::ConstantProvider) do
-      define_method(:fetch) { |name, mode:, context:| fetched = [name, mode, context.root.first_item]; 'ok' }
+      define_method(:fetch) do |name, mode:, context:|
+        fetched = [name, mode, context.root.first_item]
+        'ok'
+      end
     end.new
     host = FHIRPath::HostServices.new(constant_provider: provider)
 
