@@ -72,6 +72,24 @@ FHIRPath.evaluate({}, "%enabled", variables: { enabled: false }).to_a
 
 `host:` is reserved for explicit host services. Pure evaluation does not perform network I/O.
 
+### Host constants
+
+External constants can be supplied by an immutable `HostServices` configuration:
+
+```ruby
+provider = Class.new(FHIRPath::ConstantProvider) do
+  def fetch(name, mode:, context:)
+    { 'tenant' => 'example' }.fetch(name)
+  end
+end.new
+
+host = FHIRPath::HostServices.new(constant_provider: provider)
+FHIRPath.evaluate({}, '%tenant', host: host).to_a
+# => ["example"]
+```
+
+`ConstantProvider#fetch(name, mode:, context:)` is the only provider boundary used by this slice. The engine does not discover constants or perform filesystem/network I/O. `variables:` takes precedence over the provider. Without a provider, `%name` raises `UnknownConstantError` with code `:unknown_constant`. Provider failures raise a generic `HostError` and retain the original exception in `original_cause`; provider detail is omitted from the public error message and `to_h` serialization. Reference resolution, terminology, tracing, and cache ownership remain deferred host-service slices.
+
 ### `FHIRPath.evaluate_first`
 
 Has the same options as `evaluate` and returns the first item or `nil` for an empty result. It is a convenience at the API boundary; it does not permit multi-item singleton coercion inside the evaluator.

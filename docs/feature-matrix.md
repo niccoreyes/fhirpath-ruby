@@ -24,7 +24,10 @@ This matrix is deliberately conservative. `Supported` means the behavior is exer
 | `where`, `select`, `first`, `last`, `tail`, `take`, `skip`, `exists`, `count` | Supported | `test/subsetting_functions_test.rb` |
 | `empty`, `not`, `all`, Boolean aggregates | Supported | core compatibility tests |
 | `$this`, `$index`, `$total` | Supported | parity tests |
-| Explicit external constants | Supported | foundation/core compatibility tests |
+| Explicit external constants | Supported | foundation/core compatibility tests; values may come from `variables:` or an explicitly injected `HostServices` constant provider |
+| Missing external constant provider | Supported | `test/host_services_test.rb`; raises `UnknownConstantError` with code `:unknown_constant` and performs no fallback I/O |
+| Constant-provider failures and redaction | Supported | `test/host_services_test.rb`; raises generic `HostError` while retaining `original_cause` outside public serialization |
+| Host callback configuration/reentrancy | Supported | `test/host_services_test.rb`; `HostServices` is immutable and each evaluation receives a fresh context |
 | Custom registered functions | Supported | API/foundation tests |
 | Compiled-expression reuse | Supported | API/foundation tests |
 | Stable structured engine errors | Supported | API/foundation/parser tests |

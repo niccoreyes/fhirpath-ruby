@@ -105,6 +105,30 @@ program.call({ "resourceType" => "Patient", "name" => [{ "family" => "Hopper" }]
 
 See [API reference](docs/api.md) for result, error, extension, and immutability contracts, and [architecture](docs/architecture.md) for the implementation boundaries.
 
+### Explicit host constants
+
+External constant lookup is opt-in and stays behind an injected provider:
+
+```ruby
+class TenantConstants < FHIRPath::ConstantProvider
+  def fetch(name, mode:, context:)
+    constants.fetch(name)
+  end
+
+  private
+
+  def constants
+    { 'tenant' => 'example' }
+  end
+end
+
+host = FHIRPath::HostServices.new(constant_provider: TenantConstants.new)
+FHIRPath.evaluate({}, '%tenant', host: host).to_a
+# => ["example"]
+```
+
+`ConstantProvider#fetch` is the only boundary at which an embedding application may perform external work. The engine does not discover constants, read files, or make network requests. If no provider is supplied, an external constant raises `UnknownConstantError` with code `:unknown_constant`. Provider failures raise a generic `HostError`; the original exception is retained in `original_cause` for controlled diagnostics but provider messages are excluded from the public error serialization. `variables:` takes precedence over the provider, so explicitly supplied values do not trigger provider work.
+
 ## Supported slice
 
 The current tested slice includes:
@@ -119,7 +143,7 @@ The current tested slice includes:
 - indexers with non-negative integer indexes;
 - `where`, `select`, `first`, `last`, `tail`, `take`, `skip`, `exists`, `count`, `empty`, `not`, `all`, and Boolean aggregate functions;
 - `$this`, `$index`, and `$total` focus variables;
-- explicitly supplied external constants through `variables:`; and
+- explicitly supplied external constants through `variables:` or an injected `FHIRPath::HostServices` constant provider; and
 - immutable parse/compile boundaries with structured errors and source spans.
 
 The [feature matrix](docs/feature-matrix.md) is the executable-scope companion to this list, and the [release support matrix](docs/support-matrix.md) is the publication contract. If a behavior is not listed as supported, callers should handle a specific `FHIRPath::Error` rather than assume permissive fallback.

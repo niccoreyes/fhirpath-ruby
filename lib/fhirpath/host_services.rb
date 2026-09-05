@@ -1,17 +1,33 @@
 # frozen_string_literal: true
 
 module FHIRPath
+  # Explicit boundary for external constant lookup. Implementations may perform
+  # I/O, but only when an expression requests a constant through this object.
+  class ConstantProvider
+    def fetch(_name, mode:, context:)
+      raise NotImplementedError, 'constant providers must implement #fetch'
+    end
+
+    def call(name, mode:, context:)
+      fetch(name, mode: mode, context: context)
+    end
+  end
+
   # Optional host work is explicit and absent from pure evaluation by default.
   class HostServices
-    attr_reader :constants, :resolve_reference, :terminology, :element_children, :trace
+    attr_reader :constants, :constant_provider, :resolve_reference, :terminology, :element_children, :trace
 
     def self.default
       @default ||= new
     end
 
-    def initialize(constants: nil, resolve_reference: nil, terminology: nil,
+    # rubocop:disable Metrics/ParameterLists
+    def initialize(constants: nil, constant_provider: nil, resolve_reference: nil, terminology: nil,
                    element_children: nil, trace: nil)
-      @constants = constants
+      raise ArgumentError, 'provide either constants or constant_provider, not both' if constants && constant_provider
+
+      @constant_provider = constant_provider || constants
+      @constants = @constant_provider
       @resolve_reference = resolve_reference
       @terminology = terminology
       @element_children = element_children
@@ -20,14 +36,17 @@ module FHIRPath
     end
 
     def constant(name, mode: nil, context: nil)
-      return constants.call(name, mode: mode, context: context) if constants
+      unless constants
+        raise UnknownConstantError.new("unknown external constant: %#{name}",
+                                       code: :unknown_constant)
+      end
 
-      raise UnknownConstantError.new("unknown external constant: %#{name}",
-                                     code: :unknown_constant)
-    rescue Error
-      raise
-    rescue StandardError => e
-      raise HostError.new(e.message, cause: e)
+      begin
+        constants.call(name, mode: mode, context: context)
+      rescue StandardError => e
+        raise HostError.new('constant provider failed', code: :host_error, cause: e)
+      end
     end
+    # rubocop:enable Metrics/ParameterLists
   end
 end
