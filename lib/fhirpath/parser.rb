@@ -223,6 +223,11 @@ module FHIRPath
   end
 
   class ParsedExpression
+    # Maximum AST depth allowed when building the source map. This is the same
+    # budget used by the Parser for recursion; keeping both in sync ensures a
+    # parse that succeeds will not then overflow during source-map traversal.
+    MAX_NESTING_DEPTH = 256
+
     attr_reader :source, :ast, :source_map
 
     def initialize(source:, ast:)
@@ -234,16 +239,25 @@ module FHIRPath
 
     private
 
-    def build_source_map(node, result = {})
+    def build_source_map(node, result = {}, depth = 0)
       return result unless node.is_a?(AST::Node)
+
+      if depth > MAX_NESTING_DEPTH
+        raise ParseError.new(
+          "expression nesting exceeds the maximum depth of #{MAX_NESTING_DEPTH}",
+          code: :nesting_depth_exceeded,
+          span: node.span,
+          expression: @source
+        )
+      end
 
       result[node] = node.span
       node.instance_variables.each do |name|
         value = node.instance_variable_get(name)
         if value.is_a?(Array)
-          value.each { |child| build_source_map(child, result) }
+          value.each { |child| build_source_map(child, result, depth + 1) }
         else
-          build_source_map(value, result)
+          build_source_map(value, result, depth + 1)
         end
       end
       result
@@ -266,15 +280,27 @@ module FHIRPath
 
     BINARY_TOKENS = PRECEDENCE.keys.freeze
 
+    # Maximum recursion depth for the recursive-descent parser. Deeply nested
+    # expressions (parentheses, collections, function calls, indexers, unary
+    # chains, and deep precedence trees) recurse on the Ruby call stack; without
+    # a budget the process can exhaust the stack and raise SystemStackError,
+    # escaping the FHIRPath::Error boundary. Beyond this depth parsing fails
+    # with a structured ParseError (code :nesting_depth_exceeded) instead.
+    MAX_NESTING_DEPTH = 256
+
     def self.parse(source, capability: Capability.current)
       new(source, capability: capability).parse
     end
 
     def initialize(source, capability:)
-      @source = source.to_s
+      # Duplicate so we never retain the caller's own String identity: the
+      # compiled program is then immutable via a frozen internal snapshot
+      # without freezing the caller-owned source string.
+      @source = source.to_s.dup
       @capability = capability
       @tokens = Lexer.new(@source).tokens
       @position = 0
+      @nesting_depth = 0
     end
 
     def parse
@@ -289,22 +315,24 @@ module FHIRPath
     private
 
     def parse_expression(min_precedence)
-      left = parse_unary
-      while (precedence = binary_precedence(current)) && precedence >= min_precedence
-        operator_token = advance
-        right = parse_expression(precedence + 1)
-        left = AST::BinaryExpression.new(left: left, operator: operator_for(operator_token),
-                                         right: right,
-                                         span: span_between(left.span, right.span))
+      with_nesting do
+        left = parse_unary
+        while (precedence = binary_precedence(current)) && precedence >= min_precedence
+          operator_token = advance
+          right = parse_expression(precedence + 1)
+          left = AST::BinaryExpression.new(left: left, operator: operator_for(operator_token),
+                                           right: right,
+                                           span: span_between(left.span, right.span))
+        end
+        left
       end
-      left
     end
 
     def parse_unary
       return parse_postfix(parse_primary) unless %i[plus minus].include?(current.type)
 
       operator = advance
-      operand = parse_unary
+      operand = with_nesting { parse_unary }
       AST::UnaryExpression.new(operator: operator.type,
                                operand: operand,
                                span: span_between(operator.span, operand.span))
@@ -438,6 +466,22 @@ module FHIRPath
 
     def fail_parse(message, code, span = current.span)
       raise ParseError.new(message, code: code, span: span, expression: @source)
+    end
+
+    def with_nesting
+      @nesting_depth += 1
+      nesting_exceeded if @nesting_depth > MAX_NESTING_DEPTH
+      yield
+    ensure
+      @nesting_depth -= 1
+    end
+
+    def nesting_exceeded
+      fail_parse(
+        "expression nesting exceeds the maximum depth of #{MAX_NESTING_DEPTH}",
+        :nesting_depth_exceeded,
+        current.span
+      )
     end
   end
 end

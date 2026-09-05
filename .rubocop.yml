@@ -48,6 +48,7 @@ Metrics/ClassLength:
     - "lib/fhirpath/parser.rb"
     - "lib/fhirpath/evaluator.rb"
     - "test/foundation_test.rb"
+    - "test/parser_hardening_test.rb"
 
 Metrics/CyclomaticComplexity:
   Exclude:
