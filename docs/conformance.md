@@ -5,7 +5,7 @@ The project distinguishes specification conformance from compatibility evidence.
 - The HL7 FHIRPath specification and official shared test cases are normative.
 - Checked-in JSONL vectors are small, reviewable regression probes inspired by observed behavior in `fhirpath-py`.
 - No Python runtime is required to run the Ruby vector harness.
-- The current repository does not yet ship an importer for the official HL7 shared XML suite; complete conformance remains deferred.
+- The repository ships a Ruby-only importer for pinned official XML subsets and the pinned `fhirpath-py` YAML case format; complete conformance remains deferred.
 
 ## Run the checked-in vectors
 
@@ -52,6 +52,16 @@ Values that JSON cannot represent should use explicit tagged values when that fa
 4. Add the JSONL vector and run the complete test, lint, build, and vector commands.
 5. Update `docs/feature-matrix.md`, README limitations, and `CHANGELOG.md` if the public scope changes.
 
-## Future official-suite importer
+## Import a pinned suite subset
 
-A future importer should preserve the source suite revision and case identifier, normalize fixtures without losing typed values, and report `pass`, `defect`, `unsupported`, `host-dependent`, and `not-run` separately. It must not turn unsupported cases into passes. Release notes should include the target release, suite revision, counts, and known host/model exclusions.
+The importer accepts the checked-in manifest and a local checkout of its pinned source:
+
+```sh
+bundle exec ruby script/import_vectors.rb /path/to/fhir-test-cases
+```
+
+It emits one JSON record per selected XML case. XML fixtures are never converted heuristically: when a verified same-resource JSON fixture is available, that JSON is used while `input_fixture` retains the original XML path and `fixture_source` records the normalized source. Otherwise the record is retained as `not-run` with an explicit reason. Disabled cases are also retained as `not-run` and are never evaluated.
+
+The same importer accepts a `fhirpath-py` YAML case file when initialized with its checkout as `source_root`. YAML is parsed with safe loading, group and `disable` state are preserved, expression lists become independent records, and each record keeps the suite commit and original fixture path. `error: true` means a FHIRPath error is expected; an unrelated Ruby `StandardError` remains a defect.
+
+Every record includes `suite`, `suite_commit`, `expression`, `input_fixture`, `model`, `host_features`, `expected`, `target`, and provenance. Runner reports include per-capability totals for `pass`, `defect`, `unsupported`, `host-dependent`, and `not-run`. Unsupported and host-dependent cases remain evidence rather than passes; defects and unexplained skips block release checks.

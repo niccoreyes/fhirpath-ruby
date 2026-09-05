@@ -1,0 +1,15 @@
+{
+  "schema": "fhirpath-conformance-v1",
+  "suite": "FHIR/fhir-test-cases",
+  "suite_commit": "2d595a506a91eeb311ab787f5fe2c8806be3cfd1",
+  "target": "2.0.0",
+  "model": "plain",
+  "source": "r4/fhirpath/tests-fhir-r4.xml",
+  "fixture_root": "r4",
+  "cases": [
+    "testPrecedence2",
+    "testUnion1",
+    "testPlus4",
+    "testLiteralTrue"
+  ]
+}

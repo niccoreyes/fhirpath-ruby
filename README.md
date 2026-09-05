@@ -152,8 +152,8 @@ The [feature matrix](docs/feature-matrix.md) is the executable-scope companion t
 
 This is not yet a complete FHIRPath engine. The following remain deferred or host-dependent:
 
-- official HL7 shared-suite import and complete FHIRPath 2.0 conformance;
-- FHIR R5 model adapters, broader FHIR R4 metadata such as primitive extensions and type-aware navigation, terminology, and `resolve()`;
+- complete FHIRPath 2.0 conformance; the checked-in importer covers only the pinned official subset;
+- broader FHIR R4 metadata such as primitive extensions and type-aware navigation, FHIR R5 model adapters, terminology, and `resolve()`;
 - date/time and quantity/UCUM values;
 - advanced conversion, math, string, regular-expression, navigation, and aggregate functions;
 - complex literals and additional standard value types;

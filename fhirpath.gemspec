@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.2.0'
   spec.require_paths = ['lib']
   spec.add_dependency 'bigdecimal', '>= 3.0'
+  spec.add_dependency 'rexml', '>= 3.3'
 
   # The project is released under the permissive MIT license. Keep this
   # metadata synchronized with the checked-in LICENSE file.
@@ -52,7 +53,9 @@ Gem::Specification.new do |spec|
     'docs/support-matrix.md',
     'conformance/core.jsonl',
     'conformance/r4.jsonl',
-    'script/run_vectors.rb'
+    'conformance/official-r4-core.json',
+    'script/run_vectors.rb',
+    'script/import_vectors.rb'
   ].select { |path| File.file?(path) }
 
   spec.metadata['rubygems_mfa_required'] = 'true'
