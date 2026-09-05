@@ -118,7 +118,7 @@ The project defines `FHIRPath::TypeError` inside its namespace; callers should q
 
 For the implemented string operators, `+` concatenates two singleton strings but propagates an empty operand, while `&` treats each empty operand as the empty string. Thus `'a' + {}` is empty, whereas `'a' & {}` returns `['a']`. String escapes follow the FHIRPath `\\uXXXX` form; valid UTF-16 surrogate pairs are combined, and unknown forms such as `\\U0001F600` are rejected with `ParseError`.
 
-Most current public results are ordinary Ruby values. `FHIRPath::Value::*` and `FHIRPath::TypeInfo` provide extension boundaries for semantic values and model metadata. The dependency-free R4 adapter supports JSON choice navigation for `Observation.value[x]`; date/time, quantity, broader type-aware model behavior, and other FHIR releases remain deferred.
+Most current public results are ordinary Ruby values. `FHIRPath::Value::*` and `FHIRPath::TypeInfo` provide extension boundaries for semantic values and model metadata. The dependency-free R4 adapter supports JSON choice navigation for `Observation.value[x]`; a resolved choice value carries its FHIR logical type (for example `Quantity` for `valueQuantity`), so `is`/`as` type operators can test it. `Collection` may carry positional model-type metadata alongside items without changing item values; the metadata is attached when a collection is produced directly by model navigation, and operators that rebuild collections (such as `union`) do not yet propagate it. Date/time, quantity, broader type-aware model behavior (resource hierarchies, `ofType()`), and other FHIR releases remain deferred.
 
 ## Custom functions
 

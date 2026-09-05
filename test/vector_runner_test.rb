@@ -22,8 +22,8 @@ class FHIRPathVectorRunnerTest < Minitest::Test
   def test_runner_reports_the_r4_choice_vectors
     report = FHIRPath::VectorRunner.run(R4_VECTOR_PATH)
 
-    assert_equal 3, report[:total]
-    assert_equal 3, report[:counts]['pass']
+    assert_equal 6, report[:total]
+    assert_equal 6, report[:counts]['pass']
     assert_equal 0, report[:counts]['defect']
     assert_equal 'https://hl7.org/fhir/R4/observation.html', report[:cases].first['origin']['url']
   end

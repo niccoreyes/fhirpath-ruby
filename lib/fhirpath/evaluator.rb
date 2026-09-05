@@ -82,14 +82,17 @@ module FHIRPath
     end
 
     def identifier(node, context)
-      values = context.focus.items.flat_map do |item|
+      values = []
+      model_types = []
+      context.focus.items.each do |item|
         if context.model.root_type(item).to_s == node.name
-          [item]
+          values << item
+          model_types << nil
         else
-          [context.model.property(item, node.name)].flat_map { |value| Collection.from(value).items }
+          append_property(values, model_types, item, node.name, context)
         end
       end
-      Collection.new(values)
+      Collection.new(values, types: model_types)
     rescue NoMethodError => e
       raise ModelError.new("cannot read #{node.name}", code: :model_navigation,
                                                        span: node.span, cause: e)
@@ -97,14 +100,25 @@ module FHIRPath
 
     def navigate(node, context)
       receiver = evaluate(node.receiver, context)
-      values = receiver.items.flat_map do |item|
-        value = context.model.property(item, node.name)
-        Collection.from(value).items
+      values = []
+      model_types = []
+      receiver.items.each do |item|
+        append_property(values, model_types, item, node.name, context)
       end
-      Collection.new(values)
+      Collection.new(values, types: model_types)
     rescue NoMethodError => e
       raise ModelError.new("cannot read #{node.name}", code: :model_navigation,
                                                        span: node.span, cause: e)
+    end
+
+    # Resolves one property and records, per produced item, the logical type
+    # name the model declares for the resolved value (nil when the model has no
+    # metadata for this property, e.g. PlainModel or a non-choice field).
+    def append_property(values, model_types, item, logical_name, context)
+      produced = Collection.from(context.model.property(item, logical_name)).items
+      type = context.model.property_logical_type(item, logical_name)
+      values.concat(produced)
+      model_types.concat(Array.new(produced.length, type))
     end
 
     def index(node, context)
@@ -506,7 +520,7 @@ module FHIRPath
       return Collection.empty if left.empty?
 
       value = require_singleton(left, node.left.span)
-      matches = logical_type?(value, type_name)
+      matches = logical_type?(value, type_name) || model_logical_type?(left, type_name)
       return Collection.new([matches]) if node.operator == :is
 
       matches ? Collection.new([value]) : Collection.empty
@@ -516,6 +530,15 @@ module FHIRPath
       return node.name.downcase if node.is_a?(AST::Identifier)
 
       raise TypeError.new('type operator requires a type name', code: :expected_type, span: span)
+    end
+
+    # FHIR model type recorded when the item was produced by model navigation
+    # (e.g. `Quantity` for a resolved `Observation.valueQuantity` choice). The
+    # FHIR type name is compared case-insensitively because `type_name_from`
+    # downcases the identifier on the right of `is`/`as`.
+    def model_logical_type?(collection, type_name)
+      recorded = collection.types&.first
+      !recorded.nil? && recorded.downcase == type_name
     end
 
     def logical_type?(value, type_name)

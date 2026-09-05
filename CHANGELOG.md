@@ -4,6 +4,19 @@ All notable changes to this project are documented here. The project is pre-1.0;
 
 ## [Unreleased]
 
+- Resolve the FHIR logical type of a choice value for the `is`/`as` type
+  operators when a model provider is active. `ModelProvider` gains an optional
+  `property_logical_type` accessor (safe `nil` default on the base class and
+  `PlainModel`); the R4 provider reports the resolved variant's declared type
+  from its choice metadata (`valueQuantity` -> `Quantity`, `valueString` ->
+  `string`). Navigation records that type per item on the produced collection
+  without wrapping or altering the value, so with `model: :r4`,
+  `Observation.value is Quantity` yields `[true]` and
+  `Observation.value as Quantity` passes the value through unchanged (an empty
+  collection when the cast fails). Primitive built-in type tests, empty
+  in/empty out for absent choices, and the plain-model default are unchanged.
+  `Observation is Resource`/`DomainResource` style tests and `ofType()` remain
+  deferred.
 - Add the `tail()`, `take(n)`, and `skip(n)` member functions (FHIRPath 2.0.0, subsetting functions; §5.3.5–5.3.7): `tail()` returns all but the first item and is empty for empty/singleton input; `take(n)` returns the first `min(n, size)` items, empty for `n <= 0` or empty input, and the full collection when `n` exceeds the size; `skip(n)` returns the items after the first `n`, the full collection for `n <= 0`, and empty when no items remain. `take`/`skip` require an integer `n` and raise `TypeError` with code `expected_integer` for a non-integer argument.
 - Add a dependency-free FHIR R4 model provider selectable with `model: :r4`.
   It maps the R4 `Observation.value[x]` JSON variants `valueQuantity` and

@@ -73,6 +73,13 @@ observation = {
 
 FHIRPath.evaluate(observation, "Observation.value.value", model: :r4).to_a
 # => [120]
+
+# The choice variant carries its FHIR logical type, so `is`/`as` resolve
+# against model metadata for the resolved value:
+FHIRPath.evaluate(observation, "Observation.value is Quantity", model: :r4).to_a
+# => [true]
+FHIRPath.evaluate(observation, "Observation.value as Quantity", model: :r4).to_a
+# => [{ "value" => 120, "unit" => "mmHg" }]
 ```
 
 The R4 adapter is dependency-free and does not perform Ruby method dispatch;
@@ -139,7 +146,7 @@ The current tested slice includes:
 - dependency-free FHIR R4 model navigation selected with `model: :r4`, including the logical `Observation.value` choice property over `valueQuantity` and `valueString`;
 - unary and numeric arithmetic (`+`, `-`, `*`, `/`, `div`, and `mod`), plus string `+` when both operands are strings; a zero divisor for `/`, `div`, `mod` returns an empty collection, while `+`, `-`, `*` treat zero as a normal operand;
 - numeric/string relational comparison, collection-aware equality, equivalence, and empty-aware Boolean operators; a finite JSON `Float` is treated as a `Decimal`;
-- union, string concatenation (`+` and `&`), membership (`in`/`contains`), and primitive type operators (`is`/`as`); union removes duplicate values from both operands using `=` equality in first-seen order, and `in`/`contains` require a singleton operand; and
+- union, string concatenation (`+` and `&`), membership (`in`/`contains`), and type operators (`is`/`as`); union removes duplicate values from both operands using `=` equality in first-seen order, and `in`/`contains` require a singleton operand; `is`/`as` test built-in primitive types directly and, with `model: :r4`, also resolve the FHIR logical type of a navigated choice value (for example `Observation.value is Quantity` over `valueQuantity`), returning the value unchanged on a successful `as` and the empty collection otherwise; and
 - indexers with non-negative integer indexes;
 - `where`, `select`, `first`, `last`, `tail`, `take`, `skip`, `exists`, `count`, `empty`, `not`, `all`, and Boolean aggregate functions;
 - `$this`, `$index`, and `$total` focus variables;
@@ -153,7 +160,7 @@ The [feature matrix](docs/feature-matrix.md) is the executable-scope companion t
 This is not yet a complete FHIRPath engine. The following remain deferred or host-dependent:
 
 - complete FHIRPath 2.0 conformance; the checked-in importer covers only the pinned official subset;
-- broader FHIR R4 metadata such as primitive extensions and type-aware navigation, FHIR R5 model adapters, terminology, and `resolve()`;
+- broader FHIR R4 metadata such as primitive extensions, resource-level type tests (`Observation is Resource`/`DomainResource`), `ofType()`, and FHIR R5 model adapters; FHIR R4 `is`/`as` over a resolved choice value's logical type (e.g. `Quantity`) is supported, but terminology and `resolve()` remain host-dependent; and
 - date/time and quantity/UCUM values;
 - advanced conversion, math, string, regular-expression, navigation, and aggregate functions;
 - complex literals and additional standard value types;
