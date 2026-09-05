@@ -52,8 +52,13 @@ module FHIRPath
     def evaluate(vector, evaluator = nil)
       return evaluator.call(vector) if evaluator
 
+      # Conformance records spell the default out as `plain`; the public API
+      # treats `nil` as the PlainModel default and rejects unknown release
+      # strings, so map the explicit plain marker to nil before dispatch.
+      model = vector['model']
+      model = nil if model.to_s == 'plain'
       FHIRPath.evaluate(vector['resource'] || {}, vector.fetch('expression'),
-                        variables: vector['variables'] || {}, model: vector['model'])
+                        variables: vector['variables'] || {}, model: model)
     end
 
     def error_result(vector, line_number, classification, error)
