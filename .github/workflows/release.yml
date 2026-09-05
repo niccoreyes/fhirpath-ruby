@@ -164,6 +164,8 @@ jobs:
     needs: publish
     permissions:
       contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - name: Check out tagged source
         uses: actions/checkout@v5
