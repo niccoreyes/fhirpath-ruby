@@ -24,6 +24,8 @@ Returns an immutable `FHIRPath::ParsedExpression` with:
 
 A blank, malformed, unsupported-token, or trailing-input expression raises `FHIRPath::ParseError`. The error exposes `code`, `span`, `expression`, and `to_h`.
 
+Passing a `String` to `parse` never freezes that string: `parse` retains an internal frozen snapshot of the expression. You may mutate your own source string after calling `parse` without affecting the returned `ParsedExpression`.
+
 ### `FHIRPath.compile`
 
 ```ruby
@@ -36,6 +38,8 @@ program = FHIRPath.compile(
 ```
 
 Returns a frozen `FHIRPath::CompiledExpression`. Parsing happens once; each `evaluate` or `call` creates fresh per-evaluation context. A compiled expression must not retain a resource, variables, focus, trace state, or mutable evaluation cache between calls.
+
+`compile` likewise never freezes the caller's source `String`: it snapshots the expression internally. Mutating the string you passed after calling `compile` does not change the compiled program, and passing an already-frozen string works normally.
 
 `model` defaults to `FHIRPath::PlainModel`. `functions` is an immutable function registry snapshot.
 
@@ -75,7 +79,7 @@ All public engine errors derive from `FHIRPath::Error` and carry a stable symbol
 
 | Error | Meaning |
 |---|---|
-| `ParseError` | Invalid token, malformed syntax, unsupported escape, or trailing input |
+| `ParseError` | Invalid token, malformed syntax, unsupported escape, trailing input, or expression nesting exceeding the parser depth budget (code `nesting_depth_exceeded`) |
 | `EvaluationError` | Valid syntax cannot be evaluated for the current input |
 | `SingletonError` | A singleton value was required but the collection had multiple items |
 | `FHIRPath::TypeError` | A value has an incompatible FHIRPath type |
