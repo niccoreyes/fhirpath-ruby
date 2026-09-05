@@ -12,7 +12,11 @@ module FHIRPath
   end
 
   class FunctionRegistry
-    STANDARD_NAMES = %w[where select first last exists count empty not all allTrue anyTrue allFalse anyFalse].freeze
+    STANDARD_NAMES = %w[
+      where select first last tail take skip
+      exists count empty not all
+      allTrue anyTrue allFalse anyFalse
+    ].freeze
     DELAYED_NAMES = %w[where select exists all].freeze
 
     def self.standard
@@ -33,7 +37,7 @@ module FHIRPath
 
     def self.standard_arity(name)
       return 0..1 if name == 'exists'
-      return 1 if name == 'all' || %w[where select].include?(name)
+      return 1 if name == 'all' || %w[where select take skip].include?(name)
 
       0
     end

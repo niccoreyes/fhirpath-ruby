@@ -21,7 +21,7 @@ This matrix is deliberately conservative. `Supported` means the behavior is exer
 | Empty-aware Boolean operators | Supported | foundation/core compatibility tests |
 | Union, `in`, `contains`, `is`, `as` | Supported | core compatibility tests and vectors; union eliminates duplicates from both operands using `=` equality in first-seen order; `in`/`contains` require a singleton operand and follow the empty-collection rules |
 | Indexers | Supported | foundation/parity tests |
-| `where`, `select`, `first`, `last`, `exists`, `count` | Supported | foundation/parity tests |
+| `where`, `select`, `first`, `last`, `tail`, `take`, `skip`, `exists`, `count` | Supported | foundation/parity tests |
 | `empty`, `not`, `all`, Boolean aggregates | Supported | core compatibility tests |
 | `$this`, `$index`, `$total` | Supported | parity tests |
 | Explicit external constants | Supported | foundation/core compatibility tests |

@@ -99,7 +99,7 @@ The current tested slice includes:
 - numeric/string relational comparison, collection-aware equality, equivalence, and empty-aware Boolean operators; a finite JSON `Float` is treated as a `Decimal`;
 - union, string concatenation (`+` and `&`), membership (`in`/`contains`), and primitive type operators (`is`/`as`); union removes duplicate values from both operands using `=` equality in first-seen order, and `in`/`contains` require a singleton operand; and
 - indexers with non-negative integer indexes;
-- `where`, `select`, `first`, `last`, `exists`, `count`, `empty`, `not`, `all`, and Boolean aggregate functions;
+- `where`, `select`, `first`, `last`, `tail`, `take`, `skip`, `exists`, `count`, `empty`, `not`, `all`, and Boolean aggregate functions;
 - `$this`, `$index`, and `$total` focus variables;
 - explicitly supplied external constants through `variables:`; and
 - immutable parse/compile boundaries with structured errors and source spans.
