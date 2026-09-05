@@ -37,7 +37,7 @@ jobs:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           bundle exec ruby -Ilib -rfhirpath/version -e '
-            expected = ENV.fetch("RELEASE_TAG").sub(/\\Av/, "")
+            expected = ENV.fetch("RELEASE_TAG").sub(/\Av/, "")
             actual = FHIRPath::VERSION
             abort "tag #{expected} does not match #{actual}" unless expected == actual
           '
@@ -187,7 +187,7 @@ jobs:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           release_args=("$RELEASE_TAG" pkg/fhirpath-*.gem pkg/SHA256SUMS.txt pkg/conformance.json)
-          if ruby -e 'exit(Gem::Version.new(ARGV.fetch(0).sub(/\\Av/, "")).prerelease? ? 0 : 1)' "$RELEASE_TAG"; then
+          if ruby -e 'exit(Gem::Version.new(ARGV.fetch(0).sub(/\Av/, "")).prerelease? ? 0 : 1)' "$RELEASE_TAG"; then
             release_args+=(--prerelease)
           fi
           gh release create "${release_args[@]}" \
