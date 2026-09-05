@@ -7,7 +7,7 @@ module FHIRPath
       parser immutable-ast collection-evaluation plain-model-navigation
       primitive-values arithmetic comparison-and-equivalence boolean-logic
       union-membership-and-type-operators collection-functions focus-variables
-      external-constants custom-functions compiled-expression-reuse
+      external-constants custom-functions compiled-expression-reuse fhir-r4-model
       structured-errors
     ].freeze
 
@@ -17,7 +17,7 @@ module FHIRPath
       @current ||= new
     end
 
-    def initialize(fhirpath: '2.0.0', trial_use: [], model_releases: [], host_features: [],
+    def initialize(fhirpath: '2.0.0', trial_use: [], model_releases: ['R4'], host_features: [],
                    capability_set: CAPABILITY_SET)
       @fhirpath = fhirpath.to_s.freeze
       @trial_use = Array(trial_use).map(&:to_s).freeze
@@ -28,7 +28,12 @@ module FHIRPath
     end
 
     def supports?(feature)
-      trial_use.include?(feature.to_s) || host_features.include?(feature.to_s)
+      trial_use.include?(feature.to_s) || host_features.include?(feature.to_s) ||
+        supports_model?(feature)
+    end
+
+    def supports_model?(release)
+      model_releases.any? { |configured_release| configured_release.casecmp?(release.to_s) }
     end
 
     def to_h

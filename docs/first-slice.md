@@ -32,7 +32,8 @@ Every public evaluation returns `FHIRPath::Collection`; `evaluate_first` remains
 - Equivalence normalizes case and runs of whitespace for strings and rounds numeric operands to their least precise decimal place. Full equivalence semantics for all FHIRPath types remain deferred with the broader value system.
 - Division always produces an exact `BigDecimal`; temporal, quantity, UCUM, and advanced numeric semantics are deferred.
 - Empty arithmetic and relational operands return the empty collection. Empty equality follows FHIRPath's empty-aware result policy; equivalence of two empty collections returns `true`.
-- FHIR-specific model metadata, choice elements, terminology, `resolve()`, temporal/quantity values, advanced functions, and the official shared-suite importer remain deferred.
+- dependency-free FHIR R4 JSON choice navigation for `Observation.value[x]`;
+- broader FHIR-specific model metadata, primitive extensions, terminology, `resolve()`, temporal/quantity values, advanced functions, and the official shared-suite importer remain deferred.
 - Trial-use FHIRPath 3.0 features remain disabled by the normative 2.0.0 capability.
 
 ## Verification

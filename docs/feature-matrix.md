@@ -31,8 +31,10 @@ This matrix is deliberately conservative. `Supported` means the behavior is exer
 | Date/time literals and values | Deferred | no temporal value implementation |
 | Quantity/UCUM | Deferred | no unit service or quantity implementation |
 | Advanced conversion/math/string/regex | Deferred | not in standard registry |
-| FHIR R4/R5 model adapters | Host-dependent | plain model only |
-| Choice elements and primitive extensions | Host-dependent | requires versioned model provider |
+| FHIR R4 model adapter (`model: :r4`) | Supported | `test/r4_model_test.rb`; dependency-free `FHIRPath::FHIR::R4::ModelProvider` |
+| FHIR R4 `Observation.value[x]` logical navigation | Supported | R4 choice vectors; `valueQuantity` and `valueString` resolve through `value`, absent choice is empty |
+| FHIR R5 model adapter | Deferred | no R5 provider |
+| Broader FHIR choice elements and primitive extensions | Host-dependent | first R4 slice only covers `Observation.value[x]` |
 | `resolve()` and terminology | Host-dependent | requires injected host services |
 | Official HL7 shared test suite | Deferred | importer is not yet bundled |
 | FHIRPath 3.0 STU3 features | Deferred | not enabled by default |

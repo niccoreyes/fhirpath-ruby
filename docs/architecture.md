@@ -52,7 +52,7 @@ FHIRPath::Capability.current
 # => {
 #      fhirpath: "2.0.0",
 #      trial_use: [],
-#      model_releases: [],
+#      model_releases: ['R4'],
 #      host_features: []
 #    }
 ```
@@ -370,7 +370,9 @@ class ModelProvider
 end
 ```
 
-`PlainModel` implements predictable Hash/Array/object navigation. `FHIR::R4::ModelProvider` and `FHIR::R5::ModelProvider` are separate adapters loaded only when their dependency and metadata are installed.
+`PlainModel` implements predictable Hash/Array/object navigation. The bundled
+`FHIRPath::FHIR::R4::ModelProvider` is dependency-free; other release-specific
+providers remain separately loaded adapters.
 
 FHIR model metadata is data, not evaluator code. It should describe logical paths, type names, parent relationships, choice variants, and primitive-extension fields. For `Observation.value`, an R4 provider must resolve `valueQuantity`, `valueString`, and other `value[x]` variants to the logical property rather than treating JSON key lookup as the FHIRPath model.
 

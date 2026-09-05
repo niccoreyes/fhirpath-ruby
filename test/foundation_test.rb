@@ -19,7 +19,7 @@ class FHIRPathFoundationTest < Minitest::Test
     assert_includes capability.capability_set, 'parser'
     assert_equal FHIRPath::Capability::CAPABILITY_SET, capability.capability_set
     assert_empty capability.trial_use
-    assert_empty capability.model_releases
+    assert_includes capability.model_releases, 'R4'
     assert capability.frozen?
   end
 

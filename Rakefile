@@ -13,6 +13,7 @@ end
 desc 'Run the checked-in compatibility vectors'
 task :vectors do
   ruby 'script/run_vectors.rb', 'conformance/core.jsonl'
+  ruby 'script/run_vectors.rb', 'conformance/r4.jsonl'
 end
 
 task default: :test
