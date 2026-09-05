@@ -51,7 +51,7 @@ The implementation must be Ruby-native. It may use a grammar generator or a hand
 FHIRPath::Capability.current
 # => {
 #      fhirpath: "2.0.0",
-#      trial_use: [],
+#      trial_use: ['stu3-aggregate-functions'],
 #      model_releases: ['R4'],
 #      host_features: []
 #    }
@@ -65,7 +65,15 @@ The normative 2.0 feature set is the default. Each 3.0 STU feature must have:
 - a version or capability marker in conformance reports; and
 - a documented reason it is not part of the normative default.
 
-Examples of gated features include `Long`, instance selectors/object construction, aggregate additions, reflection, and other additions identified by the specification as trial use. The grammar is not itself a promise of evaluator support.[1][2]
+The declared exception to the gating model is the `stu3-aggregate-functions`
+subset (`sum()`, `avg()`, `max()`, `min()`), which ships default-on in the
+standard registry and is surfaced in `Capability#trial_use`; callers that need
+a strict-2.0 declaration can construct `Capability.new(trial_use: [])`.
+Registry-level enforcement of that strict declaration is documented as not yet
+implemented. Examples of gated features include `Long`, instance
+selectors/object construction, the general-purpose `aggregate()` function,
+reflection, and other additions identified by the specification as trial use.
+The grammar is not itself a promise of evaluator support.[1][2]
 
 ### 3.2 Result policy
 

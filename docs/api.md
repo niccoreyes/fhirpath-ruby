@@ -142,11 +142,28 @@ FHIRPath.evaluate({}, "triple()", functions: registry).to_a
 
 ## Capability
 
-`FHIRPath::Capability.current` declares the default `fhirpath` release (`2.0.0`)
-and the bundled FHIR model release (`R4`). It lists `trial_use`, `model_releases`,
-and `host_features`. Capabilities are immutable. A capability declaration is
-not proof that all standard functions or FHIR model behavior is implemented;
-consult [the feature matrix](feature-matrix.md).
+`FHIRPath::Capability.current` declares the default `fhirpath` release
+(`2.0.0`) and the bundled FHIR model release (`R4`). It lists `trial_use`,
+`model_releases`, and `host_features`. Capabilities are immutable.
+
+The normative 2.0.0 core keeps `fhirpath: '2.0.0'` and an unchanged
+`capability_set`. As a documented, default-on exception, the standard registry
+ships the FHIRPath 3.0.0 STU3 aggregate functions `sum()`, `avg()`, `max()`,
+and `min()` (normative 2.0.0 contains only `count()`). `Capability.current`
+surfaces this subset in `trial_use` under the marker
+`stu3-aggregate-functions`, so the capability report (`Capability#to_h`) names
+the STU3 behavior it ships instead of silently folding it into the normative
+claims. Construct `FHIRPath::Capability.new(trial_use: [])` to obtain a
+declaration without the subset; `supports?('stu3-aggregate-functions')`
+reports whether a capability declares it.
+
+`trial_use` is a surface declaration, not a registry gate: it does not enable
+or disable functions in `FHIRPath::FunctionRegistry.standard`, and passing a
+strict-2.0 capability to `parse`/`compile`/`evaluate` does not remove the
+aggregate functions from the standard registry. A caller that requires a hard
+2.0.0-only function set must supply its own registry that omits them.
+A capability declaration is not proof that all standard functions or FHIR
+model behavior is implemented; consult [the feature matrix](feature-matrix.md).
 
 ## Stability policy
 

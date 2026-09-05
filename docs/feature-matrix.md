@@ -21,7 +21,8 @@ This matrix is deliberately conservative. `Supported` means the behavior is exer
 | Empty-aware Boolean operators | Supported | foundation/core compatibility tests |
 | Union, `in`, `contains`, `is`, `as` | Supported | core compatibility tests and vectors; union eliminates duplicates from both operands using `=` equality in first-seen order; `in`/`contains` require a singleton operand and follow the empty-collection rules; `is`/`as` test built-in primitive types by runtime value and, when a model provider resolves the value, also test the FHIR logical type recorded by navigation (e.g. `Observation.value is Quantity`), with `as` passing the value through unchanged on a match and yielding the empty collection on a mismatch |
 | Indexers | Supported | foundation/parity tests |
-| `where`, `select`, `first`, `last`, `tail`, `take`, `skip`, `exists`, `count` | Supported | `test/subsetting_functions_test.rb` |
+| `where`, `select`, `first`, `last`, `tail`, `take`, `skip`, `exists` | Supported | `test/subsetting_functions_test.rb` |
+| Aggregate functions `count()`, `sum()`, `avg()`, `max()`, `min()` | Supported | `test/aggregate_functions_test.rb` and aggregate vectors. `count()` follows FHIRPath 2.0.0 (integer count; empty -> `[0]`). `sum`/`avg`/`max`/`min` are FHIRPath 3.0.0 STU3 aggregate additions (published 2026-07-28; absent from 2.0.0 and the 3.0.0 ballot) shipped in the standard registry: empty input -> empty; `sum()`/`avg()` accept numeric items only (`TypeError` code `expected_number` otherwise), sum mixed Integer/Decimal input through Decimal, and `avg()` converts Integer items to Decimal before dividing; `max()`/`min()` use comparison-operator semantics for numeric and string items (incompatible item types raise `TypeError` code `incompatible_comparison`); no input mutation. The STU3 subset is surfaced on the capability object: `Capability.current` keeps `fhirpath` `2.0.0` and declares marker `stu3-aggregate-functions` in `trial_use` (capability surface tests in the same file) |
 | `empty`, `not`, `all`, Boolean aggregates | Supported | core compatibility tests |
 | `$this`, `$index`, `$total` | Supported | parity tests |
 | Explicit external constants | Supported | foundation/core compatibility tests; values may come from `variables:` or an explicitly injected `HostServices` constant provider |
@@ -41,7 +42,8 @@ This matrix is deliberately conservative. `Supported` means the behavior is exer
 | Broader FHIR choice elements and primitive extensions | Host-dependent | first R4 slice only covers `Observation.value[x]` |
 | `resolve()` and terminology | Host-dependent | requires injected host services |
 | Official HL7 shared test suite | Deferred | importer is not yet bundled |
-| FHIRPath 3.0 STU3 features | Deferred | not enabled by default |
+| FHIRPath 3.0 STU3 aggregate functions (`sum`, `avg`, `max`, `min`) | Supported | shipped by default as the first STU3-subset additions to the standard registry — a deliberate, documented exception (declared `stu3-aggregate-functions` in `Capability.current.trial_use` with `fhirpath` staying `2.0.0`; see `docs/api.md` and `docs/support-matrix.md`); semantics follow the aggregate row above |
+| Other FHIRPath 3.0 STU3 features | Deferred | not enabled by default |
 | Network I/O/global evaluator state | Not supported by design | pure evaluation boundary |
 
 The matrix is a release-review aid, not a conformance percentage. A future release must update it together with tests, capability output, and the changelog.

@@ -178,6 +178,12 @@ module FHIRPath
         exists(receiver, node.arguments.first, context)
       when 'count'
         Collection.new([receiver.count])
+      when 'sum'
+        sum(receiver, node)
+      when 'avg'
+        average(receiver, node)
+      when 'max', 'min'
+        extremum(receiver, node.name, node)
       when 'empty'
         Collection.new([receiver.empty?])
       when 'not'
@@ -231,6 +237,48 @@ module FHIRPath
       return Collection.empty if count >= receiver.count
 
       Collection.new(receiver.items[count..])
+    end
+
+    # Aggregates (FHIRPath 2.0.0 count(); FHIRPath 3.0.0 STU3 sum/avg/max/min).
+    # Each returns a fresh immutable collection and never mutates the input.
+    # sum()/avg() promote Integer and Decimal items through BigDecimal when any
+    # decimal participates (matching the evaluator's numeric promotion in
+    # arithmetic and equality); max()/min() reuse the comparison operator
+    # semantics so numerics compare across Integer/Decimal and strings order
+    # lexicographically, with incompatible item types raising a TypeError.
+    def sum(receiver, node)
+      return Collection.empty if receiver.empty?
+      unless receiver.items.all? { |item| numeric?(item) }
+        raise TypeError.new('sum requires numeric items', code: :expected_number, span: node.span)
+      end
+
+      result = if receiver.items.all?(::Integer)
+                 receiver.items.reduce(:+)
+               else
+                 receiver.items.reduce { |total, item| decimal(total) + decimal(item) }
+               end
+      Collection.new([result])
+    end
+
+    def average(receiver, node)
+      return Collection.empty if receiver.empty?
+      unless receiver.items.all? { |item| numeric?(item) }
+        raise TypeError.new('avg requires numeric items', code: :expected_number, span: node.span)
+      end
+
+      total = receiver.items.reduce { |sum, item| decimal(sum) + decimal(item) }
+      Collection.new([decimal(total) / receiver.count])
+    end
+
+    def extremum(receiver, mode, node)
+      return Collection.empty if receiver.empty?
+
+      result = receiver.items.first
+      receiver.items.drop(1).each do |item|
+        comparison = compare_values(result, item, node.span)
+        result = item if mode == 'max' ? comparison.negative? : comparison.positive?
+      end
+      Collection.new([result])
     end
 
     def all(receiver, predicate, context)
