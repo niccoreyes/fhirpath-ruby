@@ -207,12 +207,14 @@ module FHIRPath
 
     def take(receiver, count)
       return Collection.empty if receiver.empty? || count <= 0
+      return Collection.new(receiver.items) if count >= receiver.count
 
       Collection.new(receiver.items.first(count))
     end
 
     def skip(receiver, count)
       return Collection.new(receiver.items) if count <= 0
+      return Collection.empty if count >= receiver.count
 
       Collection.new(receiver.items[count..])
     end

@@ -62,6 +62,10 @@ class FHIRPathSubsettingFunctionsTest < Minitest::Test
     assert_equal [1, 2, 3], FHIRPath.evaluate({}, '(1 | 2 | 3).take(4)').to_a
   end
 
+  def test_take_with_huge_n_returns_full_collection
+    assert_equal [1, 2, 3], FHIRPath.evaluate({}, '(1 | 2 | 3).take(1000000000000000000000000000000)').to_a
+  end
+
   def test_take_on_single_item
     assert_equal [1], FHIRPath.evaluate({}, '1.take(1)').to_a
     assert_empty FHIRPath.evaluate({}, '1.take(0)')
@@ -110,6 +114,10 @@ class FHIRPathSubsettingFunctionsTest < Minitest::Test
   def test_skip_with_n_at_or_above_size_returns_empty
     assert_empty FHIRPath.evaluate({}, '(1 | 2 | 3).skip(3)')
     assert_empty FHIRPath.evaluate({}, '(1 | 2 | 3).skip(4)')
+  end
+
+  def test_skip_with_huge_n_returns_empty_collection
+    assert_empty FHIRPath.evaluate({}, '(1 | 2 | 3).skip(1000000000000000000000000000000)')
   end
 
   def test_skip_with_n_less_than_size_returns_items_after_skipping
