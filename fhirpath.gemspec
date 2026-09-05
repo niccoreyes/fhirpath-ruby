@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 require_relative 'lib/fhirpath/version'
+require_relative 'lib/fhirpath/capability'
+
+capability = FHIRPath::Capability.current
 
 Gem::Specification.new do |spec|
   spec.name = 'fhirpath'
@@ -20,10 +23,14 @@ Gem::Specification.new do |spec|
   # The project is released under the permissive MIT license. Keep this
   # metadata synchronized with the checked-in LICENSE file.
   spec.license = 'MIT'
+  spec.metadata['release_status'] = FHIRPath::RELEASE_CHANNEL
+  spec.metadata['fhirpath_target'] = capability.fhirpath
+  spec.metadata['capability_set'] = capability.capability_set.join(',')
   spec.metadata['source_code_uri'] = spec.homepage
   spec.metadata['bug_tracker_uri'] = 'https://github.com/niccoreyes/fhirpath-ruby/issues'
   spec.metadata['documentation_uri'] = 'https://github.com/niccoreyes/fhirpath-ruby/blob/main/docs/api.md'
   spec.metadata['changelog_uri'] = 'https://github.com/niccoreyes/fhirpath-ruby/blob/main/CHANGELOG.md'
+  spec.metadata['support_matrix_uri'] = 'https://github.com/niccoreyes/fhirpath-ruby/blob/main/docs/support-matrix.md'
 
   spec.files = Dir[
     'lib/**/*',
@@ -41,6 +48,8 @@ Gem::Specification.new do |spec|
     'docs/feature-matrix.md',
     'docs/first-slice.md',
     'docs/release-checklist.md',
+    'docs/releasing.md',
+    'docs/support-matrix.md',
     'conformance/core.jsonl',
     'script/run_vectors.rb'
   ].select { |path| File.file?(path) }

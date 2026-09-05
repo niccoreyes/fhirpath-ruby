@@ -1,0 +1,193 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Release gates (Ruby ${{ matrix.ruby }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ['3.2', '3.3']
+
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+          persist-credentials: false
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Check tag and version agreement
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          bundle exec ruby -Ilib -rfhirpath/version -e '
+            expected = ENV.fetch("RELEASE_TAG").sub(/\\Av/, "")
+            actual = FHIRPath::VERSION
+            abort "tag #{expected} does not match #{actual}" unless expected == actual
+          '
+      - name: Check patch whitespace
+        run: git diff --check
+      - name: Run tests
+        run: bundle exec rake test
+      - name: Run RuboCop
+        run: bundle exec rubocop
+      - name: Run compatibility vectors
+        run: bundle exec rake vectors
+      - name: Run coverage summary
+        run: bundle exec ruby script/check_coverage.rb coverage/summary.json 2>/dev/null || true
+      - name: Build gem and smoke-test installed gem
+        run: |
+          bundle exec rake build
+          bundle exec ./script/verify_gem_install.sh pkg/fhirpath-*.gem
+          bundle exec ruby script/verify_release.rb pkg/fhirpath-*.gem
+
+  coverage:
+    name: Coverage gate
+    runs-on: ubuntu-latest
+    needs: verify
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+          persist-credentials: false
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - name: Run tests with coverage
+        env:
+          COVERAGE: '1'
+        run: bundle exec rake test
+      - name: Validate coverage summary
+        run: bundle exec ruby script/check_coverage.rb coverage/summary.json
+
+  package:
+    name: Package release artifacts
+    runs-on: ubuntu-latest
+    needs: [verify, coverage]
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+          persist-credentials: false
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - name: Build and verify the exact release package
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          bundle exec rake build
+          bundle exec ./script/verify_gem_install.sh pkg/fhirpath-*.gem
+          bundle exec ruby script/verify_release.rb pkg/fhirpath-*.gem
+          bundle exec ruby script/run_vectors.rb conformance/core.jsonl > pkg/conformance.json
+          sha256sum pkg/fhirpath-*.gem pkg/conformance.json > pkg/SHA256SUMS.txt
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-assets
+          path: pkg/
+          if-no-files-found: error
+
+  publish:
+    name: Publish to RubyGems
+    runs-on: ubuntu-latest
+    needs: package
+    environment:
+      name: release
+      url: https://rubygems.org/gems/fhirpath
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+          persist-credentials: false
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - name: Download gated release artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-assets
+          path: pkg
+      - name: Configure RubyGems Trusted Publishing
+        uses: rubygems/configure-rubygems-credentials@dc5a8d8553e6ee01fc26761a49e99e733d17954a
+      - name: Push the exact gated gem
+        run: gem push pkg/fhirpath-*.gem
+      - name: Verify the published version
+        env:
+          RELEASE_VERSION: ${{ github.ref_name }}
+        run: bundle exec ruby script/verify_rubygems_publication.rb fhirpath "${RELEASE_VERSION#v}"
+
+  github-release:
+    name: Create GitHub release
+    runs-on: ubuntu-latest
+    needs: publish
+    permissions:
+      contents: write
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+          persist-credentials: false
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-assets
+          path: pkg
+      - name: Generate release notes
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: ruby script/generate_release_notes.rb "$RELEASE_TAG" pkg/conformance.json > RELEASE_NOTES.md
+      - name: Create GitHub release with checksummed assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          release_args=("$RELEASE_TAG" pkg/fhirpath-*.gem pkg/SHA256SUMS.txt pkg/conformance.json)
+          if ruby -e 'exit(Gem::Version.new(ARGV.fetch(0).sub(/\\Av/, "")).prerelease? ? 0 : 1)' "$RELEASE_TAG"; then
+            release_args+=(--prerelease)
+          fi
+          gh release create "${release_args[@]}" \
+            --verify-tag \
+            --title "FHIRPath ${RELEASE_TAG}" \
+            --notes-file RELEASE_NOTES.md
+      - name: Verify GitHub release and assets
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          test "$(gh release view "$RELEASE_TAG" --json tagName --jq .tagName)" = "$RELEASE_TAG"
+          gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name' | grep -Fx 'SHA256SUMS.txt'
+          gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name' | grep -E '^fhirpath-.*\\.gem$'
+          gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name' | grep -Fx 'conformance.json'

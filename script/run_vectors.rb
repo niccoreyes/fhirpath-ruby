@@ -10,4 +10,10 @@ path = ARGV.fetch(0) do
   abort "usage: #{File.basename($PROGRAM_NAME)} PATH_TO_JSONL"
 end
 
-puts JSON.pretty_generate(FHIRPath::VectorRunner.run(path))
+report = FHIRPath::VectorRunner.run(path)
+puts JSON.pretty_generate(report)
+
+# A release may document unsupported or host-dependent cases, but it must not
+# ship known defects or silently skipped cases as conformance evidence.
+blocked = report[:counts].slice('defect', 'not-run')
+exit 1 if blocked.values.any?(&:positive?)

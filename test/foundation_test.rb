@@ -16,6 +16,8 @@ class FHIRPathFoundationTest < Minitest::Test
     capability = FHIRPath::Capability.current
 
     assert_equal '2.0.0', capability.fhirpath
+    assert_includes capability.capability_set, 'parser'
+    assert_equal FHIRPath::Capability::CAPABILITY_SET, capability.capability_set
     assert_empty capability.trial_use
     assert_empty capability.model_releases
     assert capability.frozen?

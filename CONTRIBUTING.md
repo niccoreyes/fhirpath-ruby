@@ -52,6 +52,12 @@ A useful pull request explains:
 
 Before requesting review, verify `git diff --check`, `bundle exec rake test`, `bundle exec rubocop`, `bundle exec rake vectors`, `bundle exec rake build`, and the gem-install smoke test. Do not claim complete FHIRPath conformance unless the official suite and release evidence support that claim.
 
+For release work, also review [`docs/support-matrix.md`](docs/support-matrix.md),
+[`docs/release-checklist.md`](docs/release-checklist.md), and
+[`docs/releasing.md`](docs/releasing.md). Version changes must update
+`lib/fhirpath/version.rb` and the matching `CHANGELOG.md` section; do not push a
+release tag from a dirty or unreviewed checkout.
+
 ## Scope and licensing
 
 The repository is licensed under the [MIT License](LICENSE), but remains
