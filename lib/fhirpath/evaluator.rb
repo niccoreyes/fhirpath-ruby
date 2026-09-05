@@ -154,6 +154,12 @@ module FHIRPath
         receiver.empty? ? Collection.empty : Collection.new([receiver.first_item])
       when 'last'
         receiver.empty? ? Collection.empty : Collection.new([receiver.items.last])
+      when 'tail'
+        receiver.empty? ? Collection.empty : Collection.new(receiver.items[1..])
+      when 'take'
+        take(receiver, integer_argument(node, context))
+      when 'skip'
+        skip(receiver, integer_argument(node, context))
       when 'exists'
         exists(receiver, node.arguments.first, context)
       when 'count'
@@ -186,6 +192,31 @@ module FHIRPath
       end
 
       Collection.new([!value])
+    end
+
+    def integer_argument(node, context)
+      argument = node.arguments.first
+      value = evaluate(argument, context)
+      count = require_singleton(value, argument.span)
+      unless count.is_a?(::Integer)
+        raise TypeError.new('expected an integer argument', code: :expected_integer, span: argument.span)
+      end
+
+      count
+    end
+
+    def take(receiver, count)
+      return Collection.empty if receiver.empty? || count <= 0
+      return Collection.new(receiver.items) if count >= receiver.count
+
+      Collection.new(receiver.items.first(count))
+    end
+
+    def skip(receiver, count)
+      return Collection.new(receiver.items) if count <= 0
+      return Collection.empty if count >= receiver.count
+
+      Collection.new(receiver.items[count..])
     end
 
     def all(receiver, predicate, context)

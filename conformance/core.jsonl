@@ -15,3 +15,9 @@
 {"id":"float-as-decimal-001","target":"2.0.0","expression":"value > 1","resource":{"value":1.5},"variables":{},"expected":[true],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"decimal-literal"}}
 {"id":"last-function-001","target":"2.0.0","expression":"(1 | 2 | 3).last()","resource":{},"variables":{},"expected":[3],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"last-function"}}
 {"id":"last-function-empty-001","target":"2.0.0","expression":"{}.last()","resource":{},"variables":{},"expected":[],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"last-function"}}
+{"id":"tail-function-001","target":"2.0.0","expression":"(1 | 2 | 3).tail()","resource":{},"variables":{},"expected":[2,3],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"tail-function"}}
+{"id":"tail-function-empty-001","target":"2.0.0","expression":"{}.tail()","resource":{},"variables":{},"expected":[],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"tail-function"}}
+{"id":"take-function-001","target":"2.0.0","expression":"(1 | 2 | 3).take(2)","resource":{},"variables":{},"expected":[1,2],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"take-function"}}
+{"id":"take-function-empty-001","target":"2.0.0","expression":"{}.take(2)","resource":{},"variables":{},"expected":[],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"take-function"}}
+{"id":"skip-function-001","target":"2.0.0","expression":"(1 | 2 | 3).skip(1)","resource":{},"variables":{},"expected":[2,3],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"skip-function"}}
+{"id":"skip-function-empty-001","target":"2.0.0","expression":"{}.skip(2)","resource":{},"variables":{},"expected":[],"origin":{"suite":"HL7-FHIRPath","commit":"master","case":"skip-function"}}

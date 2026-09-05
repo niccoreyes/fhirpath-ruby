@@ -10,11 +10,11 @@ class FHIRPathVectorRunnerTest < Minitest::Test
   def test_runner_reports_passes_and_preserves_vector_provenance
     report = FHIRPath::VectorRunner.run(VECTOR_PATH)
 
-    assert_equal 17, report[:total]
-    assert_equal 17, report[:counts]['pass']
+    assert_equal 23, report[:total]
+    assert_equal 23, report[:counts]['pass']
     assert_equal 0, report[:counts]['defect']
     assert_equal 0, report[:counts]['unsupported']
-    assert_equal 17, report[:cases].length
+    assert_equal 23, report[:cases].length
     assert_equal 'fhirpath-py', report[:cases].first['origin']['suite']
   end
 

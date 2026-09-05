@@ -4,6 +4,7 @@ All notable changes to this project are documented here. The project is pre-1.0;
 
 ## [Unreleased]
 
+- Add the `tail()`, `take(n)`, and `skip(n)` member functions (FHIRPath 2.0.0, subsetting functions; §5.3.5–5.3.7): `tail()` returns all but the first item and is empty for empty/singleton input; `take(n)` returns the first `min(n, size)` items, empty for `n <= 0` or empty input, and the full collection when `n` exceeds the size; `skip(n)` returns the items after the first `n`, the full collection for `n <= 0`, and empty when no items remain. `take`/`skip` require an integer `n` and raise `TypeError` with code `expected_integer` for a non-integer argument.
 - Add the `last()` member function (FHIRPath 2.0.0, existence/navigation functions): it returns the last item in the input collection, an empty collection when the input is empty, and requires zero arguments.
 - Correct numeric arithmetic with a zero right operand: `+`, `-`, `*` treat zero as a normal operand, while `/`, `div`, `mod` divide and a zero divisor returns an empty collection (never an error).
 - Correct `union` (`|`) to eliminate duplicate values from both operands using `=` equality in first-seen order, including numerically-equal integers and decimals.
