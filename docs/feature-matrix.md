@@ -19,7 +19,7 @@ This matrix is deliberately conservative. `Supported` means the behavior is exer
 | Finite JSON `Float` treated as `Decimal` | Supported | evaluator correctness tests; a finite `Float` (e.g. from `JSON.parse`) compares, equals, arithmetically combines, and satisfies `is Decimal`; `NaN`/`Infinity` are rejected as non-numeric |
 | String `&` concatenation | Supported | core compatibility tests; empty operands are treated as `''` |
 | Empty-aware Boolean operators | Supported | foundation/core compatibility tests |
-| Union, `in`, `contains`, `is`, `as` | Supported | core compatibility tests and vectors; union eliminates duplicates from both operands using `=` equality in first-seen order; `in`/`contains` require a singleton operand and follow the empty-collection rules |
+| Union, `in`, `contains`, `is`, `as` | Supported | core compatibility tests and vectors; union eliminates duplicates from both operands using `=` equality in first-seen order; `in`/`contains` require a singleton operand and follow the empty-collection rules; `is`/`as` test built-in primitive types by runtime value and, when a model provider resolves the value, also test the FHIR logical type recorded by navigation (e.g. `Observation.value is Quantity`), with `as` passing the value through unchanged on a match and yielding the empty collection on a mismatch |
 | Indexers | Supported | foundation/parity tests |
 | `where`, `select`, `first`, `last`, `tail`, `take`, `skip`, `exists`, `count` | Supported | `test/subsetting_functions_test.rb` |
 | `empty`, `not`, `all`, Boolean aggregates | Supported | core compatibility tests |
@@ -36,6 +36,7 @@ This matrix is deliberately conservative. `Supported` means the behavior is exer
 | Advanced conversion/math/string/regex | Deferred | not in standard registry |
 | FHIR R4 model adapter (`model: :r4`) | Supported | `test/r4_model_test.rb`; dependency-free `FHIRPath::FHIR::R4::ModelProvider` |
 | FHIR R4 `Observation.value[x]` logical navigation | Supported | R4 choice vectors; `valueQuantity` and `valueString` resolve through `value`, absent choice is empty |
+| FHIR R4 logical-type `is`/`as` over resolved choice values | Supported | `test/r4_type_operator_test.rb` and R4 choice vectors; navigation records the resolved choice variant's FHIR logical type (`Quantity`, `string`, ...) and `is`/`as` test against it; empty-in/empty-out and PlainModel (no model metadata) behavior are covered; the type is recorded for collections produced directly by navigation (operators that rebuild collections, such as `union`, do not yet propagate it); resource-level type tests and `ofType()` remain deferred |
 | FHIR R5 model adapter | Deferred | no R5 provider |
 | Broader FHIR choice elements and primitive extensions | Host-dependent | first R4 slice only covers `Observation.value[x]` |
 | `resolve()` and terminology | Host-dependent | requires injected host services |

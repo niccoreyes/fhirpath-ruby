@@ -10,6 +10,14 @@ module FHIRPath
     def root_type(_resource)
       nil
     end
+
+    # Model type name of the value that `property` resolves for +logical_name+
+    # on +element+, or nil when the model does not declare one (e.g. a
+    # non-choice field or an absent choice). Safe default: no metadata, no
+    # access to the element contents.
+    def property_logical_type(_element, _logical_name)
+      nil
+    end
   end
 
   class PlainModel < ModelProvider

@@ -51,6 +51,24 @@ module FHIRPath
           CHOICE_TYPES.fetch(parent_type.to_s, {}).fetch(logical_name.to_s, []).freeze
         end
 
+        # Model type name of the choice variant that `property` resolves for
+        # +logical_name+ on +element+, using the same key order as CHOICE_FIELDS
+        # so the concrete variant maps to its declared type (valueQuantity ->
+        # Quantity, valueString -> string). Returns nil when no choice variant
+        # is present or the property is not a declared choice.
+        def property_logical_type(element, logical_name)
+          choice_names = CHOICE_FIELDS.fetch(root_type(element).to_s, {}).fetch(logical_name.to_s, [])
+          return nil if choice_names.empty?
+
+          index = choice_names.index do |choice_name|
+            element.is_a?(Hash) &&
+              (element.key?(choice_name) || element.key?(choice_name.to_sym))
+          end
+          return nil if index.nil?
+
+          CHOICE_TYPES.fetch(root_type(element).to_s, {}).fetch(logical_name.to_s, [])[index]
+        end
+
         def type_of(element)
           root_type(element)
         end
