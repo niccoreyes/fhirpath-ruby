@@ -1,6 +1,6 @@
 # Feature and capability matrix
 
-Status: `0.1.0.pre1`; target release: FHIRPath `2.0.0`; publication contract: [`support-matrix.md`](support-matrix.md)
+Status: `0.2.0.pre1`; target release: FHIRPath `2.0.0`; publication contract: [`support-matrix.md`](support-matrix.md)
 
 This matrix is deliberately conservative. `Supported` means the behavior is exercised by the Ruby test suite or the checked-in vector corpus. `Deferred` means callers should expect a structured unsupported/unknown error. `Host-dependent` requires an adapter or injected service that is not shipped here.
 

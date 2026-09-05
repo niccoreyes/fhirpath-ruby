@@ -1,6 +1,6 @@
 # FHIRPath Ruby API reference
 
-Status: pre-release API contract (`0.1.0.pre1`)
+Status: pre-release API contract (`0.2.0.pre1`)
 
 This document describes the Ruby-native public surface. It is a contract for this project, not a claim of source compatibility with `fhirpath-py`, `fhirpath.js`, HAPI, or Firely.
 
