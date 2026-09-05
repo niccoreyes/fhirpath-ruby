@@ -52,7 +52,7 @@ FHIRPath::Capability.current
 # => {
 #      fhirpath: "2.0.0",
 #      trial_use: [],
-#      model_releases: [],
+#      model_releases: ['R4'],
 #      host_features: []
 #    }
 ```

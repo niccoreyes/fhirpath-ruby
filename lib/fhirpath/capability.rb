@@ -33,7 +33,7 @@ module FHIRPath
     end
 
     def supports_model?(release)
-      model_releases.include?(release.to_s.upcase)
+      model_releases.any? { |configured_release| configured_release.casecmp?(release.to_s) }
     end
 
     def to_h

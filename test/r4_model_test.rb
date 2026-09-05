@@ -13,6 +13,16 @@ class FHIRPathR4ModelTest < Minitest::Test
     assert_equal ['blood pressure'], FHIRPath.evaluate(resource, 'Observation.value', model: :r4).to_a
   end
 
+  def test_r4_choice_navigation_accepts_symbol_resource_type
+    resources = [
+      { resourceType: :Observation, 'valueString' => 'string-key value' },
+      { resourceType: :Observation, valueString: 'symbol-key value' }
+    ]
+
+    assert_equal ['string-key value'], FHIRPath.evaluate(resources[0], 'Observation.value', model: :r4).to_a
+    assert_equal ['symbol-key value'], FHIRPath.evaluate(resources[1], 'Observation.value', model: :r4).to_a
+  end
+
   def test_r4_choice_metadata_describes_observation_value_types
     provider = FHIRPath.model(:r4)
 
@@ -55,6 +65,15 @@ class FHIRPathR4ModelTest < Minitest::Test
     assert_includes capability.model_releases, 'R4'
     assert_includes capability.capability_set, 'fhir-r4-model'
     assert capability.supports_model?(:r4)
+  end
+
+  def test_model_selection_accepts_a_lowercase_configured_release
+    capability = FHIRPath::Capability.new(model_releases: ['r4'])
+    resource = { 'resourceType' => 'Observation', 'valueString' => 'blood pressure' }
+
+    assert_equal ['blood pressure'],
+                 FHIRPath.evaluate(resource, 'Observation.value', model: :r4,
+                                                                  capability: capability).to_a
   end
 
   def test_plain_model_remains_the_default_and_does_not_resolve_choice_keys

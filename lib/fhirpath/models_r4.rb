@@ -39,7 +39,7 @@ module FHIRPath
         def property(element, logical_name)
           return direct_property(element, logical_name) if direct_property?(element, logical_name)
 
-          choice_names = CHOICE_FIELDS.fetch(root_type(element), {}).fetch(logical_name.to_s, [])
+          choice_names = CHOICE_FIELDS.fetch(root_type(element).to_s, {}).fetch(logical_name.to_s, [])
           choice_names.each do |choice_name|
             return element[choice_name] if element.is_a?(Hash) && element.key?(choice_name)
             return element[choice_name.to_sym] if element.is_a?(Hash) && element.key?(choice_name.to_sym)
