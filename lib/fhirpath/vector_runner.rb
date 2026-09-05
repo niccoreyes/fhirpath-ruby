@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
+require_relative 'errors'
 require_relative 'conformance/importer'
 
 module FHIRPath
@@ -29,6 +30,8 @@ module FHIRPath
     end
 
     def execute(vector, line_number, evaluator: nil)
+      return result_for(vector, line_number, 'not-run').merge('actual' => nil) if vector['classification'] == 'not-run'
+
       values = evaluate(vector, evaluator).to_a
       classification = if values == vector.fetch('expected', []) && !vector['error']
                          'pass'
@@ -61,6 +64,7 @@ module FHIRPath
     end
 
     def expected_error_matches?(expected, error)
+      return error.is_a?(Error) if expected == true
       return false unless expected
 
       class_matches = !expected['class'] || expected['class'] == error.class.name
@@ -77,17 +81,26 @@ module FHIRPath
     end
 
     def result_for(vector, line_number, classification)
+      vector.merge(result_fields(vector, line_number, classification))
+    end
+
+    def result_fields(vector, line_number, classification)
       origin = vector['origin'] || {}
-      vector.merge(
+      {
         'line' => line_number,
-        'suite' => vector['suite'] || origin['suite'],
-        'suite_commit' => vector['suite_commit'] || origin['suite_commit'] || origin['commit'],
-        'input_fixture' => vector.key?('input_fixture') ? vector['input_fixture'] : nil,
-        'model' => vector['model'] || 'plain',
-        'target' => vector['target'] || Capability.current.fhirpath,
+        'suite' => result_value(vector, 'suite', origin['suite']),
+        'suite_commit' => result_value(vector, 'suite_commit', origin['suite_commit'] || origin['commit']),
+        'input_fixture' => vector.fetch('input_fixture', nil),
+        'model' => result_value(vector, 'model', 'plain'),
+        'host_features' => result_value(vector, 'host_features', Capability.current.host_features),
+        'target' => result_value(vector, 'target', Capability.current.fhirpath),
         'expected' => vector.fetch('expected', []),
         'classification' => classification
-      )
+      }
+    end
+
+    def result_value(vector, key, fallback)
+      vector[key] || fallback
     end
 
     def serialize_error(error)

@@ -130,8 +130,140 @@ class FHIRPathConformancePipelineTest < Minitest::Test
                      result.key?(key)
                    end)
       assert_equal [4], result['actual']
+      assert_equal [], result['host_features']
       assert_equal 1, report[:capability_totals]['arithmetic'][:total]
       assert_equal 1, report[:capability_totals]['arithmetic'][:counts]['pass']
+    end
+  end
+
+  def test_importer_maps_xml_to_matching_json_without_losing_types_and_records_host_features
+    Dir.mktmpdir('fhirpath-import') do |root|
+      FileUtils.mkdir_p(File.join(root, 'r4', 'fhirpath'))
+      FileUtils.mkdir_p(File.join(root, 'r4', 'examples'))
+      File.write(File.join(root, 'r4', 'fhirpath', 'tests.xml'), <<~XML)
+        <tests><group name="model"><test name="typed" inputfile="patient-example.xml">
+          <expression>Patient.active</expression><output type="boolean">true</output>
+        </test></group></tests>
+      XML
+      File.write(File.join(root, 'r4', 'patient-example.xml'), '<Patient xmlns="http://hl7.org/fhir"/>')
+      expected_resource = {
+        'resourceType' => 'Patient', 'active' => true,
+        'name' => [{ 'given' => %w[Peter James] }, { 'given' => %w[Jim] }],
+        'contact' => [{ 'name' => { 'family' => 'du Marché' } }]
+      }
+      File.write(File.join(root, 'r4', 'examples', 'patient-example.json'), expected_resource.to_json)
+
+      record = FHIRPath::Conformance::Importer.new(
+        source_root: root, suite_path: 'r4/fhirpath/tests.xml', suite_commit: 'abc', fixture_root: 'r4',
+        host_features: ['plain-json-fixture']
+      ).import.first
+
+      assert_equal expected_resource, record['resource']
+      assert_equal 'r4/patient-example.xml', record['input_fixture']
+      assert_equal 'r4/examples/patient-example.json', record['fixture_source']
+      assert_equal ['plain-json-fixture'], record['host_features']
+    end
+  end
+
+  def test_importer_retains_unconvertible_xml_as_an_auditable_not_run_record
+    Dir.mktmpdir('fhirpath-import') do |root|
+      File.write(File.join(root, 'tests.xml'), <<~XML)
+        <tests><group name="model"><test name="xml-only" inputfile="complex.xml">
+          <expression>Patient.name</expression><output type="string">Peter</output>
+        </test></group></tests>
+      XML
+      File.write(
+        File.join(root, 'complex.xml'),
+        '<Patient xmlns="http://hl7.org/fhir"><active value="true"/></Patient>'
+      )
+
+      record = FHIRPath::Conformance::Importer.new(
+        source_root: root, suite_path: 'tests.xml', suite_commit: 'abc'
+      ).import.first
+
+      assert_equal 'complex.xml', record['input_fixture']
+      assert_equal 'not-run', record['classification']
+      assert_match(/matching JSON fixture/, record['not_run_reason'])
+      assert_nil record['resource']
+    end
+  end
+
+  def test_disabled_imported_case_is_retained_and_vector_runner_does_not_evaluate_it
+    Dir.mktmpdir('fhirpath-import') do |root|
+      File.write(File.join(root, 'tests.xml'), <<~XML)
+        <tests><group name="disabled"><test name="disabled-case" disabled="true">
+          <expression>1 + 1</expression><output type="integer">2</output>
+        </test></group></tests>
+      XML
+      record = FHIRPath::Conformance::Importer.new(
+        source_root: root, suite_path: 'tests.xml', suite_commit: 'abc'
+      ).import.first
+      assert_equal 'not-run', record['classification']
+      assert_match(/disabled/, record['not_run_reason'])
+
+      calls = 0
+      result = FHIRPath::VectorRunner.execute(
+        record,
+        1,
+        evaluator: lambda do |_vector|
+          calls += 1
+          [2]
+        end
+      )
+      assert_equal 0, calls
+      assert_equal 'not-run', result['classification']
+      assert_nil result['actual']
+    end
+  end
+
+  def test_yaml_import_normalizes_real_fhirpath_py_shape_into_independent_records
+    Dir.mktmpdir('fhirpath-yaml') do |root|
+      FileUtils.mkdir_p(File.join(root, 'tests', 'cases'))
+      File.write(File.join(root, 'tests', 'cases', 'sample.yaml'), <<~YAML)
+        tests:
+          - expression:
+              - Patient.name.family
+              - name.family
+            result: [Chalmers]
+          - 'group: Disabled cases':
+              - desc: skipped
+                expression: Patient.id
+                disable: true
+                result: [example]
+        subject:
+          resourceType: Patient
+          name:
+            - family: Chalmers
+      YAML
+
+      records = FHIRPath::Conformance::Importer.new(
+        source_root: root, suite_path: 'tests/cases/sample.yaml', suite: 'fhirpath-py',
+        suite_commit: '19f631684cf413836284faed68ee3f4e4d0192ef', host_features: []
+      ).import
+
+      assert_equal 3, records.length
+      assert_equal(['Patient.name.family', 'name.family', 'Patient.id'], records.map { |r| r['expression'] })
+      assert_equal([['Chalmers'], ['Chalmers'], ['example']], records.map { |r| r['expected'] })
+      assert_equal(%w[fhirpath-py fhirpath-py fhirpath-py], records.map { |r| r['suite'] })
+      assert_equal([nil, nil, 'not-run'], records.map { |r| r['classification'] })
+      records[0]['resource']['name'][0]['family'] = 'changed'
+      assert_equal 'Chalmers', records[1]['resource']['name'][0]['family']
+    end
+  end
+
+  def test_unrelated_standard_error_is_a_defect_even_when_error_is_expected
+    Tempfile.create('fhirpath-vector') do |file|
+      file.write({ id: 'standard-error', expression: 'anything', resource: {},
+                   error: true }.to_json)
+      file.write("\n")
+      file.flush
+
+      result = FHIRPath::VectorRunner.run(
+        file.path, evaluator: ->(_vector) { raise StandardError, 'boom' }
+      )[:cases].first
+
+      assert_equal 'defect', result['classification']
+      assert_equal 'StandardError', result['actual_error']['class']
     end
   end
 

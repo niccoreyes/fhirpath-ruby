@@ -53,7 +53,9 @@ Gem::Specification.new do |spec|
     'docs/support-matrix.md',
     'conformance/core.jsonl',
     'conformance/r4.jsonl',
-    'script/run_vectors.rb'
+    'conformance/official-r4-core.json',
+    'script/run_vectors.rb',
+    'script/import_vectors.rb'
   ].select { |path| File.file?(path) }
 
   spec.metadata['rubygems_mfa_required'] = 'true'
