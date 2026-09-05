@@ -152,6 +152,8 @@ module FHIRPath
         select(receiver, node.arguments.first, context)
       when 'first'
         receiver.empty? ? Collection.empty : Collection.new([receiver.first_item])
+      when 'last'
+        receiver.empty? ? Collection.empty : Collection.new([receiver.items.last])
       when 'exists'
         exists(receiver, node.arguments.first, context)
       when 'count'
