@@ -373,19 +373,30 @@ module FHIRPath
         raise TypeError.new('arithmetic requires numeric values', code: :expected_number,
                                                                   span: node.span)
       end
-      raise EvaluationError.new('division by zero', code: :division_by_zero, span: node.span) if zero?(right_value)
 
+      # Only `/`, `div`, `mod` divide. A zero divisor yields an EMPTY collection
+      # (FHIRPath 2.0.0, arithmetic operators); it is never an error. `+`, `-`,
+      # `*` operate on zero normally, so there is no blanket zero guard here.
       result = case node.operator
                when :plus then left_value + right_value
                when :minus then left_value - right_value
                when :multiply then left_value * right_value
-               when :divide then decimal(left_value) / decimal(right_value)
-               when :div then (decimal(left_value) / decimal(right_value)).truncate
-               when :mod then remainder(left_value, right_value)
+               when :divide
+                 return Collection.empty if zero?(right_value)
+
+                 decimal(left_value) / decimal(right_value)
+               when :div
+                 return Collection.empty if zero?(right_value)
+
+                 (decimal(left_value) / decimal(right_value)).truncate
+               when :mod
+                 return Collection.empty if zero?(right_value)
+
+                 remainder(left_value, right_value)
                end
       Collection.new([result])
     rescue ::ZeroDivisionError
-      raise EvaluationError.new('division by zero', code: :division_by_zero, span: node.span)
+      Collection.empty
     end
 
     def comparison(node, context)
@@ -420,8 +431,12 @@ module FHIRPath
     def union(node, context)
       left = evaluate(node.left, context)
       right = evaluate(node.right, context)
-      result = left.items.dup
-      right.items.each do |candidate|
+      # Union eliminates duplicate values from BOTH operands (FHIRPath 2.0.0,
+      # 5.4.1 union), using the `=` (Equals) predicate rather than Ruby value
+      # identity so that e.g. Integer 1 and Decimal 1.0 collapse to one value.
+      # First-seen order is preserved; operands are not mutated.
+      result = []
+      (left.items + right.items).each do |candidate|
         result << candidate unless result.any? { |existing| equal?(existing, candidate) }
       end
       Collection.new(result)
@@ -439,10 +454,16 @@ module FHIRPath
         return Collection.new([right.items.any? { |candidate| equal?(value, candidate) }])
       end
 
-      return Collection.new([false]) if left.empty?
+      # `contains`: the right operand is the value being searched for and must be
+      # a singleton (FHIRPath 2.0.0 membership operators). This still holds when
+      # the left (searched) collection is empty, so the cardinality check is done
+      # before the empty-left short-circuit. An empty right operand yields an
+      # empty result.
       return Collection.empty if right.empty?
 
       value = require_singleton(right, node.right.span)
+      return Collection.new([false]) if left.empty?
+
       Collection.new([left.items.any? { |candidate| equal?(candidate, value) }])
     end
 
@@ -469,7 +490,7 @@ module FHIRPath
       when 'any' then true
       when 'boolean' then [true, false].include?(value)
       when 'integer' then value.is_a?(::Integer)
-      when 'decimal' then value.is_a?(BigDecimal)
+      when 'decimal' then value.is_a?(BigDecimal) || (value.is_a?(::Float) && value.finite?)
       when 'number' then numeric?(value)
       when 'string' then value.is_a?(::String)
       else false
@@ -520,10 +541,15 @@ module FHIRPath
     end
 
     def numeric?(value)
-      value.is_a?(::Integer) || value.is_a?(BigDecimal)
+      value.is_a?(::Integer) ||
+        value.is_a?(BigDecimal) ||
+        (value.is_a?(::Float) && value.finite?)
     end
 
     def decimal(value)
+      # Finite Float (e.g. from JSON.parse) is a Decimal in FHIRPath; convert it
+      # losslessly without mutating the source value. NaN/Infinity never reach
+      # here because numeric? rejects them.
       value.is_a?(BigDecimal) ? value : BigDecimal(value.to_s)
     end
 

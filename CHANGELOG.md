@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The project is pre-1.0;
 
 ## [Unreleased]
 
+- Correct numeric arithmetic with a zero right operand: `+`, `-`, `*` treat zero as a normal operand, while `/`, `div`, `mod` divide and a zero divisor returns an empty collection (never an error).
+- Correct `union` (`|`) to eliminate duplicate values from both operands using `=` equality in first-seen order, including numerically-equal integers and decimals.
+- Accept a finite JSON `Float` as a `Decimal` for comparison, equality, arithmetic, and the `is Decimal` type test; reject `NaN`/`Infinity` as non-numeric.
+- Correct `contains` so a multi-item right operand raises a singleton-required error even when the searched collection is empty, and so an empty right operand yields an empty result.
 - Correct `&` string concatenation to treat empty operands as empty strings, with regression coverage for both operators' empty-collection behavior.
 - Correct parser precedence for relational, union, and type operators to match the FHIRPath grammar.
 - Harden documentation, package verification, CI, coverage reporting, and contributor workflows.

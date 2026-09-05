@@ -13,12 +13,13 @@ This matrix is deliberately conservative. `Supported` means the behavior is exer
 | Scientific notation | Supported | core compatibility tests |
 | Empty and comma-separated collections | Supported | parser/evaluator tests |
 | Hash/Array/plain object navigation | Supported | foundation tests; `PlainModel` |
-| Unary/numeric arithmetic and string `+` | Supported | parity/core compatibility tests; `+` propagates empty operands |
+| Unary/numeric arithmetic and string `+` | Supported | parity/core compatibility tests; `+` propagates empty operands; a zero divisor for `/`, `div`, `mod` yields an empty collection, while `+`, `-`, `*` operate on zero normally |
 | Relational comparison | Supported | parity/core compatibility tests |
 | Collection equality/equivalence | Supported | core compatibility tests and vectors |
+| Finite JSON `Float` treated as `Decimal` | Supported | evaluator correctness tests; a finite `Float` (e.g. from `JSON.parse`) compares, equals, arithmetically combines, and satisfies `is Decimal`; `NaN`/`Infinity` are rejected as non-numeric |
 | String `&` concatenation | Supported | core compatibility tests; empty operands are treated as `''` |
 | Empty-aware Boolean operators | Supported | foundation/core compatibility tests |
-| Union, `in`, `contains`, `is`, `as` | Supported | core compatibility tests and vectors |
+| Union, `in`, `contains`, `is`, `as` | Supported | core compatibility tests and vectors; union eliminates duplicates from both operands using `=` equality in first-seen order; `in`/`contains` require a singleton operand and follow the empty-collection rules |
 | Indexers | Supported | foundation/parity tests |
 | `where`, `select`, `first`, `exists`, `count` | Supported | foundation/parity tests |
 | `empty`, `not`, `all`, Boolean aggregates | Supported | core compatibility tests |
