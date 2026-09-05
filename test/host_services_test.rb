@@ -90,7 +90,7 @@ class FHIRPathHostServicesTest < Minitest::Test
 
     assert_equal ['ok'], result.to_a
     assert_equal 'tenant', fetched[0]
+    assert_nil fetched[1]
     assert_equal({ 'id' => 'one' }, fetched[2])
-    refute_nil fetched[1]
   end
 end
