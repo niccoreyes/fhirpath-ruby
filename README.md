@@ -149,6 +149,7 @@ The current tested slice includes:
 - union, string concatenation (`+` and `&`), membership (`in`/`contains`), and type operators (`is`/`as`); union removes duplicate values from both operands using `=` equality in first-seen order, and `in`/`contains` require a singleton operand; `is`/`as` test built-in primitive types directly and, with `model: :r4`, also resolve the FHIR logical type of a navigated choice value (for example `Observation.value is Quantity` over `valueQuantity`), returning the value unchanged on a successful `as` and the empty collection otherwise; and
 - indexers with non-negative integer indexes;
 - `where`, `select`, `first`, `last`, `tail`, `take`, `skip`, `exists`, `count`, `empty`, `not`, `all`, and Boolean aggregate functions;
+- the FHIRPath 3.0.0 STU3 aggregate functions `sum()`, `avg()`, `max()`, and `min()` (empty input yields the empty collection; `sum`/`avg` require numeric items and `max`/`min` compare numeric and string items with comparison-operator semantics), shipped as a declared, documented exception: `Capability.current` keeps the FHIRPath 2.0.0 target and reports this subset in `trial_use` under the marker `stu3-aggregate-functions`;
 - `$this`, `$index`, and `$total` focus variables;
 - explicitly supplied external constants through `variables:` or an injected `FHIRPath::HostServices` constant provider; and
 - immutable parse/compile boundaries with structured errors and source spans.
@@ -162,10 +163,10 @@ This is not yet a complete FHIRPath engine. The following remain deferred or hos
 - complete FHIRPath 2.0 conformance; the checked-in importer covers only the pinned official subset;
 - broader FHIR R4 metadata such as primitive extensions, resource-level type tests (`Observation is Resource`/`DomainResource`), `ofType()`, and FHIR R5 model adapters; FHIR R4 `is`/`as` over a resolved choice value's logical type (e.g. `Quantity`) is supported, but terminology and `resolve()` remain host-dependent; and
 - date/time and quantity/UCUM values;
-- advanced conversion, math, string, regular-expression, navigation, and aggregate functions;
+- advanced conversion, math, string, regular-expression, and navigation functions, and the general-purpose `aggregate()` function;
 - complex literals and additional standard value types;
 - standard environment variables beyond explicitly supplied external constants;
-- FHIRPath 3.0 STU3 features; capability recognition does not enable them silently;
+- FHIRPath 3.0 STU3 features beyond the shipped `sum`/`avg`/`max`/`min` aggregate functions; capability recognition does not enable them silently;
 - network I/O from pure evaluation and global evaluator state; and
 - production support guarantees, until the support matrix and release gates are complete.
 

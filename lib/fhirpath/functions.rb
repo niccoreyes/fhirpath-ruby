@@ -16,6 +16,7 @@ module FHIRPath
       where select first last tail take skip
       exists count empty not all
       allTrue anyTrue allFalse anyFalse
+      sum avg max min
     ].freeze
     DELAYED_NAMES = %w[where select exists all].freeze
 

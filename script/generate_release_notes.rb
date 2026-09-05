@@ -20,6 +20,7 @@ end
 supported = rows.select { |row| row[:status] == 'Supported' }
 unsupported = rows.select { |row| %w[Deferred].include?(row[:status]) || row[:status] == 'Not supported by design' }
 host_dependent = rows.select { |row| row[:status] == 'Host-dependent' }
+trial_use = FHIRPath::Capability.current.trial_use
 
 puts <<~NOTES
   # FHIRPath #{version}
@@ -29,6 +30,7 @@ puts <<~NOTES
   - Release channel: #{FHIRPath::RELEASE_CHANNEL}
   - Normative FHIRPath target: #{FHIRPath::Capability.current.fhirpath}
   - Capability set: #{FHIRPath::Capability.current.capability_set.join(', ')}
+  - Trial-use (STU3-subset) features: #{trial_use.empty? ? 'None' : trial_use.join(', ')}
   - Supported Ruby CI matrix: Ruby 3.2 and Ruby 3.3
   - License: MIT
 

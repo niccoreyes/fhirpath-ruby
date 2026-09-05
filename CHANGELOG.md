@@ -4,8 +4,32 @@ All notable changes to this project are documented here. The project is pre-1.0;
 
 ## [Unreleased]
 
-## [0.2.0.pre1] - 2026-09-05
+- Add the `sum()`, `avg()`, `max()`, and `min()` aggregate functions to the
+  standard registry. These are FHIRPath 3.0.0 STU3 aggregate additions
+  (published 2026-07-28) and the first STU3-subset functions this project
+  ships; they are absent from normative FHIRPath 2.0.0 and from the 3.0.0
+  ballot. Semantics follow the published 3.0.0 text where it applies: empty
+  input returns the empty collection; non-numeric items raise `TypeError` with
+  code `expected_number`; `avg()` converts Integer items to Decimal before
+  dividing and always yields a Decimal; and `max()`/`min()` reuse the
+  comparison-operator semantics so numerics compare across Integer/Decimal and
+  strings order lexicographically, with incompatible item types raising
+  `TypeError` with code `incompatible_comparison`. The 3.0.0 text requires all
+  items to be the same type; this slice records a documented deviation for
+  numeric input instead of an exception: mixed Integer/Decimal input is summed
+  in Decimal, matching the engine's numeric promotion in arithmetic and
+  equality (`1 = 1.0` and `1 + 2.5` both hold), while all-Integer input keeps
+  an Integer `sum()` result. The subset ships by default in the standard
+  registry as a declared exception: `Capability.current` keeps `fhirpath`
+  `2.0.0` and reports the marker `stu3-aggregate-functions` in `trial_use`;
+  `docs/support-matrix.md`, `docs/api.md`, and the feature matrix document the
+  exception. `count()` (normative FHIRPath 2.0.0, existence functions)
+  already existed and now has focused expression tests and checked-in vectors
+  alongside the family. No inputs are mutated and every result is a fresh
+  frozen `Collection`; the general-purpose `aggregate()` function remains
+  deferred.
 
+## [0.2.0.pre1] - 2026-09-05
 - Resolve the FHIR logical type of a choice value for the `is`/`as` type
   operators when a model provider is active. `ModelProvider` gains an optional
   `property_logical_type` accessor (safe `nil` default on the base class and

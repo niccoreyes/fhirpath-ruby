@@ -18,9 +18,25 @@ class FHIRPathFoundationTest < Minitest::Test
     assert_equal '2.0.0', capability.fhirpath
     assert_includes capability.capability_set, 'parser'
     assert_equal FHIRPath::Capability::CAPABILITY_SET, capability.capability_set
-    assert_empty capability.trial_use
     assert_includes capability.model_releases, 'R4'
     assert capability.frozen?
+  end
+
+  def test_capability_declares_the_shipped_stu3_aggregate_subset_as_trial_use
+    marker = FHIRPath::Capability::STU3_AGGREGATE_FUNCTIONS
+    capability = FHIRPath::Capability.current
+
+    # The STU3 subset is surfaced in `trial_use`, never folded into the
+    # normative 2.0.0 target or capability set, so it cannot appear silently.
+    assert_includes capability.trial_use, marker
+    assert capability.supports?(marker)
+    refute_includes capability.capability_set, marker
+    assert_equal '2.0.0', capability.to_h[:fhirpath]
+    assert_includes capability.to_h[:trial_use], marker
+
+    strict = FHIRPath::Capability.new(trial_use: [])
+    assert_empty strict.trial_use
+    refute strict.supports?(marker)
   end
 
   def test_errors_expose_stable_machine_readable_fields
