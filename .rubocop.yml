@@ -40,6 +40,7 @@ Metrics/ParameterLists:
   Exclude:
     - "lib/fhirpath.rb"
     - "lib/fhirpath/evaluation_context.rb"
+    - "lib/fhirpath/conformance/importer.rb"
 
 # Lexer/parser and evaluator are intentionally cohesive in this first scaffold;
 # future slices can split them once their semantics stabilize.
@@ -50,13 +51,23 @@ Metrics/ClassLength:
     - "test/foundation_test.rb"
     - "test/parser_hardening_test.rb"
     - "test/subsetting_functions_test.rb"
+    - "lib/fhirpath/conformance/importer.rb"
+    - "test/conformance_pipeline_test.rb"
 
 Metrics/CyclomaticComplexity:
   Exclude:
     - "lib/fhirpath/parser.rb"
     - "lib/fhirpath/evaluator.rb"
+    - "lib/fhirpath/vector_runner.rb"
 
 Metrics/PerceivedComplexity:
   Exclude:
     - "lib/fhirpath/parser.rb"
     - "lib/fhirpath/evaluator.rb"
+
+# The conformance test deliberately exercises many cases in one readable block
+# for pass/defect classification; split out per-case helpers later if needed.
+Metrics/BlockLength:
+  Exclude:
+    - "test/conformance_pipeline_test.rb"
+    - "fhirpath.gemspec"
