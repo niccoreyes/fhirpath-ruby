@@ -41,7 +41,10 @@ Returns a frozen `FHIRPath::CompiledExpression`. Parsing happens once; each `eva
 
 `compile` likewise never freezes the caller's source `String`: it snapshots the expression internally. Mutating the string you passed after calling `compile` does not change the compiled program, and passing an already-frozen string works normally.
 
-`model` defaults to `FHIRPath::PlainModel`. `functions` is an immutable function registry snapshot.
+`model` defaults to `FHIRPath::PlainModel`. Pass `model: :r4` (or `model: 'R4'`)
+to select the dependency-free `FHIRPath::FHIR::R4::ModelProvider`. Passing a
+provider object remains supported for custom model adapters. `functions` is an
+immutable function registry snapshot.
 
 ### `FHIRPath.evaluate`
 
@@ -97,7 +100,7 @@ The project defines `FHIRPath::TypeError` inside its namespace; callers should q
 
 For the implemented string operators, `+` concatenates two singleton strings but propagates an empty operand, while `&` treats each empty operand as the empty string. Thus `'a' + {}` is empty, whereas `'a' & {}` returns `['a']`. String escapes follow the FHIRPath `\\uXXXX` form; valid UTF-16 surrogate pairs are combined, and unknown forms such as `\\U0001F600` are rejected with `ParseError`.
 
-Most current public results are ordinary Ruby values. `FHIRPath::Value::*` and `FHIRPath::TypeInfo` provide extension boundaries for semantic values and model metadata, but date/time, quantity, and FHIR model adapters are not currently part of the supported slice.
+Most current public results are ordinary Ruby values. `FHIRPath::Value::*` and `FHIRPath::TypeInfo` provide extension boundaries for semantic values and model metadata. The dependency-free R4 adapter supports JSON choice navigation for `Observation.value[x]`; date/time, quantity, broader type-aware model behavior, and other FHIR releases remain deferred.
 
 ## Custom functions
 
@@ -121,7 +124,11 @@ FHIRPath.evaluate({}, "triple()", functions: registry).to_a
 
 ## Capability
 
-`FHIRPath::Capability.current` declares the default `fhirpath` release (`2.0.0`) and lists `trial_use`, `model_releases`, and `host_features`. Capabilities are immutable. A capability declaration is not proof that all standard functions or FHIR model behavior are implemented; consult [the feature matrix](feature-matrix.md).
+`FHIRPath::Capability.current` declares the default `fhirpath` release (`2.0.0`)
+and the bundled FHIR model release (`R4`). It lists `trial_use`, `model_releases`,
+and `host_features`. Capabilities are immutable. A capability declaration is
+not proof that all standard functions or FHIR model behavior is implemented;
+consult [the feature matrix](feature-matrix.md).
 
 ## Stability policy
 

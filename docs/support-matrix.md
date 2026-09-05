@@ -16,8 +16,8 @@ The detailed behavior table is maintained in [`feature-matrix.md`](feature-matri
 | Release channel | `pre-release` |
 | License | MIT |
 | Supported Ruby CI matrix | Ruby `3.2`, Ruby `3.3` |
-| Model support | Model-independent plain Ruby Hash/Array/object navigation |
-| FHIR model releases | None bundled |
+| Model support | Model-independent plain Ruby Hash/Array/object navigation plus dependency-free FHIR R4 JSON adapter |
+| FHIR model releases | R4 (`4.0.1`), selectable with `model: :r4` |
 | Trial-use features | None enabled by default |
 
 The packaged gem repeats the target and capability declaration in gem metadata:
@@ -60,11 +60,12 @@ The release must continue to state these limitations:
 
 ## Host-dependent behavior
 
-The gem does not bundle these adapters or services. Callers must supply and
-validate them at the host boundary before claiming support:
+The gem bundles the dependency-free R4 JSON adapter described above. Callers
+must supply and validate these remaining adapters or services at the host
+boundary before claiming support:
 
-- FHIR R4/R5 model adapters;
-- choice-element metadata and primitive extensions; and
+- FHIR R5 and broader release-specific model adapters;
+- broader choice-element metadata and primitive extensions; and
 - `resolve()` and terminology services.
 
 ## Evidence and promotion policy

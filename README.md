@@ -7,7 +7,7 @@
 
 A Ruby-native implementation of the [HL7 FHIRPath](https://hl7.org/fhirpath/) expression language.
 
-This repository is an intentionally small, pre-release implementation. It provides a tested compatibility slice with stable boundaries for the public API, lexer/parser, immutable AST, collections, evaluation context, plain-model navigation, values, structured errors, and function registration. It does not claim complete FHIRPath conformance or FHIR release-model support.
+This repository is an intentionally small, pre-release implementation. It provides a tested compatibility slice with stable boundaries for the public API, lexer/parser, immutable AST, collections, evaluation context, plain-model navigation, a dependency-free FHIR R4 model adapter, values, structured errors, and function registration. It does not claim complete FHIRPath conformance or complete FHIR release-model support.
 
 ## Status at a glance
 
@@ -61,7 +61,24 @@ FHIRPath.evaluate_first(patient, "Patient.name.family")
 # => "Lovelace"
 ```
 
-`FHIRPath.evaluate` always returns a `FHIRPath::Collection`, including for a singleton and for an empty result. `evaluate_first` is an explicit convenience that returns the first Ruby value or `nil`; it does not change the evaluator's collection semantics.
+FHIR R4 JSON can be selected explicitly through the versioned provider. The
+adapter exposes the logical `Observation.value` property over R4 choice keys
+such as `valueString` and `valueQuantity`:
+
+```ruby
+observation = {
+  "resourceType" => "Observation",
+  "valueQuantity" => { "value" => 120, "unit" => "mmHg" }
+}
+
+FHIRPath.evaluate(observation, "Observation.value.value", model: :r4).to_a
+# => [120]
+```
+
+The R4 adapter is dependency-free and does not perform Ruby method dispatch;
+plain-model navigation remains the default. Its supported release and model
+selection are visible through `FHIRPath::Capability.current` and
+`FHIRPath.available_models`.
 
 ## Public API
 
@@ -95,6 +112,7 @@ The current tested slice includes:
 - primitive string, Boolean, integer, decimal, and scientific-notation literals;
 - empty and comma-separated collections;
 - plain Ruby Hash/Array and simple object navigation, including resource-type roots such as `Patient`;
+- dependency-free FHIR R4 model navigation selected with `model: :r4`, including the logical `Observation.value` choice property over `valueQuantity` and `valueString`;
 - unary and numeric arithmetic (`+`, `-`, `*`, `/`, `div`, and `mod`), plus string `+` when both operands are strings; a zero divisor for `/`, `div`, `mod` returns an empty collection, while `+`, `-`, `*` treat zero as a normal operand;
 - numeric/string relational comparison, collection-aware equality, equivalence, and empty-aware Boolean operators; a finite JSON `Float` is treated as a `Decimal`;
 - union, string concatenation (`+` and `&`), membership (`in`/`contains`), and primitive type operators (`is`/`as`); union removes duplicate values from both operands using `=` equality in first-seen order, and `in`/`contains` require a singleton operand; and
@@ -111,7 +129,7 @@ The [feature matrix](docs/feature-matrix.md) is the executable-scope companion t
 This is not yet a complete FHIRPath engine. The following remain deferred or host-dependent:
 
 - official HL7 shared-suite import and complete FHIRPath 2.0 conformance;
-- FHIR R4/R5 model adapters, choice-element metadata, primitive extensions, terminology, and `resolve()`;
+- FHIR R5 model adapters, broader FHIR R4 metadata such as primitive extensions and type-aware navigation, terminology, and `resolve()`;
 - date/time and quantity/UCUM values;
 - advanced conversion, math, string, regular-expression, navigation, and aggregate functions;
 - complex literals and additional standard value types;

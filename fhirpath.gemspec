@@ -51,6 +51,7 @@ Gem::Specification.new do |spec|
     'docs/releasing.md',
     'docs/support-matrix.md',
     'conformance/core.jsonl',
+    'conformance/r4.jsonl',
     'script/run_vectors.rb'
   ].select { |path| File.file?(path) }
 

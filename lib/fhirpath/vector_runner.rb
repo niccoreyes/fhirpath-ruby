@@ -42,7 +42,7 @@ module FHIRPath
 
     def evaluate(vector)
       FHIRPath.evaluate(vector['resource'] || {}, vector.fetch('expression'),
-                        variables: vector['variables'] || {})
+                        variables: vector['variables'] || {}, model: vector['model'])
     end
 
     def error_result(vector, line_number, classification, error)
