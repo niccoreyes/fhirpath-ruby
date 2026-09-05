@@ -12,6 +12,9 @@ This repository is an intentionally small, pre-release implementation. It provid
 - Release status: pre-release; not published to RubyGems.
 - License: [MIT](LICENSE).
 
+The exact release-facing target, capability identifiers, Ruby support matrix,
+and host/model limitations are maintained in the [release support matrix](docs/support-matrix.md).
+
 ## Installation
 
 The gem is not yet published. To use a checkout:
@@ -96,7 +99,7 @@ The current tested slice includes:
 - explicitly supplied external constants through `variables:`; and
 - immutable parse/compile boundaries with structured errors and source spans.
 
-The [feature matrix](docs/feature-matrix.md) is the executable-scope companion to this list. If a behavior is not listed as supported, callers should handle a specific `FHIRPath::Error` rather than assume permissive fallback.
+The [feature matrix](docs/feature-matrix.md) is the executable-scope companion to this list, and the [release support matrix](docs/support-matrix.md) is the publication contract. If a behavior is not listed as supported, callers should handle a specific `FHIRPath::Error` rather than assume permissive fallback.
 
 ## Explicit limitations
 
@@ -148,8 +151,10 @@ For a clean-checkout reproduction, use the exact commands in [CONTRIBUTING.md](C
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. New language behavior should be delivered as a small vertical slice: add a focused failing test, implement the smallest change, run the complete checks, and update the feature matrix and limitations when scope changes.
 
-Security reports should follow [SECURITY.md](SECURITY.md). Release readiness and
-remaining conformance gates are recorded in [docs/release-checklist.md](docs/release-checklist.md).
+Security reports should follow [SECURITY.md](SECURITY.md). Release readiness,
+versioning, publication, and remaining conformance gates are recorded in
+[`docs/release-checklist.md`](docs/release-checklist.md) and
+[`docs/releasing.md`](docs/releasing.md).
 
 ## License
 

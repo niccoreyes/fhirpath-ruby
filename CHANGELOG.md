@@ -7,6 +7,7 @@ All notable changes to this project are documented here. The project is pre-1.0;
 - Correct `&` string concatenation to treat empty operands as empty strings, with regression coverage for both operators' empty-collection behavior.
 - Correct parser precedence for relational, union, and type operators to match the FHIRPath grammar.
 - Harden documentation, package verification, CI, coverage reporting, and contributor workflows.
+- Add the release support matrix, exact package capability metadata, versioning policy, and gated RubyGems/GitHub publication workflow.
 - Declare the project under the MIT License and encode the license in gem metadata.
 
 ## [0.1.0.pre1] - 2026-09-04
