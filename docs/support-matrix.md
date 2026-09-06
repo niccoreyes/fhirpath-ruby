@@ -1,6 +1,6 @@
 # Release support matrix
 
-Status: `pre-release` (`0.2.0.pre1`)
+Status: `pre-release` (`0.2.0.pre2`)
 
 This is the release-facing support matrix. It is deliberately narrower than
 "FHIRPath-compatible": every supported claim must have executable evidence, and
@@ -38,7 +38,10 @@ These stable identifiers describe the behavior included in the current package:
 - `comparison-and-equivalence` — relational comparison, equality, and equivalence;
 - `boolean-logic` — empty-aware Boolean operators;
 - `union-membership-and-type-operators` — union, `in`, `contains`, `is`, and `as`;
-- `collection-functions` — `where`, `select`, `first`, `exists`, `count`, `empty`, `not`, `all`, and Boolean aggregates;
+- `collection-functions` — `where`, `select`, `first`, `exists`, `count`, `empty`, `not`, `all`, Boolean aggregates, and `ofType`;
+- `subsetting-functions` — `tail`, `take`, `skip`, `last`;
+- `temporal-types` — `Date`, `DateTime`, `Time` literals (`@YYYY-MM-DD`, `@THH:MM:SS`, `@YYYY-MM-DDTHH:MM:SS±HH:MM`), `today()`, `now()`, `time()`, component extractors (`year`, `month`, `day`, `hour`, `minute`, `second`, `millisecond`), `timezone()`, `timezoneOffset()`, and same-type comparison;
+- `fhir-primitive-extensions` — `._<name>` accessor returning the underlying `{value, extension}` container or empty per FHIRPath 2.0.0;
 - `focus-variables` — `$this`, `$index`, and `$total`;
 - `external-constants` — explicitly supplied `%name` values;
 - `custom-functions` — explicitly registered functions;

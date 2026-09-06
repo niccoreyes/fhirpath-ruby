@@ -1,6 +1,6 @@
 # Feature and capability matrix
 
-Status: `0.2.0.pre1`; target release: FHIRPath `2.0.0`; publication contract: [`support-matrix.md`](support-matrix.md)
+Status: `0.2.0.pre2`; target release: FHIRPath `2.0.0`; publication contract: [`support-matrix.md`](support-matrix.md)
 
 This matrix is deliberately conservative. `Supported` means the behavior is exercised by the Ruby test suite or the checked-in vector corpus. `Deferred` means callers should expect a structured unsupported/unknown error. `Host-dependent` requires an adapter or injected service that is not shipped here.
 
@@ -32,7 +32,14 @@ This matrix is deliberately conservative. `Supported` means the behavior is exer
 | Custom registered functions | Supported | API/foundation tests |
 | Compiled-expression reuse | Supported | API/foundation tests |
 | Stable structured engine errors | Supported | API/foundation/parser tests |
-| Date/time literals and values | Deferred | no temporal value implementation |
+| `ofType()` type filter | Supported | `test/oftype_test.rb`; filters collections by built-in (`Integer`, `String`, `Decimal`, `Boolean`, `Date`, `DateTime`, `Time`) and FHIR resource types recorded during navigation; logical-type `is`/`as` previously deferred this slice |
+| Date/Time/DateTime literals (`@...`) | Supported | `test/temporal_literals_test.rb`; ISO 8601 with optional timezone (`Z`/`±HH:MM`) |
+| `today()`, `now()`, `time()` | Supported | `test/temporal_now_test.rb` |
+| Temporal component extractors (`year`, `month`, `day`, `hour`, `minute`, `second`, `millisecond`) | Supported | `test/temporal_components_test.rb`; `millisecond()` on `DateTime` reads `sec_fraction * 1000` |
+| Temporal timezone (`timezone()`, `timezoneOffset()`) | Supported | `test/temporal_components_test.rb` |
+| Temporal same-type comparison | Supported | `test/temporal_comparison_test.rb`; cross-type raises `incompatible_comparison` |
+| Temporal arithmetic with Quantity/Duration | Deferred | no Quantity type yet |
+| FHIR primitive extension accessor (`._<name>`) | Supported | `test/primitive_extensions_test.rb`; returns the underlying `{value, extension}` container or empty per FHIRPath 2.0.0 |
 | Quantity/UCUM | Deferred | no unit service or quantity implementation |
 | Advanced conversion/math/string/regex | Deferred | not in standard registry |
 | FHIR R4 model adapter (`model: :r4`) | Supported | `test/r4_model_test.rb`; dependency-free `FHIRPath::FHIR::R4::ModelProvider` |
