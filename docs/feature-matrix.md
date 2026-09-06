@@ -10,10 +10,10 @@ This matrix is deliberately conservative. `Supported` means the behavior is exer
 | Parse, immutable AST, source spans | Supported | foundation/parser tests |
 | Complete-input validation | Supported | parser regression tests |
 | String, Boolean, integer, decimal literals | Supported | foundation/core compatibility tests |
+| Double-quoted string literals | Extension | the lexer accepts double-quoted strings in addition to normative single-quoted FHIRPath strings; this extension supports double-quoted Quantity units and is covered by Quantity tests |
 | Scientific notation | Supported | core compatibility tests |
 | Empty and comma-separated collections | Supported | parser/evaluator tests |
 | Hash/Array/plain object navigation | Supported | foundation tests; `PlainModel` |
-| Raw JSON string resource input | Supported | `test/json_string_input_test.rb`; strings opening with `{` or `[` after whitespace are `JSON.parse`d once per call, malformed documents raise `JSONInputError` code `invalid_json`, Hash/Array inputs are never parsed, and other strings (plain text, JSON scalar text, quoted primitives) pass through unchanged |
 | Unary/numeric arithmetic and string `+` | Supported | parity/core compatibility tests; `+` propagates empty operands; a zero divisor for `/`, `div`, `mod` yields an empty collection, while `+`, `-`, `*` operate on zero normally |
 | Relational comparison | Supported | parity/core compatibility tests |
 | Collection equality/equivalence | Supported | core compatibility tests and vectors |
@@ -39,9 +39,9 @@ This matrix is deliberately conservative. `Supported` means the behavior is exer
 | Temporal component extractors (`year`, `month`, `day`, `hour`, `minute`, `second`, `millisecond`) | Supported | `test/temporal_components_test.rb`; `millisecond()` on `DateTime` reads `sec_fraction * 1000` |
 | Temporal timezone (`timezone()`, `timezoneOffset()`) | Supported | `test/temporal_components_test.rb` |
 | Temporal same-type comparison | Supported | `test/temporal_comparison_test.rb`; cross-type raises `incompatible_comparison` |
-| Temporal arithmetic with Quantity/Duration | Deferred | no Quantity type yet |
+| Temporal arithmetic with Quantity/Duration | Deferred | calendar-duration and date/time arithmetic is not implemented; bounded numeric Quantity arithmetic is supported separately below |
 | FHIR primitive extension accessor (`._<name>`) | Supported | `test/primitive_extensions_test.rb`; returns the underlying `{value, extension}` container or empty per FHIRPath 2.0.0 |
-| Quantity/UCUM | Deferred | no unit service or quantity implementation |
+| Quantity/UCUM | Supported | `test/quantity_test.rb` and `test/quantity_edge_cases_test.rb`; immutable Decimal-backed quantities, case-sensitive dimensional conversion for the explicitly bounded dependency-free subset (`m`/`cm`/`mm`/`km`, `g`/`kg`/`mg`/`Mg`/`ug`/`ng`, `L`/`mL`/`ML`/`uL`, `mol`/`mmol`/`umol`, `s`/`min`/`h`, and products/quotients such as `mmol/L`); unsupported units are rejected rather than treated as dimensionless, incompatible calculations and mixed Quantity/scalar addition return empty, same-dimension Quantity division returns a Decimal ratio, derived-unit composition such as Quantity×Quantity or `km/h` remains deferred, and system/code metadata is preserved without changing unit equality |
 | Advanced conversion/math/string/regex | Deferred | not in standard registry |
 | FHIR R4 model adapter (`model: :r4`) | Supported | `test/r4_model_test.rb`; dependency-free `FHIRPath::FHIR::R4::ModelProvider` |
 | FHIR R4 `Observation.value[x]` logical navigation | Supported | R4 choice vectors; `valueQuantity` and `valueString` resolve through `value`, absent choice is empty |
