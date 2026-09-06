@@ -13,7 +13,7 @@ This matrix is deliberately conservative. `Supported` means the behavior is exer
 | Scientific notation | Supported | core compatibility tests |
 | Empty and comma-separated collections | Supported | parser/evaluator tests |
 | Hash/Array/plain object navigation | Supported | foundation tests; `PlainModel` |
-| Raw JSON string resource input | Supported | `test/json_string_input_test.rb`; strings opening with `{` or `[` after whitespace are `JSON.parse`d once per call, malformed documents raise `JSONInputError` code `invalid_json`, Hash/Array inputs are never parsed, and other strings (plain text, JSON scalar text, quoted primitives) pass through unchanged |
+|| Raw JSON string resource input | Supported | `test/json_string_input_test.rb`; `FHIRPath.evaluate`, `FHIRPath.evaluate_first`, and `CompiledExpression#normalize_resource` normalize strings opening with `{` or `[` after whitespace via `JSON.parse` once per call, malformed documents raise `JSONInputError` code `invalid_json`, Hash/Array inputs are never parsed, and other strings (plain text, JSON scalar text, quoted primitives) pass through unchanged |
 | Unary/numeric arithmetic and string `+` | Supported | parity/core compatibility tests; `+` propagates empty operands; a zero divisor for `/`, `div`, `mod` yields an empty collection, while `+`, `-`, `*` operate on zero normally |
 | Relational comparison | Supported | parity/core compatibility tests |
 | Collection equality/equivalence | Supported | core compatibility tests and vectors |
