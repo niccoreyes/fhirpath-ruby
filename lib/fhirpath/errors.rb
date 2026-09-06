@@ -26,6 +26,14 @@ module FHIRPath
     end
   end
 
+  # The resource argument to an evaluate boundary was a String that opens like
+  # a JSON object or array (after leading whitespace) but is not valid JSON.
+  class JSONInputError < Error
+    def initialize(message = 'resource string is not valid JSON', code: :invalid_json, **kwargs)
+      super(message, code: code, **kwargs)
+    end
+  end
+
   class EvaluationError < Error
     def initialize(message = 'expression could not be evaluated', code: :evaluation_error, **kwargs)
       super(message, code: code, **kwargs)

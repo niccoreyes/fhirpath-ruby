@@ -63,6 +63,8 @@ result = FHIRPath.evaluate(
 
 Returns a `FHIRPath::Collection`. Empty results are collections with `empty? == true`, not `nil`. `to_a` returns a copy of the ordered values.
 
+The `resource` argument may be an already-parsed Hash/Array (used directly, never re-serialized) or a raw JSON document String. Strings that open with `{` or `[` after leading whitespace are parsed with `JSON.parse` once per call; a malformed document raises `FHIRPath::JSONInputError` (code `:invalid_json`) with a generic public message that does not echo document contents, while `original_cause` retains the underlying `JSON::ParserError` for programmatic diagnostics. Any other String — plain text, JSON scalar text such as `"null"` or `"123"`, or a quoted JSON primitive like `"\"Ada\""` — keeps its pre-existing meaning as a singleton FHIRPath string value and is never parsed. Parsing builds a fresh structure per call; the caller's String and any Hash/Array resource are never mutated or frozen. `CompiledExpression#evaluate` and `#call` apply the same resource handling.
+
 `variables:` supplies external constants using either String or Symbol keys:
 
 ```ruby
@@ -101,6 +103,7 @@ All public engine errors derive from `FHIRPath::Error` and carry a stable symbol
 | Error | Meaning |
 |---|---|
 | `ParseError` | Invalid token, malformed syntax, unsupported escape, trailing input, or expression nesting exceeding the parser depth budget (code `nesting_depth_exceeded`) |
+| `JSONInputError` | The resource argument opened like a JSON object or array (after whitespace) but was not valid JSON (code `invalid_json`) |
 | `EvaluationError` | Valid syntax cannot be evaluated for the current input |
 | `SingletonError` | A singleton value was required but the collection had multiple items |
 | `FHIRPath::TypeError` | A value has an incompatible FHIRPath type |
