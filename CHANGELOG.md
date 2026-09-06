@@ -4,6 +4,41 @@ All notable changes to this project are documented here. The project is pre-1.0;
 
 ## [Unreleased]
 
+## [0.2.0.pre2] - 2026-09-06
+- Add the `ofType()` function to the standard registry. Filters the receiver
+  collection to items whose runtime type matches the specified type identifier
+  (e.g., `Integer`, `String`, `Decimal`, `Boolean`, `Date`, `DateTime`, `Time`),
+  or whose recorded model type matches an FHIR resource type (e.g.,
+  `Observation`, `Patient`). The new function is implemented against the
+  receiver's parallel `types` array (set during navigation via the
+  `ModelProvider#type_of` hook), so it works on both bare values and resources
+  produced by the FHIR R4 adapter. Closes part of issue #13.
+- Record the model-resolved resource type on every navigation result so the
+  R4 adapter can be filtered by `ofType(ResourceName)` (e.g., filtering a
+  Bundle's `entry.resource` collection to `Observation` only). Previously the
+  evaluator recorded the choice-variant logical type only; the new fallback
+  covers non-choice properties and the resource's own `resourceType`.
+- Add FHIRPath Date/Time/DateTime value types and temporal operations:
+  - Lexer supports the `@YYYY-MM-DD`, `@THH:MM:SS`, `@YYYY-MM-DDTHH:MM:SSZ`,
+    and `@YYYY-MM-DDTHH:MM:SS±HH:MM` temporal-literal syntax.
+  - Nullary functions: `today()` → Date, `now()` → DateTime, `time()` → Time.
+  - Component extractors on singletons: `year()`, `month()`, `day()`,
+    `hour()`, `minute()`, `second()`, `millisecond()`. `millisecond()` on
+    `DateTime` reads `sec_fraction * 1000` (the only fractional-precision
+    path Ruby exposes for DateTime).
+  - Timezone functions: `timezone()` returns the formatted offset string
+    (e.g., `+05:30`); `timezoneOffset()` returns the offset in minutes.
+  - Same-type temporal comparisons via `<`, `<=`, `=`, `>=`, `>` (date/date,
+    datetime/datetime, time/time only — cross-type compares raise
+    `incompatible_comparison`).
+  - `ofType(Date|DateTime|Time)` filtering.
+  - 26 new tests across literals, now/today/time, components, comparison,
+    ofType, and edge cases (empty input, singleton requirement). All pass.
+- Add FHIR primitive-extension accessors (`._<name>`) per FHIRPath 2.0.0
+  spec. `<primitive>._<name>` returns the underlying `{value, extension}`
+  JSON container when the source primitive has a `value`, and empty when
+  only an extension is present. 4 new tests added. Closes part of issue #45.
+
 ## [0.2.0.pre1] - 2026-09-05
 - Add the `sum()`, `avg()`, `max()`, and `min()` aggregate functions to the
   standard registry. These are FHIRPath 3.0.0 STU3 aggregate additions
