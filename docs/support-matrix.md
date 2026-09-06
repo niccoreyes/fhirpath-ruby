@@ -76,7 +76,7 @@ behavioral evidence and [`docs/api.md`](api.md) for the runtime declaration.
 The release must continue to state these limitations:
 
 - complete official HL7 shared-suite conformance and its importer;
-- complete UCUM conformance, units outside the explicitly supported subset, and temporal arithmetic with Quantity;
+- complete UCUM conformance, units outside the explicitly supported subset, derived-unit composition such as `60 'km' / 1 'h'`, `Quantity × Quantity`, calendar-duration arithmetic, and temporal arithmetic with Quantity;
 - advanced conversion, math, string, regular-expression, and navigation functions, and the general-purpose `aggregate()` function;
 - complex literals and additional standard value types;
 - standard environment variables beyond explicitly supplied external constants;
