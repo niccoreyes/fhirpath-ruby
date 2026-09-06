@@ -93,7 +93,7 @@ module FHIRPath
         @index += 1
         return token(SINGLE.fetch(char), char, start)
       end
-      return string_token(start) if char == "'"
+      return string_token(start) if ["'", '"'].include?(char)
       return external_token(start) if char == '%'
       return variable_token(start) if char == '$'
       return number_token(start) if char =~ /[0-9]/
@@ -103,12 +103,13 @@ module FHIRPath
     end
 
     def string_token(start)
+      quote = @source[@index]
       @index += 1
       value = +''
       until eof?
         char = @source[@index]
         @index += 1
-        return token(:string, value, start) if char == "'"
+        return token(:string, value, start) if char == quote
 
         if char == '\\'
           raise_error('unterminated string escape', @index - 1) if eof?
@@ -118,14 +119,14 @@ module FHIRPath
           value << char
         end
       end
-      raise_error('unterminated string literal', start)
+      raise_error('unterminated string literal', start, code: :unterminated_string)
     end
 
     def escaped_character
       escaped = @source[@index]
       @index += 1
       simple = { 'b' => "\b", 'f' => "\f", 'n' => "\n", 'r' => "\r",
-                 't' => "\t", '\\' => '\\', "'" => "'", '/' => '/' }
+                 't' => "\t", '\\' => '\\', "'" => "'", '"' => '"', '/' => '/' }
       return simple.fetch(escaped) if simple.key?(escaped)
       return unicode_escape if escaped == 'u'
 
@@ -438,7 +439,20 @@ module FHIRPath
     def parse_primary
       token = advance
       node = case token.type
-             when :string, :integer, :decimal, :date, :time, :datetime
+             when :integer, :decimal
+               if current.type == :string
+                 unit = advance
+                 begin
+                   value = Quantity.new(value: token.value, unit: unit.value)
+                 rescue ArgumentError => e
+                   fail_parse("invalid Quantity literal: #{e.message}", :invalid_quantity,
+                              span_between(token.span, unit.span))
+                 end
+                 AST::Literal.new(value: value, span: span_between(token.span, unit.span))
+               else
+                 AST::Literal.new(value: token.value, span: token.span)
+               end
+             when :string, :date, :time, :datetime
                AST::Literal.new(value: token.value, span: token.span)
              when :identifier
                if %w[true false].include?(token.value)

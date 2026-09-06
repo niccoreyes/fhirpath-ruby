@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'json'
 require_relative 'fhirpath/version'
 require_relative 'fhirpath/source_span'
 require_relative 'fhirpath/errors'
 require_relative 'fhirpath/capability'
 require_relative 'fhirpath/collection'
+require_relative 'fhirpath/ucum'
 require_relative 'fhirpath/types'
 require_relative 'fhirpath/ast'
 require_relative 'fhirpath/model'

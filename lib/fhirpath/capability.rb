@@ -8,7 +8,7 @@ module FHIRPath
       primitive-values arithmetic comparison-and-equivalence boolean-logic
       union-membership-and-type-operators collection-functions focus-variables
       external-constants custom-functions compiled-expression-reuse fhir-r4-model
-      structured-errors
+      structured-errors quantity-ucum
     ].freeze
 
     # Named FHIRPath 3.0.0 STU3 subset the standard registry ships by default.

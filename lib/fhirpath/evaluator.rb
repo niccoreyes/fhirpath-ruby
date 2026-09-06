@@ -387,6 +387,11 @@ module FHIRPath
       return Collection.empty if value.empty?
 
       number = require_singleton(value, node.operand.span)
+      if number.is_a?(Quantity)
+        result = node.operator == :minus ? -number.value : number.value
+        return Collection.new([Quantity.new(value: result, unit: number.unit,
+                                            system: number.system, code: number.code)])
+      end
       unless numeric?(number)
         raise TypeError.new('unary arithmetic requires a number', code: :expected_number,
                                                                   span: node.span)
@@ -493,6 +498,9 @@ module FHIRPath
 
       left_value = require_singleton(left, node.left.span)
       right_value = require_singleton(right, node.right.span)
+      if left_value.is_a?(Quantity) || right_value.is_a?(Quantity)
+        return quantity_arithmetic(left_value, right_value, node.operator, node.span)
+      end
       if left_value.is_a?(::String) && right_value.is_a?(::String) && node.operator == :plus
         return Collection.new([left_value + right_value])
       end
@@ -527,6 +535,51 @@ module FHIRPath
       Collection.empty
     end
 
+    def quantity_arithmetic(left, right, operator, span)
+      if left.is_a?(Quantity) && right.is_a?(Quantity)
+        return Collection.empty unless left.compatible?(right)
+
+        converted = right.convert_to(left.unit)
+        return Collection.empty if operator == :divide && converted.value.zero?
+
+        result = case operator
+                 when :plus then Quantity.new(value: left.value + converted.value, unit: left.unit,
+                                              system: left.system, code: left.code)
+                 when :minus then Quantity.new(value: left.value - converted.value, unit: left.unit,
+                                               system: left.system, code: left.code)
+                 when :divide then decimal(left.value) / decimal(converted.value)
+                 else return Collection.empty
+                 end
+        return Collection.new([result])
+      end
+
+      if left.is_a?(Quantity) && numeric?(right)
+        return Collection.empty if %i[divide div mod].include?(operator) && zero?(right)
+        if operator == :multiply
+          return Collection.new([Quantity.new(value: left.value * right, unit: left.unit, system: left.system,
+                                              code: left.code)])
+        end
+        if operator == :divide
+          return Collection.new([Quantity.new(value: left.value / right, unit: left.unit, system: left.system,
+                                              code: left.code)])
+        end
+
+        return Collection.empty
+      end
+
+      if numeric?(left) && right.is_a?(Quantity)
+        if operator == :multiply
+          return Collection.new([Quantity.new(value: right.value * left, unit: right.unit,
+                                              system: right.system, code: right.code)])
+        end
+
+        return Collection.empty
+      end
+
+      raise TypeError.new('Quantity arithmetic requires a compatible Quantity or scalar',
+                          code: :incompatible_quantity, span: span)
+    end
+
     def comparison(node, context)
       left = evaluate(node.left, context)
       right = evaluate(node.right, context)
@@ -534,7 +587,15 @@ module FHIRPath
 
       left_value = require_singleton(left, node.left.span)
       right_value = require_singleton(right, node.right.span)
-      comparison = compare_values(left_value, right_value, node.span)
+      if left_value.is_a?(Quantity) || right_value.is_a?(Quantity)
+        return Collection.empty unless left_value.is_a?(Quantity) && right_value.is_a?(Quantity)
+        return Collection.empty unless left_value.compatible?(right_value)
+
+        right_value = right_value.convert_to(left_value.unit)
+        comparison = left_value.value <=> right_value.value
+      else
+        comparison = compare_values(left_value, right_value, node.span)
+      end
       result = case node.operator
                when :less_than then comparison.negative?
                when :less_or_equal then comparison <= 0
@@ -728,6 +789,7 @@ module FHIRPath
       when 'date' then value.is_a?(Date)
       when 'datetime' then value.is_a?(DateTime)
       when 'time' then value.is_a?(Time)
+      when 'quantity' then value.is_a?(Quantity)
       else false
       end
     end

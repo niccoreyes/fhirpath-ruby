@@ -70,4 +70,73 @@ module FHIRPath
       end
     end
   end
+
+  # A FHIRPath Quantity backed by an explicitly bounded UCUM subset.
+  class Quantity < Value::Base
+    DEFAULT_SYSTEM = 'http://unitsofmeasure.org'
+
+    attr_reader :unit, :system, :code
+
+    def initialize(value = nil, unit = nil, **kwargs)
+      value = kwargs.fetch(:value, value)
+      unit = kwargs.fetch(:unit, unit)
+      raise ArgumentError, 'Quantity value is required' if value.nil?
+
+      decimal = value.is_a?(BigDecimal) ? value : BigDecimal(value.to_s)
+      raise ArgumentError, 'Quantity value must be finite' unless decimal.finite?
+
+      @unit = UCUM.validate(unit)
+      @system = (kwargs[:system] || DEFAULT_SYSTEM).to_s.dup.freeze
+      @code = (kwargs[:code] || @unit).to_s.dup.freeze
+      super(decimal)
+    rescue ArgumentError
+      raise
+    rescue StandardError => e
+      raise ArgumentError, "invalid Quantity value: #{e.message}"
+    end
+
+    def to_ruby
+      to_h
+    end
+
+    def to_h
+      { value: value, unit: unit, system: system, code: code }.freeze
+    end
+
+    def compatible?(other)
+      other.is_a?(Quantity) && definition.dimensions == other.send(:definition).dimensions
+    end
+
+    def convert_to(target_unit)
+      target = UCUM.validate(target_unit)
+      return self if target == unit
+      raise ArgumentError, "incompatible Quantity units: #{unit} and #{target}" unless compatible_unit?(target)
+
+      converted = value * definition.factor / UCUM.definition(target).factor
+      Quantity.new(value: converted, unit: target, system: system, code: target)
+    end
+
+    def ==(other)
+      other.is_a?(Quantity) && compatible?(other) && value == other.convert_to(unit).value
+    end
+    alias eql? ==
+
+    def hash
+      [self.class, definition.dimensions, base_value].hash
+    end
+
+    private
+
+    def base_value
+      value * definition.factor
+    end
+
+    def definition
+      UCUM.definition(unit)
+    end
+
+    def compatible_unit?(target)
+      definition.dimensions == UCUM.definition(target).dimensions
+    end
+  end
 end
