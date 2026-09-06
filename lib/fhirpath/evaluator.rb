@@ -128,15 +128,7 @@ module FHIRPath
     # container (the `{value, extension}` shape) when the source element already
     # has a value, and empty when the primitive has only an extension.
     def navigate_primitive_extension(receiver, _node)
-      values = receiver.items.map do |item|
-        if item.is_a?(Hash) && (item.key?('value') || item.key?(:value))
-          # Has a value — return the whole primitive container
-          item
-        else
-          # Only extension (or no primitive content) — empty per FHIRPath spec
-          nil
-        end
-      end.compact
+      values = receiver.items.select { |item| item.is_a?(Hash) && (item.key?('value') || item.key?(:value)) }
       Collection.new(values)
     end
 
