@@ -53,6 +53,7 @@ Metrics/ClassLength:
     - "test/subsetting_functions_test.rb"
     - "lib/fhirpath/conformance/importer.rb"
     - "test/conformance_pipeline_test.rb"
+    - "lib/fhirpath/models_r4.rb"
 
 Metrics/CyclomaticComplexity:
   Exclude:

@@ -8,6 +8,7 @@ module FHIRPath
       # The evaluator only knows the ModelProvider protocol. FHIR release
       # metadata stays in this adapter so a different release can provide its
       # own provider without changing the language core.
+      # rubocop:disable Metrics/ClassLength
       class ModelProvider < FHIRPath::ModelProvider
         RELEASE = 'R4'
         VERSION = '4.0.1'

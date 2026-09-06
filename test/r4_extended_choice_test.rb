@@ -93,3 +93,5 @@ class FHIRPathR4ExtendedChoiceTest < Minitest::Test
     assert_equal 'Quantity', result.types.first
   end
 end
+
+
