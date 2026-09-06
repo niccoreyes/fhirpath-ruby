@@ -19,12 +19,70 @@ module FHIRPath
               valueInteger valueRange valueRatio valueSampledData valueTime
               valueDateTime valuePeriod
             ].freeze
+          },
+          'Medication' => {
+            'medication' => %w[
+              medicationCodeableConcept medicationReference
+            ].freeze
+          },
+          'Condition' => {
+            'clinicalStatus' => %w[
+              clinicalStatusCodeableConcept clinicalStatusCoding
+            ].freeze,
+            'verificationStatus' => %w[
+              verificationStatusCodeableConcept verificationStatusCoding
+            ].freeze
+          },
+          'Procedure' => {
+            'outcome' => %w[
+              outcomeCodeableConcept outcomeReference
+            ].freeze,
+            'indication' => %w[
+              indicationCodeableConcept indicationReference
+            ].freeze
+          },
+          'DiagnosticReport' => {
+            'category' => %w[
+              categoryCodeableConcept categoryCoding
+            ].freeze,
+            'code' => %w[
+              codeCodeableConcept codeCoding
+            ].freeze
           }
         }.freeze
         CHOICE_TYPES = {
           'Observation' => {
             'value' => %w[
               Quantity CodeableConcept string boolean integer Range Ratio SampledData time dateTime Period
+            ].freeze
+          },
+          'Medication' => {
+            'medication' => %w[
+              CodeableConcept Reference
+            ].freeze
+          },
+          'Condition' => {
+            'clinicalStatus' => %w[
+              CodeableConcept Coding
+            ].freeze,
+            'verificationStatus' => %w[
+              CodeableConcept Coding
+            ].freeze
+          },
+          'Procedure' => {
+            'outcome' => %w[
+              CodeableConcept Reference
+            ].freeze,
+            'indication' => %w[
+              CodeableConcept Reference
+            ].freeze
+          },
+          'DiagnosticReport' => {
+            'category' => %w[
+              CodeableConcept Coding
+            ].freeze,
+            'code' => %w[
+              CodeableConcept Coding
             ].freeze
           }
         }.freeze
