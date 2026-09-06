@@ -177,7 +177,7 @@ This is not yet a complete FHIRPath engine. The following remain deferred or hos
 
 - complete FHIRPath 2.0 conformance; the checked-in importer covers only the pinned official subset;
 - broader FHIR R4 metadata such as primitive extensions, resource-level type tests (`Observation is Resource`/`DomainResource`), `ofType()`, and FHIR R5 model adapters; FHIR R4 `is`/`as` over a resolved choice value's logical type (e.g. `Quantity`) is supported, but terminology and `resolve()` remain host-dependent; and
-- date/time and quantity/UCUM values;
+- temporal arithmetic with Date/Time/DateTime and Quantity/Duration, including calendar-duration arithmetic;
 - advanced conversion, math, string, regular-expression, and navigation functions, and the general-purpose `aggregate()` function;
 - complex literals and additional standard value types;
 - standard environment variables beyond explicitly supplied external constants;
