@@ -100,11 +100,7 @@ module FHIRPath
 
     def navigate(node, context)
       receiver = evaluate(node.receiver, context)
-      # FHIR primitive-extension accessor: `.<element>._<name>` accesses the
-      # underlying primitive container when the source element has a `value`.
-      if node.name.start_with?('_')
-        return navigate_primitive_extension(receiver, node)
-      end
+      return navigate_primitive_extension(receiver, node) if node.name.start_with?('_')
 
       values = []
       model_types = []
