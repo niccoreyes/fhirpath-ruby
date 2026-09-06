@@ -17,6 +17,9 @@ module FHIRPath
       exists count empty not all
       allTrue anyTrue allFalse anyFalse
       sum avg max min
+      today now time
+      year month day hour minute second millisecond
+      timezone timezoneOffset
     ].freeze
     DELAYED_NAMES = %w[where select exists all].freeze
 
