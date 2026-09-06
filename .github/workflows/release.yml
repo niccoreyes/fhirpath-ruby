@@ -185,24 +185,40 @@ jobs:
         env:
           RELEASE_TAG: ${{ github.ref_name }}
         run: ruby script/generate_release_notes.rb "$RELEASE_TAG" pkg/conformance.json > RELEASE_NOTES.md
-      - name: Create GitHub release with checksummed assets
+      - name: Create GitHub release (without assets)
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          release_args=("$RELEASE_TAG" pkg/fhirpath-*.gem pkg/SHA256SUMS.txt pkg/conformance.json)
-          if ruby -e 'exit(Gem::Version.new(ARGV.fetch(0).sub(/\Av/, "")).prerelease? ? 0 : 1)' "$RELEASE_TAG"; then
-            release_args+=(--prerelease)
+          if ruby -e 'exit(Gem::Version.new(ARGV.fetch(0).sub(/\\Av/, "")).prerelease? ? 0 : 1)' "$RELEASE_TAG"; then
+            gh release create "$RELEASE_TAG" \
+              --verify-tag \
+              --prerelease \
+              --title "FHIRPath ${RELEASE_TAG}" \
+              --notes-file RELEASE_NOTES.md
+          else
+            gh release create "$RELEASE_TAG" \
+              --verify-tag \
+              --title "FHIRPath ${RELEASE_TAG}" \
+              --notes-file RELEASE_NOTES.md
           fi
-          gh release create "${release_args[@]}" \
-            --verify-tag \
-            --title "FHIRPath ${RELEASE_TAG}" \
-            --notes-file RELEASE_NOTES.md
+      - name: Upload GitHub release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          # Upload each asset individually so we get immediate feedback on failures
+          for asset in pkg/fhirpath-*.gem pkg/SHA256SUMS.txt pkg/conformance.json; do
+            gh release upload "$RELEASE_TAG" "$asset" --clobber
+          done
       - name: Verify GitHub release and assets
         env:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          test "$(gh release view "$RELEASE_TAG" --json tagName --jq .tagName)" = "$RELEASE_TAG"
-          gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name' | grep -Fx 'SHA256SUMS.txt'
-          gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name' | grep -E '^fhirpath-.*\\.gem$'
-          gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name' | grep -Fx 'conformance.json'
+          # Wait briefly for GitHub to propagate asset metadata
+          sleep 2
+          release=$(gh release view "$RELEASE_TAG" --json tagName,assets --jq .)
+          echo "$release" | jq -e '.tagName == "'$RELEASE_TAG'"' >/dev/null
+          echo "$release" | jq -e '.assets | map(.name) | index("fhirpath-*.gem") != null' >/dev/null
+          echo "$release" | jq -e '.assets | map(.name) | index("conformance.json") != null' >/dev/null
+          echo "$release" | jq -e '.assets | map(.name) | index("SHA256SUMS.txt") != null' >/dev/null
