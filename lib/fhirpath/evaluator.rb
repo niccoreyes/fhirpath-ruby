@@ -100,6 +100,12 @@ module FHIRPath
 
     def navigate(node, context)
       receiver = evaluate(node.receiver, context)
+      # FHIR primitive-extension accessor: `.<element>._<name>` accesses the
+      # underlying primitive container when the source element has a `value`.
+      if node.name.start_with?('_')
+        return navigate_primitive_extension(receiver, node)
+      end
+
       values = []
       model_types = []
       receiver.items.each do |item|
@@ -118,6 +124,24 @@ module FHIRPath
     rescue NoMethodError => e
       raise ModelError.new("cannot read #{node.name}", code: :model_navigation,
                                                        span: node.span, cause: e)
+    end
+
+    # Handle the FHIR primitive-extension accessor (`_<name>`) on a primitive
+    # JSON element that is split into `{ value, extension }` per the FHIR spec.
+    # Per FHIRPath 2.0.0, `<primitive>._<name>` returns the underlying primitive
+    # container (the `{value, extension}` shape) when the source element already
+    # has a value, and empty when the primitive has only an extension.
+    def navigate_primitive_extension(receiver, node)
+      values = receiver.items.map do |item|
+        if item.is_a?(Hash) && (item.key?('value') || item.key?(:value))
+          # Has a value — return the whole primitive container
+          item
+        else
+          # Only extension (or no primitive content) — empty per FHIRPath spec
+          nil
+        end
+      end.compact
+      Collection.new(values)
     end
 
     # Resolves one property and records, per produced item, the logical type
