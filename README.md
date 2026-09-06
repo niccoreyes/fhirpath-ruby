@@ -4,6 +4,9 @@
 [![Release](https://github.com/niccoreyes/fhirpath-ruby/actions/workflows/release.yml/badge.svg)](https://github.com/niccoreyes/fhirpath-ruby/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/niccoreyes/fhirpath-ruby/blob/main/LICENSE)
 [![Ruby](https://img.shields.io/badge/Ruby-3.2%20%7C%203.3-blue.svg)](https://github.com/niccoreyes/fhirpath-ruby/blob/main/.github/workflows/ci.yml)
+[![Gem Version](https://badge.fury.io/rb/fhirpath.svg)](https://rubygems.org/gems/fhirpath)
+[![Gem Downloads](https://img.shields.io/gem/dt/fhirpath)](https://rubygems.org/gems/fhirpath)
+[![RubyGems](https://img.shields.io/gem/v/fhirpath?logo=rubygems&logoColor=white)](https://rubygems.org/gems/fhirpath)
 
 A Ruby-native implementation of the [HL7 FHIRPath](https://hl7.org/fhirpath/) expression language.
 
@@ -11,10 +14,10 @@ This repository is an intentionally small, pre-release implementation. It provid
 
 ## Status at a glance
 
-- Version: `0.2.0.pre1`
+- Version: `0.2.0.pre3`
 - Normative language target: FHIRPath `2.0.0`
 - Ruby support policy: Ruby `3.2` and `3.3` are tested in CI; newer Ruby versions are supported only after CI coverage is added.
-- Release status: pre-release; not published to RubyGems.
+- Release status: pre-release; published to [RubyGems](https://rubygems.org/gems/fhirpath).
 - License: [MIT](LICENSE).
 
 The exact release-facing target, capability identifiers, Ruby support matrix,
@@ -22,19 +25,15 @@ and host/model limitations are maintained in the [release support matrix](docs/s
 
 ## Installation
 
-The gem is not yet published. To use a checkout:
+The gem is published on [RubyGems.org](https://rubygems.org/gems/fhirpath):
 
 ```sh
-git clone https://github.com/niccoreyes/fhirpath-ruby.git
-cd fhirpath-ruby
-bundle install
-bundle exec rake test
+gem install fhirpath
 ```
 
-Once a release is published, the intended consumer workflow will be:
+Or in a Gemfile:
 
 ```ruby
-# Gemfile
 gem "fhirpath"
 ```
 
