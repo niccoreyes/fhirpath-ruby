@@ -13,7 +13,7 @@ module FHIRPath
 
   class FunctionRegistry
     STANDARD_NAMES = %w[
-      where select first last tail take skip
+      where select first last tail take skip ofType
       exists count empty not all
       allTrue anyTrue allFalse anyFalse
       sum avg max min
@@ -38,7 +38,7 @@ module FHIRPath
 
     def self.standard_arity(name)
       return 0..1 if name == 'exists'
-      return 1 if name == 'all' || %w[where select take skip].include?(name)
+      return 1 if name == 'all' || %w[where select take skip ofType].include?(name)
 
       0
     end

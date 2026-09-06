@@ -103,7 +103,16 @@ module FHIRPath
       values = []
       model_types = []
       receiver.items.each do |item|
-        append_property(values, model_types, item, node.name, context)
+        produced = Collection.from(context.model.property(item, node.name)).items
+        type = context.model.property_logical_type(item, node.name)
+        values.concat(produced)
+        model_types.concat(Array.new(produced.length, type))
+        # If no choice type was recorded, try to get the resource type from the model
+        next unless type.nil? && context.model.respond_to?(:type_of)
+
+        produced.each do |produced_item|
+          model_types[-produced.length + produced.index(produced_item)] = context.model.type_of(produced_item)
+        end
       end
       Collection.new(values, types: model_types)
     rescue NoMethodError => e
@@ -192,6 +201,8 @@ module FHIRPath
         all(receiver, node.arguments.first, context)
       when 'allTrue', 'anyTrue', 'allFalse', 'anyFalse'
         boolean_aggregate(receiver, node.name, node)
+      when 'ofType'
+        of_type(receiver, node, context)
       else
         invoke_registered(node, receiver, context, spec)
       end
@@ -560,6 +571,26 @@ module FHIRPath
       return Collection.new([false]) if left.empty?
 
       Collection.new([left.items.any? { |candidate| equal?(candidate, value) }])
+    end
+
+    def of_type(receiver, node, _context)
+      # FHIRPath ofType() filters the collection to items matching the specified type
+      # The argument is a type identifier (e.g., Integer, String, Decimal, Boolean,
+      # or FHIR resource types like Observation, Patient)
+      type_arg = node.arguments.first
+      unless type_arg.is_a?(AST::Identifier)
+        raise TypeError.new('ofType requires a type identifier', code: :expected_type, span: type_arg.span)
+      end
+
+      type_name = type_arg.name.downcase
+
+      # Use the receiver's recorded types (parallel to items) for model types,
+      # fall back to logical_type? for built-in types
+      matching_items = receiver.items.each_with_index.select do |item, index|
+        item_type = receiver.types&.at(index)
+        (item_type && item_type.downcase == type_name) || logical_type?(item, type_name)
+      end.map(&:first)
+      Collection.new(matching_items)
     end
 
     def type_operator(node, context)
