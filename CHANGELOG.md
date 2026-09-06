@@ -3,6 +3,18 @@
 All notable changes to this project are documented here. The project is pre-1.0; the API and supported behavior may change between releases.
 
 ## [Unreleased]
+- `FHIRPath.evaluate` and `FHIRPath.evaluate_first` (and the equivalent
+  `CompiledExpression#evaluate`/`call`) accept a raw JSON document string as
+  the resource argument and parse it automatically, so FHIR JSON in its common
+  HTTP-body string form no longer needs a separate `JSON.parse` by the caller.
+  Detection is limited to strings that open with `{` or `[` after leading
+  whitespace, so Hash/Array resources are never routed through a JSON parser
+  and other strings (plain text, JSON scalar text such as `"null"` or `"123"`,
+  quoted JSON primitives) keep their existing meaning as singleton FHIRPath
+  string values. A string that opens like a JSON document but is not valid
+  JSON raises the new structured `FHIRPath::JSONInputError` (code
+  `:invalid_json`). The caller's String and any Hash/Array resource are never
+  mutated. Closes issue #56.
 
 ## [0.2.0.pre3] - 2026-09-06
 - Same library content as `0.2.0.pre2`. Version bumped because the earlier

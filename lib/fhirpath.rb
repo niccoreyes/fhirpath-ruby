@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'json'
 require_relative 'fhirpath/version'
 require_relative 'fhirpath/source_span'
 require_relative 'fhirpath/errors'
