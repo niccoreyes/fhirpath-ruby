@@ -203,6 +203,16 @@ module FHIRPath
         boolean_aggregate(receiver, node.name, node)
       when 'ofType'
         of_type(receiver, node, context)
+      when 'today'
+        temporal_now(receiver, node, context, :date)
+      when 'now'
+        temporal_now(receiver, node, context, :datetime)
+      when 'time'
+        temporal_now(receiver, node, context, :time)
+      when 'year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'
+        temporal_component(receiver, node, context, node.name)
+      when 'timezone', 'timezoneOffset'
+        temporal_timezone(receiver, node, context, node.name)
       else
         invoke_registered(node, receiver, context, spec)
       end
@@ -593,6 +603,81 @@ module FHIRPath
       Collection.new(matching_items)
     end
 
+    def temporal_now(receiver, _node, _context, type)
+      return Collection.empty if receiver.empty?
+
+      # today(), now(), time() are nullary functions - receiver is ignored
+      case type
+      when :date
+        Collection.new([Date.today])
+      when :datetime
+        Collection.new([DateTime.now])
+      when :time
+        Collection.new([Time.now])
+      end
+    end
+
+    def temporal_component(receiver, node, _context, component)
+      return Collection.empty if receiver.empty?
+
+      value = require_singleton(receiver, node.span)
+      result = case component
+               when 'year'
+                 value.respond_to?(:year) ? value.year : nil
+               when 'month'
+                 value.respond_to?(:month) ? value.month : nil
+               when 'day'
+                 value.respond_to?(:day) ? value.day : nil
+               when 'hour'
+                 value.respond_to?(:hour) ? value.hour : nil
+               when 'minute'
+                 value.respond_to?(:min) ? value.min : nil
+               when 'second'
+                 value.respond_to?(:sec) ? value.sec : nil
+               when 'millisecond'
+                 if value.is_a?(DateTime)
+                   # DateTime stores fractional seconds as a Rational
+                   (value.sec_fraction * 1000).to_i
+                 elsif value.respond_to?(:msec)
+                   value.msec
+                 elsif value.respond_to?(:nsec)
+                   (value.nsec / 1_000_000).to_i
+                 end
+               end
+      if result.nil?
+        raise TypeError.new("temporal component #{component} not supported on #{value.class}",
+                            code: :unsupported_temporal, span: node.span)
+      end
+
+      Collection.new([result])
+    end
+
+    def temporal_timezone(receiver, node, _context, component)
+      return Collection.empty if receiver.empty?
+
+      value = require_singleton(receiver, node.span)
+      unless value.respond_to?(:zone) || value.respond_to?(:offset)
+        raise TypeError.new("timezone not supported on #{value.class}", code: :unsupported_temporal, span: node.span)
+      end
+
+      result = if component == 'timezone'
+                 value.respond_to?(:zone) ? value.zone : format_offset(value.offset)
+               else
+                 # timezoneOffset returns minutes
+                 value.respond_to?(:offset) ? (value.offset * 24 * 60).to_i : nil
+               end
+      Collection.new([result])
+    end
+
+    def format_offset(offset)
+      return '+00:00' if offset.nil? || offset.zero?
+
+      hours = (offset * 24).to_i
+      minutes = ((offset * 24 * 60) % 60).to_i
+      sign = hours >= 0 ? '+' : '-'
+      format('%s%02d:%02d', sign, hours.abs, minutes.abs)
+    end
+
     def type_operator(node, context)
       left = evaluate(node.left, context)
       type_name = type_name_from(node.right, node.span)
@@ -628,6 +713,9 @@ module FHIRPath
       when 'decimal' then value.is_a?(BigDecimal) || (value.is_a?(::Float) && value.finite?)
       when 'number' then numeric?(value)
       when 'string' then value.is_a?(::String)
+      when 'date' then value.is_a?(Date)
+      when 'datetime' then value.is_a?(DateTime)
+      when 'time' then value.is_a?(Time)
       else false
       end
     end
@@ -635,7 +723,10 @@ module FHIRPath
     def compare_values(left, right, span)
       if numeric?(left) && numeric?(right)
         decimal(left) <=> decimal(right)
-      elsif left.is_a?(::String) && right.is_a?(::String)
+      elsif (left.is_a?(::String) && right.is_a?(::String)) ||
+            (left.is_a?(Date) && right.is_a?(Date)) ||
+            (left.is_a?(DateTime) && right.is_a?(DateTime)) ||
+            (left.is_a?(Time) && right.is_a?(Time))
         left <=> right
       else
         raise TypeError.new('comparison requires compatible values', code: :incompatible_comparison,

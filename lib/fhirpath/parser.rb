@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'bigdecimal'
+require 'date'
+require 'time'
 
 module FHIRPath
   class Token
@@ -22,7 +24,8 @@ module FHIRPath
       '=' => :equals, '+' => :plus, '-' => :minus,
       '*' => :multiply, '/' => :divide,
       '<' => :less_than, '>' => :greater_than,
-      '|' => :union, '&' => :concatenate, '~' => :equivalent
+      '|' => :union, '&' => :concatenate, '~' => :equivalent,
+      '@' => :temporal
     }.freeze
 
     TWO_CHARACTER = {
@@ -85,6 +88,8 @@ module FHIRPath
 
       char = @source[@index]
       if SINGLE.key?(char)
+        return temporal_token(start) if char == '@'
+
         @index += 1
         return token(SINGLE.fetch(char), char, start)
       end
@@ -208,6 +213,98 @@ module FHIRPath
       return token(:operator, text.to_sym, start) if KEYWORD_OPERATORS.include?(text)
 
       token(:identifier, text, start)
+    end
+
+    def temporal_token(start)
+      @index += 1 # skip '@'
+      temporal_start = @index
+
+      has_date = parse_date_part?
+      has_time = parse_time_part?
+      parse_timezone_part
+
+      text = @source[temporal_start...@index]
+      raise_error('empty temporal literal', start) if text.empty?
+
+      value, type = parse_temporal_value(text, has_date, has_time)
+      token(type, value, start)
+    rescue ArgumentError => e
+      raise_error("invalid temporal literal: #{e.message}", start, code: :invalid_temporal)
+    end
+
+    def parse_date_part?
+      return false if eof? || !@source[@index].match?(/[0-9]/)
+
+      @index += 4 # YYYY
+      return false if eof? || @source[@index] != '-'
+
+      @index += 1
+      @index += 2 # MM
+      return false if eof? || @source[@index] != '-'
+
+      @index += 1
+      @index += 2 # DD
+      true
+    end
+
+    def parse_time_part?
+      return false if eof? || @source[@index] != 'T'
+
+      @index += 1
+      return false if eof? || !@source[@index, 2].match?(/^\d{2}$/)
+
+      @index += 2 # HH
+      return false if eof? || @source[@index] != ':'
+
+      @index += 1
+      return false if eof? || !@source[@index, 2].match?(/^\d{2}$/)
+
+      @index += 2 # MM
+      return false if eof? || @source[@index] != ':'
+
+      @index += 1
+      return false if eof? || !@source[@index, 2].match?(/^\d{2}$/)
+
+      @index += 2 # SS
+
+      # Optional milliseconds
+      if !eof? && @source[@index] == '.'
+        @index += 1
+        @index += 1 while !eof? && @source[@index].match?(/[0-9]/)
+      end
+      true
+    end
+
+    def parse_timezone_part
+      return if eof? || !@source[@index].match?(/[Z+-]/)
+
+      if @source[@index] == 'Z'
+        @index += 1
+      else
+        @index += 1 # + or -
+        @index += 2 # HH
+        @index += 1 if !eof? && @source[@index] == ':'
+        @index += 2
+      end
+    end
+
+    def parse_temporal_value(text, has_date, has_time)
+      if has_date && has_time
+        [DateTime.parse(text), :datetime]
+      elsif has_date
+        [Date.parse(text), :date]
+      elsif has_time
+        time_text = text
+        time_text = time_text[1..] if time_text.start_with?('T')
+        value = if time_text.include?('Z') || time_text.match?(/[+-]\d{2}:?\d{2}$/)
+                  DateTime.parse("2000-01-01T#{time_text}").to_time
+                else
+                  Time.parse("2000-01-01T#{time_text}")
+                end
+        [value, :time]
+      else
+        raise ArgumentError, 'invalid temporal literal'
+      end
     end
 
     def token(type, value, start)
@@ -341,7 +438,7 @@ module FHIRPath
     def parse_primary
       token = advance
       node = case token.type
-             when :string, :integer, :decimal
+             when :string, :integer, :decimal, :date, :time, :datetime
                AST::Literal.new(value: token.value, span: token.span)
              when :identifier
                if %w[true false].include?(token.value)
