@@ -42,22 +42,16 @@ documented limitations before using this implementation in production.
 
 ## Quick start
 
-```ruby
-# JSON equivalent:
-# {
-#   "items": [1, 2, 3, 4, 5]
-# }
-data = { items: [1, 2, 3, 4, 5] }
-FHIRPath.evaluate(data, "items.where($this > 3)")   # : [4, 5]
+## Quick start
 
-# JSON equivalent:
-# {
-#   "resourceType": "Observation",
-#   "id": "obs-1",
-#   "status": "final",
-#   "code": { "coding": [{ "system": "http://loinc.org", "code" => "8480-6" }] },
-#   "valueQuantity": { "value": 5.5, "unit": "mmol/L", "system": "http://unitsofmeasure.org", "code": "mmol/L" }
-# }
+```ruby
+require "fhirpath"
+
+# Plain Ruby Hash/Array navigation
+data = { items: [1, 2, 3, 4, 5] }
+FHIRPath.evaluate(data, "items.where($this > 3)")   # => [4, 5]
+
+# FHIR R4 model adapter
 observation = {
   "resourceType" => "Observation",
   "id" => "obs-1",
@@ -66,20 +60,12 @@ observation = {
   "valueQuantity" => { "value" => 5.5, "unit" => "mmol/L", "system" => "http://unitsofmeasure.org", "code" => "mmol/L" }
 }
 
-// Navigate FHIR JSON with R4 model adapter
-FHIRPath.evaluate(observation, "valueQuantity.value > 5.0", model: :r4)  # : [true]
-FHIRPath.evaluate(observation, "valueQuantity.unit", model: :r4)         # : ["mmol/L"]
-FHIRPath.evaluate(observation, "code.coding.system", model: :r4)         # : ["http://loinc.org"]
+# Navigate FHIR JSON with R4 model adapter
+FHIRPath.evaluate(observation, "valueQuantity.value > 5.0", model: :r4)  # => [true]
+FHIRPath.evaluate(observation, "valueQuantity.unit", model: :r4)         # => ["mmol/L"]
+FHIRPath.evaluate(observation, "code.coding.system", model: :r4)         # => ["http://loinc.org"]
 
-// Type filtering with ofType()
-// JSON equivalent:
-// {
-//   "resourceType": "Bundle",
-//   "entry": [
-//     { "resource": { "resourceType": "Observation", "id": "1" } },
-//     { "resource": { "resourceType": "Patient", "id": "2" } }
-//   ]
-# }
+# Type filtering with ofType()
 bundle = {
   "resourceType" => "Bundle",
   "entry" => [
@@ -87,8 +73,35 @@ bundle = {
     { "resource" => { "resourceType" => "Patient", "id" => "2" } }
   ]
 }
-FHIRPath.evaluate(bundle, "entry.resource.ofType(Observation)", model: :r4)  # : [Observation resource]
+FHIRPath.evaluate(bundle, "entry.resource.ofType(Observation)", model: :r4)  # => [Observation resource]
 ```
+
+FHIR R4 JSON can be selected explicitly through the versioned provider. The
+adapter exposes the logical `Observation.value` property over R4 choice keys
+such as `valueString` and `valueQuantity`:
+
+```ruby
+observation = {
+  "resourceType" => "Observation",
+  "valueQuantity" => { "value" => 120, "unit" => "mmHg" }
+}
+
+FHIRPath.evaluate(observation, "Observation.value.value", model: :r4).to_a
+# => [120]
+
+# The choice variant carries its FHIR logical type, so `is`/`as` resolve
+# against model metadata for the resolved value:
+FHIRPath.evaluate(observation, "Observation.value is Quantity", model: :r4).to_a
+# => [true]
+FHIRPath.evaluate(observation, "Observation.value as Quantity", model: :r4).to_a
+# => [{ "value" => 120, "unit" => "mmHg" }]
+```
+
+The R4 adapter is dependency-free and does not perform Ruby method dispatch;
+plain-model navigation remains the default. Its supported release and model
+selection are visible through `FHIRPath::Capability.current` and
+`FHIRPath.available_models`.
+
 ## Public API
 
 The API is intentionally Ruby-native rather than source-compatible with `fhirpath-py`:
