@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The project is pre-1.0;
 
 ## [Unreleased]
 
+## [0.2.0.pre3] - 2026-09-06
+- Same library content as `0.2.0.pre2`. Version bumped because the earlier
+  `0.2.0.pre2` tag was pushed to RubyGems by a partial release run before the
+  workflow fix landed in PR #50, and RubyGems rejects repushing the same
+  version. Library code, capability set, and feature matrix are unchanged
+  from `0.2.0.pre2`; only the gem version and this changelog entry differ.
+
 ## [0.2.0.pre2] - 2026-09-06
 - Add the `ofType()` function to the standard registry. Filters the receiver
   collection to items whose runtime type matches the specified type identifier
