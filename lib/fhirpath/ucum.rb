@@ -60,7 +60,9 @@ module FHIRPath
 
       numerator = product_definition(parts.first, unit)
       denominator = parts.length == 2 ? product_definition(parts.last, unit, exponent_sign: -1) : unitless_definition
-      UnitDefinition.new(dimensions: combine_dimensions(numerator.dimensions, denominator.dimensions),
+      dimensions = combine_dimensions(numerator.dimensions, denominator.dimensions)
+      dimensions.each_value { |power| raise ArgumentError, "Quantity unit exponent exceeds #{MAX_EXPONENT}" if power.abs > MAX_EXPONENT }
+      UnitDefinition.new(dimensions: dimensions,
                          factor: numerator.factor * denominator.factor)
     end
 
