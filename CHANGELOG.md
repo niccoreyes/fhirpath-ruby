@@ -3,18 +3,24 @@
 All notable changes to this project are documented here. The project is pre-1.0; the API and supported behavior may change between releases.
 
 ## [Unreleased]
-- `FHIRPath.evaluate` and `FHIRPath.evaluate_first` (and the equivalent
-  `CompiledExpression#evaluate`/`call`) accept a raw JSON document string as
-  the resource argument and parse it automatically, so FHIR JSON in its common
-  HTTP-body string form no longer needs a separate `JSON.parse` by the caller.
-  Detection is limited to strings that open with `{` or `[` after leading
-  whitespace, so Hash/Array resources are never routed through a JSON parser
-  and other strings (plain text, JSON scalar text such as `"null"` or `"123"`,
-  quoted JSON primitives) keep their existing meaning as singleton FHIRPath
-  string values. A string that opens like a JSON document but is not valid
-  JSON raises the new structured `FHIRPath::JSONInputError` (code
-  `:invalid_json`). The caller's String and any Hash/Array resource are never
-  mutated. Closes issue #56.
+- Add a dependency-free, explicitly bounded FHIRPath `Quantity` type. Quantity
+  values always store a finite `BigDecimal` and expose `value`, `unit`,
+  `system`, and `code`; integer quantity literals are promoted to Decimal.
+  Single- and double-quoted unit literals are supported, with case-sensitive
+  conversion for the tested subset of length, mass, volume, amount, and time
+  units plus simple products/quotients such as `mmol/L`. Same-dimension
+  quantities support comparison, addition, subtraction, scalar multiplication
+  and division, and Quantity/Quantity ratios. Unsupported units are rejected;
+  incompatible calculations return an empty collection. Quantity×Quantity and
+  derived-unit composition such as `km/h` remain deferred. This is not complete
+  UCUM conformance, and calendar-duration arithmetic remains deferred. The
+  parser also accepts double-quoted strings as a documented extension, while
+  normative FHIRPath string literals remain single-quoted. Wrong-case symbols
+  such as `MG` and `G` are rejected; exponent notation uses `^` (for example,
+  `m^2`). Mixed Quantity/scalar addition is empty in either operand order,
+  and derived-unit division such as `km/h` is deferred. Quantity `system` and
+  `code` metadata is preserved but does not change unit equality.
+
 
 ## [0.2.0.pre3] - 2026-09-06
 - Same library content as `0.2.0.pre2`. Version bumped because the earlier

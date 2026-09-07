@@ -59,10 +59,28 @@ module FHIRPath
       end
 
       numerator = product_definition(parts.first, unit)
-      denominator = parts.length == 2 ? product_definition(parts.last, unit, exponent_sign: -1) : unitless_definition
-      UnitDefinition.new(dimensions: combine_dimensions(numerator.dimensions, denominator.dimensions),
+      denominator = build_denominator(parts, unit)
+      dimensions = combine_dimensions(numerator.dimensions, denominator.dimensions)
+      validate_dimensions!(dimensions)
+      UnitDefinition.new(dimensions: dimensions,
                          factor: numerator.factor * denominator.factor)
     end
+
+    def build_denominator(parts, unit)
+      return unitless_definition unless parts.length == 2
+
+      product_definition(parts.last, unit, exponent_sign: -1)
+    end
+    private_class_method :build_denominator
+
+    def validate_dimensions!(dimensions)
+      dimensions.each_value do |power|
+        next unless power.abs > MAX_EXPONENT
+
+        raise ArgumentError, "Quantity unit exponent exceeds #{MAX_EXPONENT}"
+      end
+    end
+    private_class_method :validate_dimensions!
 
     def product_definition(product, original, exponent_sign: 1)
       dimensions = {}

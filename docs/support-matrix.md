@@ -34,7 +34,8 @@ These stable identifiers describe the behavior included in the current package:
 - `collection-evaluation` — explicit empty, singleton, and multi-item results;
 - `plain-model-navigation` — Hash, Array, and safe simple-object navigation;
 - `primitive-values` — strings, Booleans, integers, decimals, and scientific notation;
-- `arithmetic` — unary/numeric arithmetic and string `+`;
+- `arithmetic` — unary/numeric arithmetic, string `+`, and the bounded Quantity scalar/Quantity arithmetic described below;
+- `quantity-ucum` — immutable Decimal-backed Quantity values with case-sensitive dimensional conversion for the explicitly supported unit subset (`m`/`cm`/`mm`/`km`, `g`/`kg`/`mg`/`Mg`/`ug`/`ng`, `L`/`mL`/`ML`/`uL`, `mol`/`mmol`/`umol`, `s`/`min`/`h`, and products/quotients such as `mmol/L`); unsupported units are rejected, incompatible calculations and mixed Quantity/scalar addition return empty, same-dimension Quantity division returns a Decimal ratio, derived-unit composition such as Quantity×Quantity or `km/h` remains deferred, and system/code metadata is preserved without changing unit equality;
 - `comparison-and-equivalence` — relational comparison, equality, and equivalence;
 - `boolean-logic` — empty-aware Boolean operators;
 - `union-membership-and-type-operators` — union, `in`, `contains`, `is`, and `as`;
@@ -75,8 +76,7 @@ behavioral evidence and [`docs/api.md`](api.md) for the runtime declaration.
 The release must continue to state these limitations:
 
 - complete official HL7 shared-suite conformance and its importer;
-- date/time literals and values;
-- quantity and UCUM semantics;
+- complete UCUM conformance, units outside the explicitly supported subset, derived-unit composition such as `60 'km' / 1 'h'`, `Quantity × Quantity`, calendar-duration arithmetic, and temporal arithmetic with Quantity;
 - advanced conversion, math, string, regular-expression, and navigation functions, and the general-purpose `aggregate()` function;
 - complex literals and additional standard value types;
 - standard environment variables beyond explicitly supplied external constants;
