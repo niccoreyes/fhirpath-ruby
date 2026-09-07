@@ -215,10 +215,21 @@ jobs:
         env:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          # Wait briefly for GitHub to propagate asset metadata
-          sleep 2
-          release=$(gh release view "$RELEASE_TAG" --json tagName,assets --jq .)
-          echo "$release" | jq -e '.tagName == "'$RELEASE_TAG'"' >/dev/null
-          echo "$release" | jq -e '.assets | map(.name) | index("fhirpath-*.gem") != null' >/dev/null
-          echo "$release" | jq -e '.assets | map(.name) | index("conformance.json") != null' >/dev/null
-          echo "$release" | jq -e '.assets | map(.name) | index("SHA256SUMS.txt") != null' >/dev/null
+          # Asset names are exact values; jq index() does not interpret globs.
+          # Retry because GitHub may briefly return stale release metadata after upload.
+          for attempt in {1..10}; do
+            release=$(gh release view "$RELEASE_TAG" --json tagName,assets --jq .)
+            if echo "$release" | jq -e \
+              --arg tag "$RELEASE_TAG" \
+              '.tagName == $tag and
+               ([.assets[].name] | sort) ==
+               (["fhirpath-" + ($tag | sub("^v"; "")) + ".gem", "conformance.json", "SHA256SUMS.txt"] | sort)' \
+              >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+
+          echo "release metadata did not contain the expected assets" >&2
+          echo "$release" >&2
+          exit 1
