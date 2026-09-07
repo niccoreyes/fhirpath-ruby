@@ -42,8 +42,6 @@ documented limitations before using this implementation in production.
 
 ## Quick start
 
-## Quick start
-
 ```ruby
 require "fhirpath"
 
@@ -51,7 +49,7 @@ require "fhirpath"
 data = { items: [1, 2, 3, 4, 5] }
 FHIRPath.evaluate(data, "items.where($this > 3)")   # => [4, 5]
 
-# FHIR R4 model adapter
+# FHIR R4 model adapter — Ruby Hash
 observation = {
   "resourceType" => "Observation",
   "id" => "obs-1",
@@ -65,6 +63,25 @@ FHIRPath.evaluate(observation, "valueQuantity.value > 5.0", model: :r4)  # => [t
 FHIRPath.evaluate(observation, "valueQuantity.unit", model: :r4)         # => ["mmol/L"]
 FHIRPath.evaluate(observation, "code.coding.system", model: :r4)         # => ["http://loinc.org"]
 
+# Raw JSON string input — evaluate FHIR resources directly from HTTP responses
+patient_json = <<~JSON
+  {
+    "resourceType": "Patient",
+    "id": "pat-1",
+    "name": [{ "use": "official", "family": "Chalmers", "given": ["Peter", "James"] }],
+    "gender": "male",
+    "birthDate": "1974-12-25",
+    "address": [{ "use": "home", "city": "PleasantVille", "state": "Vic", "postalCode": "3999" }]
+  }
+JSON
+
+FHIRPath.evaluate(patient_json, "Patient.name.where(use='official').family", model: :r4)
+# => ["Chalmers"]
+FHIRPath.evaluate(patient_json, "Patient.birthDate", model: :r4)
+# => ["1974-12-25"]
+FHIRPath.evaluate(patient_json, "Patient.address.city", model: :r4)
+# => ["PleasantVille"]
+
 # Type filtering with ofType()
 bundle = {
   "resourceType" => "Bundle",
@@ -74,6 +91,13 @@ bundle = {
   ]
 }
 FHIRPath.evaluate(bundle, "entry.resource.ofType(Observation)", model: :r4)  # => [Observation resource]
+
+# Compiled expression reuse
+program = FHIRPath.compile("Patient.name.family")
+program.evaluate({ "resourceType" => "Patient", "name" => [{ "family" => "Lovelace" }] }).to_a
+# => ["Lovelace"]
+program.call(patient_json).to_a  # also accepts raw JSON strings
+# => ["Chalmers"]
 ```
 
 FHIR R4 JSON can be selected explicitly through the versioned provider. The

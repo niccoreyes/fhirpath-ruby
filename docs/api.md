@@ -65,6 +65,54 @@ Returns a `FHIRPath::Collection`. Empty results are collections with `empty? == 
 
 The `resource` argument may be an already-parsed Hash/Array (used directly, never re-serialized) or a raw JSON document String. Strings that open with `{` or `[` after leading whitespace are parsed with `JSON.parse` once per call; a malformed document raises `FHIRPath::JSONInputError` (code `:invalid_json`) with a generic public message that does not echo document contents, while `original_cause` retains the underlying `JSON::ParserError` for programmatic diagnostics. Any other String — plain text, JSON scalar text such as `"null"` or `"123"`, or a quoted JSON primitive like `"\"Ada\""` — keeps its pre-existing meaning as a singleton FHIRPath string value and is never parsed. Parsing builds a fresh structure per call; the caller's String and any Hash/Array resource are never mutated or frozen. `CompiledExpression#evaluate` and `#call` apply the same resource handling.
 
+**Resource input handling summary:**
+
+| Input type | Behavior |
+|------------|----------|
+| `Hash` / `Array` | Used directly (never re-serialized) |
+| String starting with `{` or `[` (after whitespace) | Parsed as JSON document via `JSON.parse` once per call; malformed JSON raises `JSONInputError` (code `invalid_json`) |
+| Any other String | Treated as a singleton FHIRPath string value (never parsed) |
+
+```ruby
+# Hash input — used directly
+FHIRPath.evaluate({ "resourceType" => "Patient" }, "Patient.id")
+
+# JSON object string — parsed as JSON document
+json = '{ "resourceType": "Patient", "id": "123" }'
+FHIRPath.evaluate(json, "Patient.id")  # => ["123"]
+
+# JSON array string — parsed as JSON document
+FHIRPath.evaluate('[1, 2, 3]', 'count()')  # => [3]
+
+# Whitespace before { or [ is ignored
+FHIRPath.evaluate("  \n{ \"resourceType\": \"Patient\" }", "Patient.id")
+
+# Plain string — NOT parsed, treated as FHIRPath string value
+FHIRPath.evaluate("just text", "$this")  # => ["just text"]
+
+# JSON scalar text — NOT parsed (not an object/array)
+FHIRPath.evaluate("123", "$this")        # => ["123"] (string, not number)
+FHIRPath.evaluate("true", "$this")       # => ["true"] (string, not Boolean)
+FHIRPath.evaluate("null", "$this")       # => ["null"] (string, not empty)
+
+# Quoted JSON primitive — NOT parsed
+FHIRPath.evaluate('"Ada"', "$this")      # => ["\"Ada\""] (string with quotes)
+```
+
+**Error handling:**
+
+```ruby
+# Malformed JSON raises structured JSONInputError
+begin
+  FHIRPath.evaluate('{ "resourceType": "Patient", invalid: }', "Patient.id")
+rescue FHIRPath::JSONInputError => e
+  e.code           # => :invalid_json
+  e.message        # => "resource string is not valid JSON" (no document contents)
+  e.to_h[:code]    # => :invalid_json
+  e.original_cause # => JSON::ParserError (for programmatic diagnostics)
+end
+```
+
 `variables:` supplies external constants using either String or Symbol keys:
 
 ```ruby
