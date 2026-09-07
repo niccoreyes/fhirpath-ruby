@@ -5,7 +5,8 @@ The project distinguishes specification conformance from compatibility evidence.
 - The HL7 FHIRPath specification and official shared test cases are normative.
 - Checked-in JSONL vectors are small, reviewable regression probes inspired by observed behavior in `fhirpath-py`.
 - No Python runtime is required to run the Ruby vector harness.
-- The repository ships a Ruby-only importer for pinned official XML subsets and the pinned `fhirpath-py` YAML case format; complete conformance remains deferred.
+- The repository ships a Ruby-only importer for official XML suites and the pinned `fhirpath-py` YAML case format.
+- The default manifest imports a pinned subset; `load_full_suite: true` imports the complete official suite.
 
 ## Run the checked-in vectors
 
@@ -51,6 +52,23 @@ Values that JSON cannot represent should use explicit tagged values when that fa
 3. Add a focused Ruby test for the behavior.
 4. Add the JSONL vector and run the complete test, lint, build, and vector commands.
 5. Update `docs/feature-matrix.md`, README limitations, and `CHANGELOG.md` if the public scope changes.
+
+## Import the complete official suite
+
+Set `load_full_suite: true` in the manifest to bypass `case_ids` filtering and import every XML case from the official suite. The importer still applies the same fixture normalization, provenance tracking, and `not-run` classification rules as the pinned-subset mode.
+
+```json
+{
+  "schema": "fhirpath-conformance-v1",
+  "suite": "FHIR/fhir-test-cases",
+  "suite_commit": "1.7.69",
+  "target": "2.0.0",
+  "model": "plain",
+  "source": "r4/fhirpath/tests-fhir-r4.xml",
+  "fixture_root": "r4",
+  "load_full_suite": true
+}
+```
 
 ## Import a pinned suite subset
 
