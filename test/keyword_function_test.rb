@@ -25,8 +25,6 @@ class FHIRPathKeywordFunctionTest < Minitest::Test
   end
 
   def test_keyword_operator_requires_function_call
-    resource = { 'Patient' => { 'name' => %w[John Doe] } }
-
     # Keyword operators cannot be used as member access without parens
     error = assert_raises(FHIRPath::ParseError) do
       FHIRPath.parse('Patient.in')

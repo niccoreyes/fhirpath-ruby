@@ -224,7 +224,7 @@ module FHIRPath
         membership_value(receiver, node.arguments.first, context, node.receiver&.span)
       when 'contains'
         # `contains` as a function: receiver.contains(value) -> receiver contains value
-        membership_collection(receiver, node.arguments.first, context, node.receiver&.span)
+        membership_collection(receiver, node.arguments.first, context)
       when 'today'
         temporal_now(receiver, node, context, :date)
       when 'now'
@@ -729,7 +729,7 @@ module FHIRPath
 
     # `contains` as a function: receiver.contains(value) checks if the argument
     # singleton is a member of the receiver collection.
-    def membership_collection(receiver, argument_node, context, receiver_span = nil)
+    def membership_collection(receiver, argument_node, context)
       argument = evaluate(argument_node, context)
       return Collection.empty if argument.empty?
 
