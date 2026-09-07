@@ -37,7 +37,7 @@ module FHIRPath
 
     def supports?(feature)
       trial_use.include?(feature.to_s) || host_features.include?(feature.to_s) ||
-        supports_model?(feature)
+        capability_set.include?(feature.to_s) || supports_model?(feature)
     end
 
     def supports_model?(release)

@@ -79,7 +79,7 @@ The release must continue to state these limitations:
 
 - complete official HL7 shared-suite conformance and its importer;
 - complete UCUM conformance, units outside the explicitly supported subset, derived-unit composition such as `60 'km' / 1 'h'`, `Quantity × Quantity`, calendar-duration arithmetic, and temporal arithmetic with Quantity;
-- advanced conversion, math, string, regular-expression, and navigation functions, and the general-purpose `aggregate()` function;
+- advanced conversion, math, string, regular-expression, and navigation functions beyond the explicitly listed implementations;
 - complex literals and additional standard value types;
 - standard environment variables beyond explicitly supplied external constants;
 - FHIRPath `3.0` STU3 features beyond the declared `stu3-aggregate-functions` subset; and
