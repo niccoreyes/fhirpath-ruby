@@ -144,7 +144,7 @@ class FHIRPathParserHardeningTest < Minitest::Test
   end
 
   def run_subprocess(script)
-    output = IO.popen(['ruby', '-I', LIB, '-e', script], err: %i[child out], &:read)
+    output = IO.popen(['ruby', '-W0', '-I', LIB, '-e', script], err: %i[child out], &:read)
     [$CHILD_STATUS, output]
   end
 

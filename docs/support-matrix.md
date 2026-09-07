@@ -40,7 +40,9 @@ These stable identifiers describe the behavior included in the current package:
 - `boolean-logic` — empty-aware Boolean operators;
 - `union-membership-and-type-operators` — union, `in`, `contains`, `is`, and `as`;
 - `collection-functions` — `where`, `select`, `first`, `exists`, `count`, `empty`, `not`, `all`, Boolean aggregates, and `ofType`;
++ `collection-functions` — `where`, `select`, `first`, `exists`, `count`, `empty`, `not`, `all`, Boolean aggregates, `ofType`, and `aggregate`;
 - `subsetting-functions` — `tail`, `take`, `skip`, `last`;
++ `subsetting-functions` — `tail`, `take`, `skip`, `last`;
 - `temporal-types` — `Date`, `DateTime`, `Time` literals (`@YYYY-MM-DD`, `@THH:MM:SS`, `@YYYY-MM-DDTHH:MM:SS±HH:MM`), `today()`, `now()`, `time()`, component extractors (`year`, `month`, `day`, `hour`, `minute`, `second`, `millisecond`), `timezone()`, `timezoneOffset()`, and same-type comparison;
 - `fhir-primitive-extensions` — `._<name>` accessor returning the underlying `{value, extension}` container or empty per FHIRPath 2.0.0;
 - `focus-variables` — `$this`, `$index`, and `$total`;
@@ -77,7 +79,7 @@ The release must continue to state these limitations:
 
 - complete official HL7 shared-suite conformance and its importer;
 - complete UCUM conformance, units outside the explicitly supported subset, derived-unit composition such as `60 'km' / 1 'h'`, `Quantity × Quantity`, calendar-duration arithmetic, and temporal arithmetic with Quantity;
-- advanced conversion, math, string, regular-expression, and navigation functions, and the general-purpose `aggregate()` function;
+- advanced conversion, math, string, regular-expression, and navigation functions beyond the explicitly listed implementations;
 - complex literals and additional standard value types;
 - standard environment variables beyond explicitly supplied external constants;
 - FHIRPath `3.0` STU3 features beyond the declared `stu3-aggregate-functions` subset; and

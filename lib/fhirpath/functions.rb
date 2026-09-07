@@ -16,12 +16,12 @@ module FHIRPath
       where select first last tail take skip ofType
       exists count empty not all
       allTrue anyTrue allFalse anyFalse
-      sum avg max min
+      sum avg max min aggregate iif
       today now time
       year month day hour minute second millisecond
       timezone timezoneOffset
     ].freeze
-    DELAYED_NAMES = %w[where select exists all].freeze
+    DELAYED_NAMES = %w[where select exists all aggregate iif].freeze
 
     def self.standard
       @standard ||= new(STANDARD_NAMES.each_with_object({}) do |name, specs|
@@ -33,19 +33,30 @@ module FHIRPath
       FunctionSpec.new(
         name: name,
         arity: standard_arity(name),
-        parameters: DELAYED_NAMES.include?(name) ? [:expression] : [],
+        parameters: standard_parameters(name),
         receiver: :collection,
         delayed: DELAYED_NAMES.include?(name)
       )
     end
 
+    def self.standard_parameters(name)
+      return [:expression] if %w[where select exists all].include?(name)
+      return %i[expression expression expression] if name == 'iif'
+      return %i[expression any] if name == 'aggregate'
+
+      []
+    end
+
     def self.standard_arity(name)
       return 0..1 if name == 'exists'
       return 1 if name == 'all' || %w[where select take skip ofType].include?(name)
+      return 1..2 if name == 'aggregate'
+      return 2..3 if name == 'iif'
 
       0
     end
-    private_class_method :standard_arity, :standard_spec
+
+    private_class_method :standard_arity, :standard_spec, :standard_parameters
 
     def initialize(specs = {})
       @specs = specs.transform_keys(&:to_s).dup.freeze

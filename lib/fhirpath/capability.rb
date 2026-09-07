@@ -8,7 +8,7 @@ module FHIRPath
       primitive-values arithmetic comparison-and-equivalence boolean-logic
       union-membership-and-type-operators collection-functions focus-variables
       external-constants custom-functions compiled-expression-reuse fhir-r4-model
-      structured-errors quantity-ucum
+      structured-errors quantity-ucum aggregate
     ].freeze
 
     # Named FHIRPath 3.0.0 STU3 subset the standard registry ships by default.
@@ -37,7 +37,7 @@ module FHIRPath
 
     def supports?(feature)
       trial_use.include?(feature.to_s) || host_features.include?(feature.to_s) ||
-        supports_model?(feature)
+        capability_set.include?(feature.to_s) || supports_model?(feature)
     end
 
     def supports_model?(release)
