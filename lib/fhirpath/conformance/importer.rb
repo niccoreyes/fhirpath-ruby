@@ -7,9 +7,8 @@ require_relative '../capability'
 
 module FHIRPath
   module Conformance
-    # Imports a selected, pinned subset of the official XML shared suite.
-    # The importer is deliberately Ruby-only so it is safe to use in tests and
-    # release checks without installing a second language runtime.
+    # Imports test cases from the official HL7 FHIRPath test suite.
+    # Can load either a pinned subset or the complete suite.
     class Importer
       DEFAULT_SUITE = 'FHIR/fhir-test-cases'
 
@@ -25,12 +24,14 @@ module FHIRPath
           target: manifest.fetch('target'),
           model: manifest.fetch('model', 'plain'),
           host_features: manifest.fetch('host_features', Capability.current.host_features),
-          case_ids: manifest['cases']
+          case_ids: manifest['case_ids'],
+          load_full_suite: manifest.fetch('load_full_suite', false)
         )
       end
 
       def initialize(source_root:, suite_path:, suite_commit:, suite: DEFAULT_SUITE, target: '2.0.0',
-                     fixture_root: nil, model: 'plain', host_features: Capability.current.host_features, case_ids: nil)
+                     fixture_root: nil, model: 'plain', host_features: Capability.current.host_features,
+                     case_ids: nil, load_full_suite: false)
         @source_root = File.expand_path(source_root)
         @suite_path = relative_path(suite_path)
         @fixture_root = fixture_root && relative_path(fixture_root)
@@ -40,6 +41,7 @@ module FHIRPath
         @model = model.to_s.freeze
         @host_features = Array(host_features).map(&:to_s).freeze
         @case_ids = case_ids&.map(&:to_s)&.freeze
+        @load_full_suite = load_full_suite
         validate_options
       end
 
@@ -61,11 +63,12 @@ module FHIRPath
       def import_xml
         document = REXML::Document.new(File.read(absolute_path(@suite_path)))
         tests = document.root.elements.to_a('group/test')
-        select_tests(tests).map { |test| record_for(test) }
+        tests_to_process = @load_full_suite ? tests : select_tests(tests)
+        tests_to_process.map { |test| record_for(test) }
       end
 
       def import_yaml
-        document = YAML.safe_load_file(absolute_path(@suite_path), permitted_classes: [], aliases: false)
+        document = YAML.safe_load(File.read(absolute_path(@suite_path)), permitted_classes: [], aliases: false) # rubocop:disable Style/YAMLFileRead
         subject = deep_copy(document['subject']) if document.is_a?(Hash)
         ordinal = 0
         records = []
@@ -98,7 +101,7 @@ module FHIRPath
       end
 
       def select_tests(tests)
-        return tests unless @case_ids
+        return tests unless @case_ids && !@load_full_suite
 
         by_id = tests.to_h { |test| [test.attributes.fetch('name').to_s, test] }
         @case_ids.map do |case_id|
