@@ -40,7 +40,9 @@ These stable identifiers describe the behavior included in the current package:
 - `boolean-logic` — empty-aware Boolean operators;
 - `union-membership-and-type-operators` — union, `in`, `contains`, `is`, and `as`;
 - `collection-functions` — `where`, `select`, `first`, `exists`, `count`, `empty`, `not`, `all`, Boolean aggregates, and `ofType`;
++ `collection-functions` — `where`, `select`, `first`, `exists`, `count`, `empty`, `not`, `all`, Boolean aggregates, `ofType`, and `aggregate`;
 - `subsetting-functions` — `tail`, `take`, `skip`, `last`;
++ `subsetting-functions` — `tail`, `take`, `skip`, `last`;
 - `temporal-types` — `Date`, `DateTime`, `Time` literals (`@YYYY-MM-DD`, `@THH:MM:SS`, `@YYYY-MM-DDTHH:MM:SS±HH:MM`), `today()`, `now()`, `time()`, component extractors (`year`, `month`, `day`, `hour`, `minute`, `second`, `millisecond`), `timezone()`, `timezoneOffset()`, and same-type comparison;
 - `fhir-primitive-extensions` — `._<name>` accessor returning the underlying `{value, extension}` container or empty per FHIRPath 2.0.0;
 - `focus-variables` — `$this`, `$index`, and `$total`;

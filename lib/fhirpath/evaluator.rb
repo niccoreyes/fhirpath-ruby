@@ -54,7 +54,11 @@ module FHIRPath
               when 'index'
                 context.index.nil? ? Collection.empty : Collection.new([context.index])
               when 'total'
-                context.total.nil? ? Collection.empty : Collection.new([context.total])
+                if context.variables.key?('total')
+                  context.variables['total']
+                else
+                  context.total.nil? ? Collection.empty : Collection.new([context.total])
+                end
               else
                 unless context.variables.key?(node.name)
                   raise EvaluationError.new("unknown variable: $#{node.name}",
@@ -225,6 +229,10 @@ module FHIRPath
         temporal_component(receiver, node, context, node.name)
       when 'timezone', 'timezoneOffset'
         temporal_timezone(receiver, node, context, node.name)
+      when 'aggregate'
+        aggregate(receiver, node, context)
+      when 'iif'
+        iif(receiver, node, context)
       else
         invoke_registered(node, receiver, context, spec)
       end
@@ -301,6 +309,51 @@ module FHIRPath
 
       total = receiver.items.reduce { |sum, item| decimal(sum) + decimal(item) }
       Collection.new([decimal(total) / receiver.count])
+    end
+
+    def iif(_receiver, node, context)
+      condition_expr = node.arguments[0]
+      true_expr = node.arguments[1]
+      false_expr = node.arguments[2]
+
+      cond_result = evaluate(condition_expr, context)
+      is_true = boolean_value(cond_result, condition_expr.span) == true
+
+      if is_true
+        true_expr ? evaluate(true_expr, context) : Collection.empty
+      else
+        false_expr ? evaluate(false_expr, context) : Collection.empty
+      end
+    end
+
+    def aggregate(receiver, node, context)
+      aggregator_expr = node.arguments.first
+      init_expr = node.arguments[1]
+
+      total = if init_expr
+                evaluate(init_expr, context)
+              else
+                Collection.empty
+              end
+
+      return total if receiver.empty?
+
+      receiver.items.each_with_index do |item, index|
+        item_col = Collection.new([item])
+        iter_context = context.derive(
+          focus: item_col,
+          index: index,
+          total: receiver.count,
+          variables: context.variables.merge(
+            'this' => item_col,
+            'total' => total
+          )
+        )
+
+        total = evaluate(aggregator_expr, iter_context)
+      end
+
+      total
     end
 
     def extremum(receiver, mode, node)

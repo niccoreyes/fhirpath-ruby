@@ -47,8 +47,13 @@ module FHIRPath
     def evaluate(resource, expression, variables: {}, model: nil,
                  capability: Capability.current, functions: FunctionRegistry.standard,
                  options: {}, host: nil)
-      compile(expression, model: model, capability: capability, functions: functions)
-        .evaluate(resource, variables: variables, host: host, options: options)
+      compiled = if expression.is_a?(CompiledExpression)
+                   expression
+                 else
+                   compile(expression, model: model, capability: capability,
+                                       functions: functions)
+                 end
+      compiled.evaluate(resource, variables: variables, host: host, options: options)
     end
 
     def evaluate_first(resource, expression, variables: {}, model: nil,

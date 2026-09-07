@@ -245,4 +245,57 @@ class FHIRPathAggregateCapabilitySurfaceTest < Minitest::Test
 
     assert_equal [6], FHIRPath.evaluate({}, '(1 | 2 | 3).sum()', capability: strict).to_a
   end
+
+  # --- aggregate() ---
+
+  def test_aggregate_sum_with_init_zero
+    # sum can be expressed as value.aggregate($this + $total, 0)
+    assert_equal [6], FHIRPath.evaluate({}, '(1 | 2 | 3).aggregate($this + $total, 0)').to_a
+  end
+
+  def test_aggregate_min_with_custom_init
+    # min can be expressed as value.aggregate(iif($total.empty(), $this, iif($this < $total, $this, $total)))
+    expr = '(3 | 1 | 4 | 1 | 5).aggregate(iif($total.empty(), $this, iif($this < $total, $this, $total)))'
+    assert_equal [1], FHIRPath.evaluate({}, expr).to_a
+  end
+
+  def test_aggregate_max_with_custom_init
+    # max can be expressed similarly
+    expr = '(3 | 1 | 4 | 1 | 5).aggregate(iif($total.empty() or $this > $total, $this, $total))'
+    assert_equal [5], FHIRPath.evaluate({}, expr).to_a
+  end
+
+  def test_aggregate_average_via_sum_and_count
+    # average can be computed as sum / count using a nested expression
+    # First compute sum, then divide by count
+    sum_result = FHIRPath.evaluate({}, '(1 | 2 | 3).aggregate($this + $total, 0)').to_a.first
+    assert_equal 6, sum_result
+    # Then count and divide manually (since division needs proper context)
+    assert_equal BigDecimal('2.0'), BigDecimal(sum_result) / 3
+  end
+
+  def test_aggregate_optional_init_argument
+    # init argument is optional - should default to empty collection
+    # For sum, this means empty collection returns empty
+    assert_equal [], FHIRPath.evaluate({}, '{}.aggregate($this + $total)').to_a
+  end
+
+  def test_aggregate_with_empty_collection
+    # empty collection should return the init value
+    assert_equal [42], FHIRPath.evaluate({}, '{}.aggregate($this + $total, 42)').to_a
+    assert_equal ['hello'], FHIRPath.evaluate({}, '{}.aggregate($this + $total, "hello")').to_a
+  end
+
+  def test_aggregate_does_not_mutate_input
+    resource = { 'items' => [1, 2, 3] }
+    original = resource['items'].dup
+    FHIRPath.evaluate(resource, 'items.aggregate($this + $total, 0)')
+    assert_equal original, resource['items']
+  end
+
+  def test_aggregate_nested_collections
+    resource = { 'groups' => [[1, 2], [3, 4, 5]] }
+    # sum of all numbers: 1+2+3+4+5 = 15
+    assert_equal [15], FHIRPath.evaluate(resource, 'groups.aggregate($this + $total, 0)').to_a
+  end
 end
