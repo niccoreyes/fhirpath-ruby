@@ -363,6 +363,8 @@ module FHIRPath
   end
 
   class Parser
+    OPERATOR_FUNCTIONS = %i[in contains].freeze
+
     PRECEDENCE = {
       implies: 1,
       or: 2, xor: 2,
@@ -497,14 +499,7 @@ module FHIRPath
       loop do
         case current.type
         when :dot
-          advance
-          name = expect(:identifier)
-          node = if current.type == :left_paren
-                   parse_function(node, name)
-                 else
-                   AST::MemberInvocation.new(receiver: node, name: name.value,
-                                             span: span_between(node.span, name.span))
-                 end
+          node = parse_member_access(node)
         when :left_bracket
           advance
           index = parse_expression(0)
@@ -525,8 +520,34 @@ module FHIRPath
       node
     end
 
+    def parse_member_access(node)
+      advance
+      if current.type == :identifier
+        name = expect(:identifier)
+        # Regular identifier: can be either a member access or function call
+        if current.type == :left_paren
+          parse_function(node, name)
+        else
+          AST::MemberInvocation.new(receiver: node, name: name.value,
+                                    span: span_between(node.span, name.span))
+        end
+      elsif current.type == :operator && OPERATOR_FUNCTIONS.include?(current.value)
+        # Keyword operators (in, contains): ONLY allowed as function calls with ()
+        name = current
+        advance
+        if current.type == :left_paren
+          parse_function(node, name)
+        else
+          fail_parse('keyword operator requires function call syntax', :unexpected_token, current.span)
+        end
+      else
+        fail_parse('expected a function name', :unexpected_token, current.span)
+      end
+    end
+
     def parse_function(receiver, name_token)
       name = name_token.is_a?(AST::Identifier) ? name_token.name : name_token.value
+      name = name.to_s
       start = receiver ? receiver.span : name_token.span
       expect(:left_paren)
       arguments = []

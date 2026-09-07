@@ -219,6 +219,12 @@ module FHIRPath
         boolean_aggregate(receiver, node.name, node)
       when 'ofType'
         of_type(receiver, node, context)
+      when 'in'
+        # `in` as a function: receiver.in(collection) -> receiver in collection
+        membership_value(receiver, node.arguments.first, context)
+      when 'contains'
+        # `contains` as a function: receiver.contains(value) -> receiver contains value
+        membership_collection(receiver, node.arguments.first, context)
       when 'today'
         temporal_now(receiver, node, context, :date)
       when 'now'
@@ -707,6 +713,30 @@ module FHIRPath
       return Collection.new([false]) if left.empty?
 
       Collection.new([left.items.any? { |candidate| equal?(candidate, value) }])
+    end
+
+    # `in` as a function: receiver.in(collection) checks if the singleton receiver
+    # is a member of the argument collection.
+    def membership_value(receiver, argument_node, context, receiver_span = nil)
+      argument = evaluate(argument_node, context)
+      return Collection.empty if receiver.empty?
+
+      value = require_singleton(receiver, receiver_span || argument_node.span)
+      return Collection.new([false]) if argument.empty?
+
+      Collection.new([argument.items.any? { |candidate| equal?(value, candidate) }])
+    end
+
+    # `contains` as a function: receiver.contains(value) checks if the argument
+    # singleton is a member of the receiver collection.
+    def membership_collection(receiver, argument_node, context)
+      argument = evaluate(argument_node, context)
+      return Collection.empty if argument.empty?
+
+      value = require_singleton(argument, argument_node.span)
+      return Collection.new([false]) if receiver.empty?
+
+      Collection.new([receiver.items.any? { |candidate| equal?(candidate, value) }])
     end
 
     def of_type(receiver, node, _context)

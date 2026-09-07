@@ -79,11 +79,62 @@ The release must continue to state these limitations:
 
 - complete official HL7 shared-suite conformance and its importer;
 - complete UCUM conformance, units outside the explicitly supported subset, derived-unit composition such as `60 'km' / 1 'h'`, `Quantity × Quantity`, calendar-duration arithmetic, and temporal arithmetic with Quantity;
+- `subsetOf`, `startsWith`, `endsWith`, `matches`, `matchesFull`, `convertsToInteger`, `lowBoundary`, `highBoundary`, `comparable`, `precision`, and `hasValue` (including the broader temporal/UCUM behavior those official cases exercise);
 - advanced conversion, math, string, regular-expression, and navigation functions beyond the explicitly listed implementations;
 - complex literals and additional standard value types;
 - standard environment variables beyond explicitly supplied external constants;
 - FHIRPath `3.0` STU3 features beyond the declared `stu3-aggregate-functions` subset; and
 - network I/O and global evaluator state in the pure evaluation boundary.
+
+## Official shared-suite classification snapshot
+
+The full checked-in R4 suite was imported and executed on 2026-09-07 from
+FHIR/fhir-test-cases commit `1.7.69` with the command sequence:
+
+```sh
+ruby script/import_vectors.rb conformance conformance/official-r4-core.json > /tmp/fhirpath-official-full.jsonl
+ruby script/run_vectors.rb /tmp/fhirpath-official-full.jsonl
+```
+
+The run produced 935 records; the full machine-readable report is checked in at
+`conformance/official-suite-report.json`. The runner's mechanical counts were:
+
+| Raw runner classification | Count | Manual disposition |
+|---|---:|---|
+| `pass` | 4 | passing evidence |
+| `defect` | 83 | 0 genuine parser defects (#66 resolved); 81 known unsupported/deferred behaviors; 1 expected-execution-failure (#65) |
+| `unsupported` | 0 | the current runner reports missing standard functions as raw defects when no expected error is declared |
+| `host-dependent` | 0 | no host-service cases reached evaluation |
+| `not-run` | 848 | fixture/import limitation: no verified matching JSON fixture for the source XML |
+
+The 81 known unsupported/deferred cases are grouped as follows: `subsetOf`
+(1), `startsWith` (1), `endsWith` (1), regular-expression `matches` and
+`matchesFull` (16), `convertsToInteger` (1), `lowBoundary` (28), `highBoundary`
+(24), `comparable` and the broader UCUM units it exercises (3), `precision`
+(5), and `hasValue` (1). These remain outside the published capability set and
+are covered by the limitations below; they are not evidence of regressions in
+supported behavior.
+
+One case is a genuine Ruby implementation defect and has a separate bug report:
+failure to parse the valid keyword-named function call
+`Appointment.identifier.contains('rand')` ([#66](https://github.com/niccoreyes/fhirpath-ruby/issues/66)), which is a lexer/parser
+collision between the `contains` binary operator and the `contains()` function
+name, independent of whether the string-function family is enabled. This was
+resolved by teaching the parser to treat keyword operators (`contains`, `in`)
+as member-invoked function names after a `.`.
+
+The `1 > 2 is Boolean` case ([#65](https://github.com/niccoreyes/fhirpath-ruby/issues/65)) is not a defect: the
+official suite marks `testPrecedence3` `invalid="execution"`, so the expression
+is expected to fail at evaluation time. With `is`/`as` binding tighter than the
+relational comparison, `1 > 2 is Boolean` parses as `1 > (2 is Boolean)`, which
+correctly raises a `TypeError` — matching the intended suite behavior.
+
+The 848 `not-run` records are not silently treated as passes. They identify
+where the official XML suite currently lacks a verified same-resource JSON
+fixture in the checked-in fixture set; improving fixture coverage is separate
+from evaluator conformance. Until those records are resolved or explicitly
+accepted as fixture limitations, the official suite cannot be used as a green
+release gate.
 
 ## Host-dependent behavior
 
