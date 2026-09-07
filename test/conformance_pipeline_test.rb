@@ -272,4 +272,26 @@ class FHIRPathConformancePipelineTest < Minitest::Test
 
     refute_match(/(?:system|exec|spawn|Open3).*python/i, runtime)
   end
+
+  def test_load_full_suite_imports_all_xml_cases_without_case_ids_filter
+    Dir.mktmpdir('fhirpath-import') do |root|
+      FileUtils.mkdir_p(File.join(root, 'r4', 'fhirpath'))
+      File.write(File.join(root, 'r4', 'fhirpath', 'tests.xml'), <<~XML)
+        <tests><group name="core">
+          <test name="case-one"><expression>1 + 1</expression><output type="integer">2</output></test>
+          <test name="case-two"><expression>2 + 2</expression><output type="integer">4</output></test>
+          <test name="case-three"><expression>3 + 3</expression><output type="integer">6</output></test>
+        </group></tests>
+      XML
+
+      records = FHIRPath::Conformance::Importer.new(
+        source_root: root, suite_path: 'r4/fhirpath/tests.xml', suite_commit: 'abc',
+        load_full_suite: true
+      ).import
+
+      assert_equal 3, records.length
+      assert_equal(%w[case-one case-two case-three], records.map { |r| r['id'] })
+      assert_equal([2, 4, 6], records.map { |r| r['expected'].first })
+    end
+  end
 end
