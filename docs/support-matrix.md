@@ -102,7 +102,7 @@ The run produced 935 records; the full machine-readable report is checked in at
 | Raw runner classification | Count | Manual disposition |
 |---|---:|---|
 | `pass` | 4 | passing evidence |
-| `defect` | 83 | 1 genuine parser defect (#66, now resolved); 81 known unsupported/deferred behaviors; 1 expected-execution-failure (#65) |
+| `defect` | 83 | 0 genuine parser defects (#66 resolved); 81 known unsupported/deferred behaviors; 1 expected-execution-failure (#65) |
 | `unsupported` | 0 | the current runner reports missing standard functions as raw defects when no expected error is declared |
 | `host-dependent` | 0 | no host-service cases reached evaluation |
 | `not-run` | 848 | fixture/import limitation: no verified matching JSON fixture for the source XML |
