@@ -524,17 +524,24 @@ module FHIRPath
       advance
       if current.type == :identifier
         name = expect(:identifier)
+        # Regular identifier: can be either a member access or function call
+        if current.type == :left_paren
+          parse_function(node, name)
+        else
+          AST::MemberInvocation.new(receiver: node, name: name.value,
+                                    span: span_between(node.span, name.span))
+        end
       elsif current.type == :operator && OPERATOR_FUNCTIONS.include?(current.value)
+        # Keyword operators (in, contains): ONLY allowed as function calls with ()
         name = current
         advance
+        if current.type == :left_paren
+          parse_function(node, name)
+        else
+          fail_parse('keyword operator requires function call syntax', :unexpected_token, current.span)
+        end
       else
         fail_parse('expected a function name', :unexpected_token, current.span)
-      end
-      if current.type == :left_paren
-        parse_function(node, name)
-      else
-        AST::MemberInvocation.new(receiver: node, name: name.value,
-                                  span: span_between(node.span, name.span))
       end
     end
 

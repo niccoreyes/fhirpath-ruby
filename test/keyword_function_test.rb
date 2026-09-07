@@ -24,6 +24,16 @@ class FHIRPathKeywordFunctionTest < Minitest::Test
     assert_equal :invalid_arity, error.code
   end
 
+  def test_keyword_operator_requires_function_call
+    resource = { 'Patient' => { 'name' => %w[John Doe] } }
+
+    # Keyword operators cannot be used as member access without parens
+    error = assert_raises(FHIRPath::ParseError) do
+      FHIRPath.parse('Patient.in')
+    end
+    assert_equal :unexpected_token, error.code
+  end
+
   def test_keyword_function_matches_membership_semantics
     resource = { 'Patient' => { 'name' => %w[John Doe] } }
 
