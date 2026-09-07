@@ -221,7 +221,7 @@ module FHIRPath
         of_type(receiver, node, context)
       when 'in'
         # `in` as a function: receiver.in(collection) -> receiver in collection
-        membership_value(receiver, node.arguments.first, context, node.receiver&.span)
+        membership_value(receiver, node.arguments.first, context)
       when 'contains'
         # `contains` as a function: receiver.contains(value) -> receiver contains value
         membership_collection(receiver, node.arguments.first, context)
