@@ -5,7 +5,7 @@ All notable changes to this project are documented here. The project is pre-1.0;
 ## [Unreleased]
 
 ## [0.2.0.pre7] - 2026-09-08
-- Change the default FHIR model from `PlainModel` to `FHIR::R4::ModelProvider`: omitted `model:` now uses R4, enabling choice navigation (`Observation.value`) and logical-type `is`/`as` metadata by default. Pass `model: nil` to opt out and use `PlainModel` for model-independent navigation. Backward-compatible: explicit `model: nil` retains the previous behavior.
+- Change the default FHIR model from `PlainModel` to `FHIR::R4::ModelProvider`: omitted `model:` now uses R4, enabling choice navigation (`Observation.value`) and logical-type `is`/`as` metadata by default. Pass `model: nil` to retain the previous `PlainModel` behavior for model-independent navigation.
 
 ## [0.2.0.pre6] - 2026-09-08
 - Add the `aggregate()` function with `$this`, `$total`, and `$index` variables for general-purpose collection aggregation (issue #43). The function signature is `aggregate(expression, initial)` where the expression is evaluated per item with the accumulator as `$total`. Empty collections return the initial value (or empty if omitted). Closes issue #43.
