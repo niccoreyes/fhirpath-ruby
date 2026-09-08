@@ -4,7 +4,7 @@ require 'minitest/autorun'
 
 # Test the docs version checker by verifying the actual repository state
 class DocsVersionCheckerTest < Minitest::Test
-  LIB_VERSION = '0.2.0.pre5'
+  LIB_VERSION = '0.2.0.pre7'
 
   def test_library_version_is_correct
     require_relative '../lib/fhirpath/version'
