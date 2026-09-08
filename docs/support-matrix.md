@@ -1,6 +1,6 @@
 # Release support matrix
 
-Status: `pre-release` (`0.2.0.pre3`)
+Status: `pre-release` (`0.2.0.pre7`)
 
 This is the release-facing support matrix. It is deliberately narrower than
 "FHIRPath-compatible": every supported claim must have executable evidence, and
