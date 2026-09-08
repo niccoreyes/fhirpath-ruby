@@ -103,6 +103,6 @@ All notable changes to this project are documented here. The project is pre-1.0;
 - Added a small JSONL differential-vector runner and six checked-in compatibility vectors.
 - Documented the prototype scope, architecture, limitations, and staged conformance plan.
 
-[Unreleased]: https://github.com/niccoreyes/fhirpath-ruby/compare/v0.2.0.pre5...HEAD
+[Unreleased]: https://github.com/niccoreyes/fhirpath-ruby/compare/v0.2.0.pre7...HEAD
 [0.2.0.pre1]: https://github.com/niccoreyes/fhirpath-ruby/releases/tag/v0.2.0.pre1
 [0.1.0.pre1]: https://github.com/niccoreyes/fhirpath-ruby/releases/tag/v0.1.0.pre1
