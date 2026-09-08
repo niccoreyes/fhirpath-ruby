@@ -76,10 +76,10 @@ class FHIRPathR4ModelTest < Minitest::Test
                                                                   capability: capability).to_a
   end
 
-  def test_plain_model_remains_the_default_and_does_not_resolve_choice_keys
+  def test_plain_model_can_be_explicitly_selected
     resource = { 'resourceType' => 'Observation', 'valueString' => 'blood pressure' }
 
-    assert_empty FHIRPath.evaluate(resource, 'Observation.value')
+    assert_empty FHIRPath.evaluate(resource, 'Observation.value', model: nil)
   end
 
   def test_model_selection_honors_a_capability_without_r4

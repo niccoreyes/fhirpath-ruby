@@ -37,14 +37,14 @@ module FHIRPath
       ['R4'].freeze
     end
 
-    def compile(expression, model: nil, capability: Capability.current,
+    def compile(expression, model: :r4, capability: Capability.current,
                 functions: FunctionRegistry.standard)
       parsed = expression.is_a?(ParsedExpression) ? expression : parse(expression, capability: capability)
       CompiledExpression.new(parsed: parsed, model: resolve_model(model, capability),
                              functions: functions, capability: capability)
     end
 
-    def evaluate(resource, expression, variables: {}, model: nil,
+    def evaluate(resource, expression, variables: {}, model: :r4,
                  capability: Capability.current, functions: FunctionRegistry.standard,
                  options: {}, host: nil)
       compiled = if expression.is_a?(CompiledExpression)
@@ -56,7 +56,7 @@ module FHIRPath
       compiled.evaluate(resource, variables: variables, host: host, options: options)
     end
 
-    def evaluate_first(resource, expression, variables: {}, model: nil,
+    def evaluate_first(resource, expression, variables: {}, model: :r4,
                        capability: Capability.current, functions: FunctionRegistry.standard,
                        options: {}, host: nil)
       evaluate(resource, expression, variables: variables, model: model,

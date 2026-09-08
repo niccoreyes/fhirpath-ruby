@@ -17,7 +17,7 @@ The detailed behavior table is maintained in [`feature-matrix.md`](feature-matri
 | License | MIT |
 | Supported Ruby CI matrix | Ruby `3.2`, Ruby `3.3` |
 | Model support | Model-independent plain Ruby Hash/Array/object navigation plus dependency-free FHIR R4 JSON adapter |
-| FHIR model releases | R4 (`4.0.1`), selectable with `model: :r4` |
+| FHIR model releases | R4 (`4.0.1`) is the default; pass `model: nil` to select PlainModel for model-independent navigation |
 | Trial-use features | One declared exception only: the FHIRPath 3.0 STU3 aggregate functions `sum`/`avg`/`max`/`min`, shipped by default in the standard registry (see [Declared STU3-subset exception](#declared-stu3-subset-exception)) |
 
 The packaged gem repeats the target and capability declaration in gem metadata:

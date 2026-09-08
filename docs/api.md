@@ -31,7 +31,7 @@ Passing a `String` to `parse` never freezes that string: `parse` retains an inte
 ```ruby
 program = FHIRPath.compile(
   expression,
-  model: nil,
+  model: :r4,
   capability: FHIRPath::Capability.current,
   functions: FHIRPath::FunctionRegistry.standard
 )
@@ -41,10 +41,9 @@ Returns a frozen `FHIRPath::CompiledExpression`. Parsing happens once; each `eva
 
 `compile` likewise never freezes the caller's source `String`: it snapshots the expression internally. Mutating the string you passed after calling `compile` does not change the compiled program, and passing an already-frozen string works normally.
 
-`model` defaults to `FHIRPath::PlainModel`. Pass `model: :r4` (or `model: 'R4'`)
-to select the dependency-free `FHIRPath::FHIR::R4::ModelProvider`. Passing a
-provider object remains supported for custom model adapters. `functions` is an
-immutable function registry snapshot.
+`model` defaults to `FHIRPath::FHIR::R4::ModelProvider`. Pass `model: nil`
+to opt out and use `FHIRPath::PlainModel` for model-independent navigation,
+or pass a custom provider object.
 
 ### `FHIRPath.evaluate`
 
@@ -53,7 +52,7 @@ result = FHIRPath.evaluate(
   resource,
   expression,
   variables: {},
-  model: nil,
+  model: :r4,
   capability: FHIRPath::Capability.current,
   functions: FHIRPath::FunctionRegistry.standard,
   options: {},
@@ -70,7 +69,7 @@ The `resource` argument may be an already-parsed Hash/Array (used directly, neve
 | Input type | Behavior |
 |------------|----------|
 | `Hash` / `Array` | Used directly (never re-serialized) |
-| String starting with `{` or `[` (after whitespace) | Parsed as JSON document via `JSON.parse` once per call; malformed JSON raises `JSONInputError` (code `invalid_json`) |
+| String starting with `{` or `[` (after whitespace) | Parsed as JSON document via `JSON.parse` once per call; malformed JSON raises `JSONInputError` code `invalid_json` |
 | Any other String | Treated as a singleton FHIRPath string value (never parsed) |
 
 ```ruby
@@ -122,6 +121,26 @@ FHIRPath.evaluate({}, "%enabled", variables: { enabled: false }).to_a
 
 `host:` is reserved for explicit host services. Pure evaluation does not perform network I/O.
 
+### Model selection
+
+By default, `FHIRPath.evaluate` uses the R4 model adapter, which enables
+choice navigation (e.g. `Observation.value` resolves over `valueString`,
+`valueQuantity`, etc.) and logical-type `is`/`as` metadata. Pass
+`model: nil` to use `PlainModel` for plain Hash/Array navigation without
+FHIR choice resolution:
+
+```ruby
+observation = { 'resourceType' => 'Observation', 'valueString' => 'high' }
+
+# R4 model (default) — choice navigation
+FHIRPath.evaluate(observation, 'Observation.value').to_a
+# => ['high']
+
+# Plain model — direct property lookup only
+FHIRPath.evaluate(observation, 'Observation.value', model: nil).to_a
+# => []
+```
+
 ### Host constants
 
 External constants can be supplied by an immutable `HostServices` configuration:
@@ -169,7 +188,7 @@ The project defines `FHIRPath::TypeError` inside its namespace; callers should q
 
 For the implemented string operators, `+` concatenates two singleton strings but propagates an empty operand, while `&` treats each empty operand as the empty string. Thus `'a' + {}` is empty, whereas `'a' & {}` returns `['a']`. String escapes follow the FHIRPath `\\uXXXX` form; valid UTF-16 surrogate pairs are combined, and unknown forms such as `\\U0001F600` are rejected with `ParseError`.
 
-Most current public results are ordinary Ruby values. `FHIRPath::Value::*` and `FHIRPath::TypeInfo` provide extension boundaries for semantic values and model metadata. The dependency-free R4 adapter supports JSON choice navigation for `Observation.value[x]`; a resolved choice value carries its FHIR logical type (for example `Quantity` for `valueQuantity`), so `is`/`as` type operators can test it. `Collection` may carry positional model-type metadata alongside items without changing item values; the metadata is attached when a collection is produced directly by model navigation, and operators that rebuild collections (such as `union`) do not yet propagate it. Date/time, quantity, broader type-aware model behavior (resource hierarchies, `ofType()`), and other FHIR releases remain deferred.
+Most current public results are ordinary Ruby values. `FHIRPath::Value::*` and `FHIRPath::TypeInfo` provide extension boundaries for semantic values and model metadata. By default, the engine uses the dependency-free R4 adapter, which supports JSON choice navigation for `Observation.value[x]`; a resolved choice value carries its FHIR logical type (for example `Quantity` for `valueQuantity`), so `is`/`as` type operators can test it. Pass `model: nil` to use `PlainModel` for model-independent navigation without choice metadata. `Collection` may carry positional model-type metadata alongside items without changing item values; the metadata is attached when a collection is produced directly by model navigation, and operators that rebuild collections (such as `union`) do not yet propagate it. Date/time, quantity, broader type-aware model behavior (resource hierarchies, `ofType()`), and other FHIR releases remain deferred.
 
 ## Custom functions
 
