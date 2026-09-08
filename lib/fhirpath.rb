@@ -68,8 +68,8 @@ module FHIRPath
 
     def resolve_model(model, capability)
       return PlainModel.new if model.nil?
-      return model unless model.is_a?(Symbol) || model.is_a?(String)
-
+      return model if model.is_a?(Symbol) || model.is_a?(String)
+      
       provider = ModelRegistry.fetch(model)
       unless capability.supports_model?(provider.class::RELEASE)
         raise UnsupportedFeatureError.new(
