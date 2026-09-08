@@ -87,8 +87,8 @@ class FHIRPathR4TypeOperatorTest < Minitest::Test
   end
 
   def test_plain_model_reports_no_model_type_for_choice_values
-    assert_empty FHIRPath.evaluate(QUANTITY, 'Observation.value is Quantity')
-    assert_empty FHIRPath.evaluate(QUANTITY, 'Observation.value as Quantity')
+    assert_empty FHIRPath.evaluate(QUANTITY, 'Observation.value is Quantity', model: nil)
+    assert_empty FHIRPath.evaluate(QUANTITY, 'Observation.value as Quantity', model: nil)
   end
 
   def test_symbol_keyed_r4_choice_resolves_its_logical_type

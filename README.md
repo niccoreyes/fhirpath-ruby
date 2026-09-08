@@ -58,9 +58,9 @@ observation = {
 }
 
 # Navigate FHIR JSON with R4 model adapter
-FHIRPath.evaluate(observation, "valueQuantity.value > 5.0", model: :r4)  # => [true]
-FHIRPath.evaluate(observation, "valueQuantity.unit", model: :r4)         # => ["mmol/L"]
-FHIRPath.evaluate(observation, "code.coding.system", model: :r4)         # => ["http://loinc.org"]
+FHIRPath.evaluate(observation, "valueQuantity.value > 5.0")  # => [true]
+FHIRPath.evaluate(observation, "valueQuantity.unit")         # => ["mmol/L"]
+FHIRPath.evaluate(observation, "code.coding.system")         # => ["http://loinc.org"]
 
 # Raw JSON string input — evaluate FHIR resources directly from HTTP responses
 patient_json = <<~JSON
@@ -74,11 +74,11 @@ patient_json = <<~JSON
   }
 JSON
 
-FHIRPath.evaluate(patient_json, "Patient.name.where(use='official').family", model: :r4)
+FHIRPath.evaluate(patient_json, "Patient.name.where(use='official').family")
 # => ["Chalmers"]
-FHIRPath.evaluate(patient_json, "Patient.birthDate", model: :r4)
+FHIRPath.evaluate(patient_json, "Patient.birthDate")
 # => ["1974-12-25"]
-FHIRPath.evaluate(patient_json, "Patient.address.city", model: :r4)
+FHIRPath.evaluate(patient_json, "Patient.address.city")
 # => ["PleasantVille"]
 
 # Type filtering with ofType()
@@ -99,9 +99,9 @@ program.call(patient_json).to_a  # also accepts raw JSON strings
 # => ["Chalmers"]
 ```
 
-FHIR R4 JSON can be selected explicitly through the versioned provider. The
-adapter exposes the logical `Observation.value` property over R4 choice keys
-such as `valueString` and `valueQuantity`:
+# FHIR R4 JSON can be selected explicitly through the versioned provider. The
+# adapter exposes the logical `Observation.value` property over R4 choice keys
+# such as `valueString` and `valueQuantity`:
 
 ```ruby
 observation = {
@@ -109,21 +109,18 @@ observation = {
   "valueQuantity" => { "value" => 120, "unit" => "mmHg" }
 }
 
-FHIRPath.evaluate(observation, "Observation.value.value", model: :r4).to_a
+FHIRPath.evaluate(observation, "Observation.value.value").to_a
 # => [120]
 
 # The choice variant carries its FHIR logical type, so `is`/`as` resolve
 # against model metadata for the resolved value:
-FHIRPath.evaluate(observation, "Observation.value is Quantity", model: :r4).to_a
+FHIRPath.evaluate(observation, "Observation.value is Quantity").to_a
 # => [true]
-FHIRPath.evaluate(observation, "Observation.value as Quantity", model: :r4).to_a
+FHIRPath.evaluate(observation, "Observation.value as Quantity").to_a
 # => [{ "value" => 120, "unit" => "mmHg" }]
 ```
 
-The R4 adapter is dependency-free and does not perform Ruby method dispatch;
-plain-model navigation remains the default. Its supported release and model
-selection are visible through `FHIRPath::Capability.current` and
-`FHIRPath.available_models`.
+- The R4 adapter is dependency-free and does not perform Ruby method dispatch; it is now the default model. Callers can opt out with `model: nil` to use PlainModel for model-independent navigation. Its supported release and model selection are visible through `FHIRPath::Capability.current` and `FHIRPath.available_models`.
 
 ## Public API
 
@@ -131,10 +128,10 @@ The API is intentionally Ruby-native rather than source-compatible with `fhirpat
 
 ```ruby
 FHIRPath.parse(expression, capability: FHIRPath::Capability.current)
-FHIRPath.compile(expression, model: nil, capability: ..., functions: ...)
-FHIRPath.evaluate(resource, expression, variables: {}, model: nil,
+FHIRPath.compile(expression, model: :r4, capability: ..., functions: ...)
+FHIRPath.evaluate(resource, expression, variables: {}, model: :r4,
                  capability: ..., functions: ..., options: {}, host: nil)
-FHIRPath.evaluate_first(resource, expression, variables: {}, model: nil,
+FHIRPath.evaluate_first(resource, expression, variables: {}, model: :r4,
                         capability: ..., functions: ..., options: {}, host: nil)
 ```
 
@@ -181,11 +178,11 @@ The current tested slice includes:
 - primitive string, Boolean, integer, decimal, and scientific-notation literals;
 - empty and comma-separated collections;
 - plain Ruby Hash/Array and simple object navigation, including resource-type roots such as `Patient`;
-- dependency-free FHIR R4 model navigation selected with `model: :r4`, including the logical `Observation.value` choice property over `valueQuantity` and `valueString`;
+- dependency-free FHIR R4 model navigation selected with `model: :r4`, including the logical `Observation.value` choice property over `valueQuantity` and `valueString`; omitted model now defaults to R4
 - unary and numeric arithmetic (`+`, `-`, `*`, `/`, `div`, and `mod`), plus string `+` when both operands are strings; a zero divisor for `/`, `div`, `mod` returns an empty collection, while `+`, `-`, `*` treat zero as a normal operand;
 - bounded FHIRPath `Quantity` values with finite Decimal storage, case-sensitive conversion for the documented dependency-free unit subset, same-dimension comparison/addition/subtraction, scalar multiplication/division, Quantity ratios, and `ofType(Quantity)`/`is Quantity`/`as Quantity`; unsupported units and complete UCUM semantics remain outside this release slice; the parser also accepts double-quoted strings as an extension, uses `^` for supported unit exponents, preserves Quantity `system`/`code` metadata without using it for unit equality, and defers derived-unit composition such as Quantity×Quantity or `km/h`;
 - numeric/string relational comparison, collection-aware equality, equivalence, and empty-aware Boolean operators; a finite JSON `Float` is treated as a `Decimal`;
-- union, string concatenation (`+` and `&`), membership (`in`/`contains`), and type operators (`is`/`as`); union removes duplicate values from both operands using `=` equality in first-seen order, and `in`/`contains` require a singleton operand; `is`/`as` test built-in primitive types directly and, with `model: :r4`, also resolve the FHIR logical type of a navigated choice value (for example `Observation.value is Quantity` over `valueQuantity`), returning the value unchanged on a successful `as` and the empty collection otherwise; and
+- union, string concatenation (`+` and `&`), membership (`in`/`contains`), and type operators (`is`/`as`); union removes duplicate values from both operands using `=` equality in first-seen order, and `in`/`contains` require a singleton operand; `is`/`as` test built-in primitive types directly and, with the default R4 model, also resolve the FHIR logical type of a navigated choice value (for example `Observation.value is Quantity` over `valueQuantity`), returning the value unchanged on a successful `as` and the empty collection otherwise; and
 - indexers with non-negative integer indexes;
 - `where`, `select`, `first`, `last`, `tail`, `take`, `skip`, `exists`, `count`, `empty`, `not`, `all`, and Boolean aggregate functions;
 - the FHIRPath 3.0.0 STU3 aggregate functions `sum()`, `avg()`, `max()`, and `min()` (empty input yields the empty collection; `sum`/`avg` require numeric items and `max`/`min` compare numeric and string items with comparison-operator semantics), shipped as a declared, documented exception: `Capability.current` keeps the FHIRPath 2.0.0 target and reports this subset in `trial_use` under the marker `stu3-aggregate-functions`;
@@ -200,7 +197,7 @@ The [feature matrix](docs/feature-matrix.md) is the executable-scope companion t
 This is not yet a complete FHIRPath engine. The following remain deferred or host-dependent:
 
 - complete FHIRPath 2.0 conformance; the checked-in importer covers only the pinned official subset;
-- broader FHIR R4 metadata such as primitive extensions, resource-level type tests (`Observation is Resource`/`DomainResource`), `ofType()`, and FHIR R5 model adapters; FHIR R4 `is`/`as` over a resolved choice value's logical type (e.g. `Quantity`) is supported, but terminology and `resolve()` remain host-dependent; and
+- broader FHIR R4 metadata such as primitive extensions, resource-level type tests (`Observation is Resource`/`DomainResource`), and FHIR R5 model adapters; FHIR R4 `is`/`as` over a resolved choice value's logical type (e.g. `Quantity`) is supported by default; terminology and `resolve()` remain host-dependent; and
 - temporal arithmetic with Date/Time/DateTime and Quantity/Duration, including calendar-duration arithmetic;
 - advanced conversion, math, string, regular-expression, and navigation functions, and the general-purpose `aggregate()` function;
 - complex literals and additional standard value types;
