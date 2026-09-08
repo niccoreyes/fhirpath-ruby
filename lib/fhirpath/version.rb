@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module FHIRPath
-  VERSION = '0.2.0.pre5'
+  VERSION = '0.2.0.pre7'
   # A stable release requires the complete release gate to be deliberately
   # promoted. Keep pre-release status explicit while the shared-suite and
   # model-adapter work remains incomplete.
