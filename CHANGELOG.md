@@ -4,7 +4,9 @@ All notable changes to this project are documented here. The project is pre-1.0;
 
 ## [Unreleased]
 
-## [0.2.0.pre5] - 2026-09-07
+## [0.2.0.pre7] - 2026-09-08
+
+## [0.2.0.pre6] - 2026-09-08
 - Add the `aggregate()` function with `$this`, `$total`, and `$index` variables for general-purpose collection aggregation (issue #43). The function signature is `aggregate(expression, initial)` where the expression is evaluated per item with the accumulator as `$total`. Empty collections return the initial value (or empty if omitted). Closes issue #43.
 - Add keyword-named functions (`contains`, `in`) usable after member access (`Patient.name.contains('John')`) — the lexer previously classified these as binary operators only, preventing function-call syntax after `.` (issue #66). Also registers both as standard functions with arity 1.
 - Accept raw JSON strings in `FHIRPath.evaluate()` and `CompiledExpression#evaluate`: strings starting with `{` or `[` after optional whitespace are parsed via `JSON.parse` once per call; malformed JSON raises `JSONInputError` (code `:invalid_json`); `Hash`/`Array` inputs pass through unchanged; other strings remain singleton string values (issue #56).
