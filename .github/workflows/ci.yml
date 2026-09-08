@@ -28,6 +28,8 @@ jobs:
         run: git diff --check
       - name: Run tests
         run: bundle exec rake test
+      - name: Check docs version consistency
+        run: bundle exec ruby script/check_docs_version.rb
       - name: Run RuboCop
         run: bundle exec rubocop
       - name: Run compatibility vectors

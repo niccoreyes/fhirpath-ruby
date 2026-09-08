@@ -19,14 +19,11 @@ This repository is an intentionally small, pre-release implementation. It provid
 - Release status: pre-release; published to [RubyGems](https://rubygems.org/gems/fhirpath).
 - License: [MIT](LICENSE).
 
-The exact release-facing target, capability identifiers, Ruby support matrix,
-and host/model limitations are maintained in the [release support matrix](docs/support-matrix.md).
-
 ## Installation
 
 The gem is published on [RubyGems.org](https://rubygems.org/gems/fhirpath):
 
-```sh
+```shell
 gem install fhirpath
 ```
 
@@ -36,8 +33,7 @@ Or in a Gemfile:
 gem "fhirpath"
 ```
 
-The pre-release status and incomplete conformance scope still apply; review the
-documented limitations before using this implementation in production.
+The pre-release status and incomplete conformance scope still apply; review the documented limitations before using this implementation in production.
 
 ## Quick start
 
@@ -62,34 +58,24 @@ FHIRPath.evaluate(observation, "valueQuantity.value > 5.0")  # => [true]
 FHIRPath.evaluate(observation, "valueQuantity.unit")         # => ["mmol/L"]
 FHIRPath.evaluate(observation, "code.coding.system")         # => ["http://loinc.org"]
 
-# Raw JSON string input — evaluate FHIR resources directly from HTTP responses
+# Raw JSON string input — evaluate FHIR resources directly from HTTP responses (uses R4 model by default)
 patient_json = <<~JSON
   {
     "resourceType": "Patient",
-    "id": "pat-1",
-    "name": [{ "use": "official", "family": "Chalmers", "given": ["Peter", "James"] }],
-    "gender": "male",
-    "birthDate": "1974-12-25",
-    "address": [{ "use": "home", "city": "PleasantVille", "state": "Vic", "postalCode": "3999" }]
+    "name": [{ "family": "Chalmers" }]
   }
 JSON
+FHIRPath.evaluate(patient_json, "name.family")  # => ["Chalmers"]
 
-FHIRPath.evaluate(patient_json, "Patient.name.where(use='official').family")
-# => ["Chalmers"]
-FHIRPath.evaluate(patient_json, "Patient.birthDate")
-# => ["1974-12-25"]
-FHIRPath.evaluate(patient_json, "Patient.address.city")
-# => ["PleasantVille"]
-
-# Type filtering with ofType()
+# Bundle → typed resources with ofType()
 bundle = {
   "resourceType" => "Bundle",
   "entry" => [
-    { "resource" => { "resourceType" => "Observation", "id" => "1" } },
-    { "resource" => { "resourceType" => "Patient", "id" => "2" } }
+    { "resource" => { "resourceType" => "Observation", "id" => "obs-1", "status" => "final" } },
+    { "resource" => { "resourceType" => "Patient", "id" => "pat-1" } }
   ]
 }
-FHIRPath.evaluate(bundle, "entry.resource.ofType(Observation)", model: :r4)  # => [Observation resource]
+FHIRPath.evaluate(bundle, "entry.resource.ofType(Observation)")  # => [Observation resource]
 
 # Compiled expression reuse
 program = FHIRPath.compile("Patient.name.family")
@@ -99,9 +85,9 @@ program.call(patient_json).to_a  # also accepts raw JSON strings
 # => ["Chalmers"]
 ```
 
-# FHIR R4 JSON can be selected explicitly through the versioned provider. The
-# adapter exposes the logical `Observation.value` property over R4 choice keys
-# such as `valueString` and `valueQuantity`:
+## FHIR R4 model adapter (default)
+
+The R4 adapter is dependency-free and does not perform Ruby method dispatch; the R4 model adapter is now the default. Its supported release and model selection are visible through `FHIRPath::Capability.current` and `FHIRPath.available_models`. Plain-model navigation is available via `model: nil`.
 
 ```ruby
 observation = {
@@ -109,18 +95,16 @@ observation = {
   "valueQuantity" => { "value" => 120, "unit" => "mmHg" }
 }
 
-FHIRPath.evaluate(observation, "Observation.value.value").to_a
+FHIRPath.evaluate(observation, "value.value").to_a
 # => [120]
 
 # The choice variant carries its FHIR logical type, so `is`/`as` resolve
 # against model metadata for the resolved value:
-FHIRPath.evaluate(observation, "Observation.value is Quantity").to_a
+FHIRPath.evaluate(observation, "value is Quantity").to_a
 # => [true]
-FHIRPath.evaluate(observation, "Observation.value as Quantity").to_a
+FHIRPath.evaluate(observation, "value as Quantity").to_a
 # => [{ "value" => 120, "unit" => "mmHg" }]
 ```
-
-- The R4 adapter is dependency-free and does not perform Ruby method dispatch; it is now the default model. Callers can opt out with `model: nil` to use PlainModel for model-independent navigation. Its supported release and model selection are visible through `FHIRPath::Capability.current` and `FHIRPath.available_models`.
 
 ## Public API
 
@@ -143,46 +127,24 @@ program.evaluate({ "resourceType" => "Patient", "name" => [{ "family" => "Lovela
 # => ["Lovelace"]
 program.call({ "resourceType" => "Patient", "name" => [{ "family" => "Hopper" }] }).to_a
 # => ["Hopper"]
+program.call(patient_json).to_a  # also accepts raw JSON strings
+# => ["Chalmers"]
 ```
 
-See [API reference](docs/api.md) for result, error, extension, and immutability contracts, and [architecture](docs/architecture.md) for the implementation boundaries.
+The compiled expression carries its own model, capability, and function registry — call-site overrides are not required.
 
-### Explicit host constants
-
-External constant lookup is opt-in and stays behind an injected provider:
-
-```ruby
-class TenantConstants < FHIRPath::ConstantProvider
-  def fetch(name, mode:, context:)
-    constants.fetch(name)
-  end
-
-  private
-
-  def constants
-    { 'tenant' => 'example' }
-  end
-end
-
-host = FHIRPath::HostServices.new(constant_provider: TenantConstants.new)
-FHIRPath.evaluate({}, '%tenant', host: host).to_a
-# => ["example"]
-```
-
-`ConstantProvider#fetch` is the only boundary at which an embedding application may perform external work. The engine does not discover constants, read files, or make network requests. If no provider is supplied, an external constant raises `UnknownConstantError` with code `:unknown_constant`. Constant-provider failures raise a generic `HostError`; exceptions raised by the constant provider are not retained as public causes, and their messages are excluded from the public error serialization and `full_message`. `variables:` takes precedence over the provider, so explicitly supplied values do not trigger provider work.
-
-## Supported slice
+## Supported feature slice
 
 The current tested slice includes:
 
 - primitive string, Boolean, integer, decimal, and scientific-notation literals;
 - empty and comma-separated collections;
 - plain Ruby Hash/Array and simple object navigation, including resource-type roots such as `Patient`;
-- dependency-free FHIR R4 model navigation selected with `model: :r4`, including the logical `Observation.value` choice property over `valueQuantity` and `valueString`; omitted model now defaults to R4
+- dependency-free FHIR R4 model navigation (now the default), including the logical `Observation.value` choice property over `valueQuantity` and `valueString`;
 - unary and numeric arithmetic (`+`, `-`, `*`, `/`, `div`, and `mod`), plus string `+` when both operands are strings; a zero divisor for `/`, `div`, `mod` returns an empty collection, while `+`, `-`, `*` treat zero as a normal operand;
 - bounded FHIRPath `Quantity` values with finite Decimal storage, case-sensitive conversion for the documented dependency-free unit subset, same-dimension comparison/addition/subtraction, scalar multiplication/division, Quantity ratios, and `ofType(Quantity)`/`is Quantity`/`as Quantity`; unsupported units and complete UCUM semantics remain outside this release slice; the parser also accepts double-quoted strings as an extension, uses `^` for supported unit exponents, preserves Quantity `system`/`code` metadata without using it for unit equality, and defers derived-unit composition such as Quantity×Quantity or `km/h`;
 - numeric/string relational comparison, collection-aware equality, equivalence, and empty-aware Boolean operators; a finite JSON `Float` is treated as a `Decimal`;
-- union, string concatenation (`+` and `&`), membership (`in`/`contains`), and type operators (`is`/`as`); union removes duplicate values from both operands using `=` equality in first-seen order, and `in`/`contains` require a singleton operand; `is`/`as` test built-in primitive types directly and, with the default R4 model, also resolve the FHIR logical type of a navigated choice value (for example `Observation.value is Quantity` over `valueQuantity`), returning the value unchanged on a successful `as` and the empty collection otherwise; and
+- union, string concatenation (`+` and `&`), membership (`in`/`contains`), and type operators (`is`/`as`); union removes duplicate values from both operands using `=` equality in first-seen order, and `in`/`contains` require a singleton operand; `is`/`as` test built-in primitive types directly and also resolve the FHIR logical type of a navigated choice value (for example `Observation.value is Quantity` over `valueQuantity`), returning the value unchanged on a successful `as` and the empty collection otherwise; and
 - indexers with non-negative integer indexes;
 - `where`, `select`, `first`, `last`, `tail`, `take`, `skip`, `exists`, `count`, `empty`, `not`, `all`, and Boolean aggregate functions;
 - the FHIRPath 3.0.0 STU3 aggregate functions `sum()`, `avg()`, `max()`, and `min()` (empty input yields the empty collection; `sum`/`avg` require numeric items and `max`/`min` compare numeric and string items with comparison-operator semantics), shipped as a declared, documented exception: `Capability.current` keeps the FHIRPath 2.0.0 target and reports this subset in `trial_use` under the marker `stu3-aggregate-functions`;
@@ -204,51 +166,8 @@ This is not yet a complete FHIRPath engine. The following remain deferred or hos
 - standard environment variables beyond explicitly supplied external constants;
 - FHIRPath 3.0 STU3 features beyond the shipped `sum`/`avg`/`max`/`min` aggregate functions; capability recognition does not enable them silently;
 - network I/O from pure evaluation and global evaluator state; and
-- production support guarantees, until the support matrix and release gates are complete.
-
-Unsupported operations raise `UnsupportedFeatureError`, `UnknownFunctionError`, or another specific `FHIRPath::Error`. Malformed or trailing source raises `ParseError`; the parser does not accept a valid prefix and silently ignore trailing input.
-
-## Development and verification
-
-Install development dependencies and run the complete local checks:
-
-```sh
-bundle install
-bundle exec rake test
-bundle exec rubocop
-bundle exec rake vectors
-bundle exec rake build
-bundle exec ./script/verify_gem_install.sh pkg/fhirpath-*.gem
-```
-
-The optional vector workflow is deterministic and does not require Python:
-
-```sh
-bundle exec ruby script/run_vectors.rb conformance/core.jsonl
-```
-
-It reports `pass`, `defect`, `unsupported`, `host-dependent`, and `not-run` separately. These hand-authored JSONL vectors are compatibility evidence, not a replacement for the official HL7 shared suite. See [Conformance workflow](docs/conformance.md).
-
-Coverage is opt-in and uses Ruby's standard `Coverage` library:
-
-```sh
-COVERAGE=1 bundle exec rake test
-bundle exec ruby script/check_coverage.rb coverage/summary.json
-```
-
-For a clean-checkout reproduction, use the exact commands in [CONTRIBUTING.md](CONTRIBUTING.md). CI runs the supported Ruby matrix, tests, RuboCop, vectors, package build, gem-install smoke test, and coverage report generation.
-
-## Contributing
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. New language behavior should be delivered as a small vertical slice: add a focused failing test, implement the smallest change, run the complete checks, and update the feature matrix and limitations when scope changes.
-
-Security reports should follow [SECURITY.md](SECURITY.md). Release readiness,
-versioning, publication, and remaining conformance gates are recorded in
-[`docs/release-checklist.md`](docs/release-checklist.md) and
-[`docs/releasing.md`](docs/releasing.md).
+- unqualified string escaping beyond the documented UTF-16 surrogate-pair handling.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE). The gem is still a
-pre-release and does not claim complete FHIRPath conformance; those limitations
-are independent of the license.
+[MIT](LICENSE).
