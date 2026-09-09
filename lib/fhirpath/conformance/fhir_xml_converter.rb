@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'bigdecimal'
 require 'rexml/document'
 
 module FHIRPath
@@ -98,28 +99,6 @@ module FHIRPath
           [nested, nil]
         end
 
-        def extension_array(element)
-          extensions = element.elements.to_a.select { |c| EXTENSION_NAMES.include?(c.local_name) }
-          return nil if extensions.empty?
-
-          extensions.map { |c| convert_extension(c) }
-        end
-
-        # An extension element maps to `{ 'url' => ..., 'valueXxx' => ... }`.
-        def convert_extension(extension)
-          data = {}
-          url = extension.attributes['url']
-          data['url'] = url.to_s unless url.to_s.empty?
-          extension.each_element do |child|
-            value, child_ext = scalar_or_complex(child)
-            data[child.local_name] = value
-            data["_#{child.local_name}"] = { 'extension' => child_ext } if child_ext
-          end
-          raise UnsupportedStructureError, "extension without url or value: #{extension}" if data.empty?
-
-          data
-        end
-
         # Each <contained> element contains exactly one resource. Return an
         # array with that single resource so append() always builds a flat
         # array across multiple <contained> siblings.
@@ -188,11 +167,33 @@ module FHIRPath
         def decimal_value(raw)
           raise UnsupportedStructureError, "non-decimal value for decimal element: #{raw}" unless numeric?(raw)
 
-          raw.to_s
+          BigDecimal(raw.to_s)
         end
 
         def numeric?(raw)
           /\A[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\z/.match?(raw.to_s)
+        end
+
+        def extension_array(element)
+          extensions = element.elements.to_a.select { |c| EXTENSION_NAMES.include?(c.local_name) }
+          return nil if extensions.empty?
+
+          extensions.map { |c| convert_extension(c) }
+        end
+
+        # An extension element maps to `{ 'url' => ..., 'valueXxx' => ... }`.
+        def convert_extension(extension)
+          data = {}
+          url = extension.attributes['url']
+          data['url'] = url.to_s unless url.to_s.empty?
+          extension.each_element do |child|
+            value, child_ext = scalar_or_complex(child)
+            append(data, child.local_name, value)
+            append(data, "_#{child.local_name}", { 'extension' => child_ext }) if child_ext
+          end
+          raise UnsupportedStructureError, "extension without url or value: #{extension}" if data.empty?
+
+          data
         end
       end
     end
