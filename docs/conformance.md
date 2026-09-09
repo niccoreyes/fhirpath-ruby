@@ -83,3 +83,33 @@ It emits one JSON record per selected XML case. XML fixtures are resolved to ver
 The same importer accepts a `fhirpath-py` YAML case file when initialized with its checkout as `source_root`. YAML is parsed with safe loading, group and `disable` state are preserved, expression lists become independent records, and each record keeps the suite commit and original fixture path. `error: true` means a FHIRPath error is expected; an unrelated Ruby `StandardError` remains a defect.
 
 Every record includes `suite`, `suite_commit`, `expression`, `input_fixture`, `model`, `host_features`, `expected`, `target`, and provenance. Runner reports include per-capability totals for `pass`, `defect`, `unsupported`, `host-dependent`, and `not-run`. Unsupported and host-dependent cases remain evidence rather than passes; defects and unexplained skips block release checks.
+
+## Staged CI conformance gates
+
+CI enforces staged gates rather than a single all-green requirement:
+
+```sh
+# Validate corpus contract (schema, provenance, classification)
+bundle exec rake conformance:validate
+
+# Import and report the official HL7 suite
+bundle exec rake conformance:official
+
+# Import and report the fhirpath.js compatibility corpus
+bundle exec rake conformance:fhirpath_js
+
+# Check baseline regression (fail on unexpected regressions)
+bundle exec rake conformance:baseline
+```
+
+The `conformance-gates` CI job runs these checks after the standard test suite passes. A new regression—defined as fewer passes, more defects, more not-run cases, or source SHA drift—fails the gate. Improvements (more passes, fewer defects, fewer not-run) are reported but do not fail.
+
+Baseline files live in `conformance/baselines/`. To update a baseline after reviewed improvement:
+
+```sh
+bundle exec ruby script/validate_conformance_corpus.rb conformance/official-r4-core.jsonl \
+  --baseline conformance/baselines/official-r4.json \
+  --output-baseline conformance/baselines/official-r4.json
+```
+
+Release workflows require the `conformance-gates` job to pass before publishing.

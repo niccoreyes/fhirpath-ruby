@@ -1,0 +1,12 @@
+{
+  "schema": "fhirpath-conformance-v1",
+  "suite": "HL7/fhirpath.js",
+  "suite_commit": "e8b6a6d0c8c8b5b5c8c8b5b5c8c8b5b5c8c8b5b5",
+  "target": "2.0.0",
+  "model": "r4",
+  "corpus": "fhirpath-js",
+  "source": "cases/3_path_selection.yaml",
+  "fixture_root": "resources/r4",
+  "load_full_suite": false,
+  "case_ids": []
+}

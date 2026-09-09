@@ -17,6 +17,11 @@ This checklist is the gate for a reusable public release. It is intentionally ex
 | RubyGems publication and external readback | Ready | Trusted Publishing environment gate and `gem push`; requires one-time RubyGems publisher setup |
 | Contributor and security guidance | Met | `CONTRIBUTING.md`, `SECURITY.md` |
 | Changelog/release notes | Met | `CHANGELOG.md` and this checklist |
+| Official HL7 shared-suite corpus validation | Met | `rake conformance:validate` enforces schema, provenance, and classification integrity |
+| Official HL7 suite import and reporting | Met | `rake conformance:official` imports full suite; report uploaded as CI artifact |
+| fhirpath.js compatibility corpus import | Met | `rake conformance:fhirpath_js` imports pinned compatibility cases |
+| Baseline regression gate | Met | `rake conformance:baseline` rejects pass decreases, defect increases, and not-run regressions |
+| Conformance gates in release workflow | Met | `conformance-gates` job is a required prerequisite for `publish` |
 | Complete official HL7 shared-suite conformance | Partial | importer and full suite remain deferred |
 | FHIR release model adapter | Partial | `PlainModel` only; adapters are host-dependent |
 | License selected and encoded in package metadata | Met | MIT License text is checked in at `LICENSE`; `fhirpath.gemspec` declares `MIT` |
@@ -28,6 +33,7 @@ This checklist is the gate for a reusable public release. It is intentionally ex
 - Confirm the supported Ruby matrix and run it on the tagged source revision.
 - Build from a clean committed checkout; inspect gem contents and metadata.
 - Run the complete tests, RuboCop, vectors, coverage, and gem-install smoke test.
+- Run corpus validation (`rake conformance:validate`), generate reports, and check baseline regression (`rake conformance:baseline`).
 - Generate release notes with scope, limitations, conformance counts, known host/model exclusions, and checksum/provenance.
 - Create a reviewed version tag and use `.github/workflows/release.yml` with the approved `release` environment; do not publish from a dirty tree.
 - Verify the RubyGems readback, pushed commit, tag, GitHub release metadata, and uploaded artifacts after each external action.
@@ -37,7 +43,7 @@ but does not commit, push, create a tag, or publish a release.
 
 ## Integration countercheck (2026-09-05)
 
-The post-hardening working tree was independently reviewed against the HL7 FHIRPath operator documentation and exercised locally. This pass corrected two implementation gaps: `&` now treats an empty operand as `''`, and relational/union/type parser precedence now follows the normative ordering. The nonstandard `\\UXXXXXXXX` string escape is rejected; valid UTF-16 `\\uXXXX` surrogate pairs are combined.
+The post-hardening working tree was independently reviewed against the HL7 FHIRPath operator documentation and exercised locally. This pass corrected two implementation gaps: `&` now treats an empty operand as `''`, and relational/union/type parser precedence now follows the normative ordering. The nonstandard `\UXXXXXXXX` string escape is rejected; valid UTF-16 `\uXXXX` surrogate pairs are combined.
 
 Verification on Homebrew Ruby 4.0.4 (the repository's local bundle contains native extensions for this runtime):
 

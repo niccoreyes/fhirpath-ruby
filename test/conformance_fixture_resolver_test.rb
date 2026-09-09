@@ -110,7 +110,7 @@ class FHIRPathConformanceFixtureResolverTest < Minitest::Test
     ext = name['_family']['extension']
     assert_equal 1, ext.length
     # Repeated child elements under an extension should be collected as an array
-    assert_equal ['first', 'second'], ext.first['valueString']
+    assert_equal %w[first second], ext.first['valueString']
   end
 
   def test_xml_converter_handles_choice_fields
