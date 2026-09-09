@@ -46,11 +46,15 @@ module FHIRPath
       end
 
       def import
-        case File.extname(@suite_path).downcase
-        when '.xml' then import_xml
-        when '.yaml', '.yml' then import_yaml
-        else raise ArgumentError, "unsupported suite format: #{@suite_path}"
-        end
+        @seen_ids = Hash.new(0)
+        records = case File.extname(@suite_path).downcase
+                  when '.xml' then import_xml
+                  when '.yaml', '.yml' then import_yaml
+                  else raise ArgumentError, "unsupported suite format: #{@suite_path}"
+                  end
+        # Ensure deterministic, canonical ordering so identical sources always
+        # produce byte-identical normalized output (corpus contract).
+        records.sort_by { |record| record['id'].to_s }
       end
 
       private
@@ -110,7 +114,8 @@ module FHIRPath
       end
 
       def record_for(test)
-        case_id = test.attributes.fetch('name').to_s
+        case_name = test.attributes.fetch('name').to_s
+        case_id = disambiguate_id(case_name)
         input_fixture = test.attributes['inputfile']&.to_s
         resource, fixture_metadata = fixture_for(input_fixture)
         record = build_record(
@@ -122,10 +127,36 @@ module FHIRPath
           expected: expected_outputs(test),
           resource: resource,
           variables: {},
-          origin: origin_for(case_id)
+          origin: origin_for(case_name)
         ).merge(fixture_metadata)
-        add_field(record, 'error', parse_error(test))
+        add_field(record, 'error', parse_error(test) || parse_invalid(test))
         finalize_record(record, fixture_metadata, disabled_test?(test))
+      end
+
+      def parse_invalid(test)
+        expression = test.elements['expression']
+        return unless expression
+
+        invalid = expression.attributes['invalid']
+        return unless invalid
+
+        value = invalid.to_s.strip
+        case value
+        when 'syntax'
+          { 'class' => 'FHIRPath::ParseError' }
+        else
+          { 'class' => 'FHIRPath::Error' }
+        end
+      end
+
+      # Upstream suites sometimes reuse a case name for distinct tests (e.g.
+      # FHIR testEquivalent23). Preserve the original name in origin.case for
+      # traceability, but give every record a stable, unique id by suffixing
+      # later occurrences deterministically.
+      def disambiguate_id(base)
+        @seen_ids[base] += 1
+        count = @seen_ids[base]
+        count == 1 ? base : "#{base}~#{count}"
       end
 
       def yaml_record_for(test, expression, subject, group, disabled, ordinal)

@@ -1,7 +1,7 @@
 {
   "schema": "fhirpath-conformance-v1",
   "suite": "FHIR/fhir-test-cases",
-  "suite_commit": "1.7.69",
+  "suite_commit": "ebb15f74f95a4731e59099c4244eeed734c9e447",
   "target": "2.0.0",
   "model": "plain",
   "source": "r4/fhirpath/tests-fhir-r4.xml",

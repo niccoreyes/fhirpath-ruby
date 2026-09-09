@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "corpus": "fhirpath-js",
+  "suite": "HL7/fhirpath.js",
+  "suite_commit": null,
+  "target": "2.0.0",
+  "model": "r4",
+  "total": 0,
+  "record_counts": {
+    "evaluable": 0,
+    "pass": 0,
+    "defect": 0,
+    "unsupported": 0,
+    "host-dependent": 0,
+    "not-run": 0
+  },
+  "classification_counts": {
+    "pass": 0,
+    "defect": 0,
+    "unsupported": 0,
+    "host-dependent": 0,
+    "not-run": 0
+  },
+  "capability_totals": {},
+  "corpus_digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

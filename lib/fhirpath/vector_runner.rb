@@ -3,6 +3,7 @@
 require 'json'
 require_relative 'errors'
 require_relative 'conformance/importer'
+require_relative 'conformance/corpus_validator'
 
 module FHIRPath
   # Small, optional JSONL differential-vector runner. It is deliberately kept
@@ -32,21 +33,33 @@ module FHIRPath
     def execute(vector, line_number, evaluator: nil)
       return result_for(vector, line_number, 'not-run').merge('actual' => nil) if vector['classification'] == 'not-run'
 
-      values = evaluate(vector, evaluator).to_a
-      classification = if values == vector.fetch('expected', []) && !vector['error']
-                         'pass'
-                       else
-                         'defect'
-                       end
-      result_for(vector, line_number, classification).merge('actual' => values)
-    rescue UnsupportedFeatureError => e
-      error_result(vector, line_number, classify_error(vector, e, 'unsupported'), e)
-    rescue HostError => e
-      error_result(vector, line_number, classify_error(vector, e, 'host-dependent'), e)
-    rescue Error => e
-      error_result(vector, line_number, classify_error(vector, e, 'defect'), e)
-    rescue StandardError => e
-      error_result(vector, line_number, 'defect', e)
+      if vector['error']
+        # Error expected - try to evaluate and see if we get the expected error
+        begin
+          evaluate(vector, evaluator)
+          # Evaluation succeeded but we expected an error -> defect
+          error_result(vector, line_number, 'defect', StandardError.new('expected error but evaluation succeeded'))
+        rescue UnsupportedFeatureError => e
+          error_result(vector, line_number, classify_error(vector, e, 'unsupported'), e)
+        rescue HostError => e
+          error_result(vector, line_number, classify_error(vector, e, 'host-dependent'), e)
+        rescue StandardError => e
+          error_result(vector, line_number, classify_error(vector, e, 'defect'), e)
+        end
+      else
+        # No error expected - evaluation should succeed and match expected values
+        begin
+          values = evaluate(vector, evaluator).to_a
+          classification = if values == vector.fetch('expected', [])
+                             'pass'
+                           else
+                             'defect'
+                           end
+          result_for(vector, line_number, classification).merge('actual' => values)
+        rescue StandardError => e
+          error_result(vector, line_number, 'defect', e)
+        end
+      end
     end
 
     def evaluate(vector, evaluator = nil)
@@ -72,10 +85,24 @@ module FHIRPath
       return error.is_a?(Error) if expected == true
       return false unless expected
 
-      class_matches = !expected['class'] || expected['class'] == error.class.name
+      class_matches = true
+      if expected['class']
+        expected_class_name = expected['class'].to_s
+        if expected_class_name.start_with?('FHIRPath::')
+          expected_class = begin
+            Object.const_get(expected_class_name)
+          rescue NameError, TypeError
+            nil
+          end
+          class_matches = expected_class.is_a?(Class) || expected_class.is_a?(Module)
+          class_matches &&= error.is_a?(expected_class) if class_matches
+        else
+          class_matches = false
+        end
+      end
+
       actual_code = error.respond_to?(:code) ? error.code.to_s : nil
-      code_matches = !expected['code'] || expected['code'].to_s == actual_code
-      class_matches && code_matches
+      (!expected['code'] || expected['code'].to_s == actual_code) && class_matches
     end
 
     def classify_error(vector, error, fallback)

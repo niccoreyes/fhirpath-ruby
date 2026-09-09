@@ -273,6 +273,27 @@ class FHIRPathConformancePipelineTest < Minitest::Test
     refute_match(/(?:system|exec|spawn|Open3).*python/i, runtime)
   end
 
+  def test_importer_disambiguates_duplicate_case_names_with_unique_ids
+    Dir.mktmpdir('fhirpath-import') do |root|
+      File.write(File.join(root, 'tests.xml'), <<~XML)
+        <tests><group name="core">
+          <test name="dup"><expression>1 | 2</expression></test>
+          <test name="other"><expression>3 | 4</expression></test>
+          <test name="dup"><expression>1 | 3</expression></test>
+        </group></tests>
+      XML
+
+      records = FHIRPath::Conformance::Importer.new(
+        source_root: root, suite_path: 'tests.xml', suite_commit: 'ebb15f74f95a4731e59099c4244eeed734c9e447'
+      ).import
+
+      assert_equal(%w[dup dup~2 other], records.map { |r| r['id'] })
+      assert_equal(%w[dup dup other], records.map { |r| r['origin']['case'] })
+      report = FHIRPath::Conformance::CorpusValidator.validate(records)
+      assert report[:valid], report[:errors].inspect
+    end
+  end
+
   def test_load_full_suite_imports_all_xml_cases_without_case_ids_filter
     Dir.mktmpdir('fhirpath-import') do |root|
       FileUtils.mkdir_p(File.join(root, 'r4', 'fhirpath'))
@@ -290,8 +311,149 @@ class FHIRPathConformancePipelineTest < Minitest::Test
       ).import
 
       assert_equal 3, records.length
-      assert_equal(%w[case-one case-two case-three], records.map { |r| r['id'] })
-      assert_equal([2, 4, 6], records.map { |r| r['expected'].first })
+      assert_equal(%w[case-one case-three case-two], records.map { |r| r['id'] })
+      assert_equal([2, 6, 4], records.map { |r| r['expected'].first })
     end
+  end
+end
+
+class FHIRPathCorpusValidatorTest < Minitest::Test
+  def immutable_sha
+    'ebb15f74f95a4731e59099c4244eeed734c9e447'
+  end
+
+  def make_records(count = 3)
+    (1..count).map do |i|
+      {
+        'id' => "case-#{i}".rjust(4, '0'), 'suite' => 'FHIR/fhir-test-cases',
+        'suite_commit' => immutable_sha, 'expression' => "#{i} + #{i}",
+        'input_fixture' => nil, 'model' => 'plain', 'host_features' => [],
+        'target' => '2.0.0', 'capability' => 'testBasics', 'expected' => [i * 2],
+        'resource' => {}, 'variables' => {},
+        'origin' => { 'suite' => 'FHIR/fhir-test-cases', 'suite_commit' => immutable_sha,
+                      'case' => "case-#{i}", 'path' => 'r4/fhirpath/tests.xml' }
+      }
+    end
+  end
+
+  def test_corpus_validator_accepts_wellformed_records
+    report = FHIRPath::Conformance::CorpusValidator.validate(make_records)
+
+    assert report[:valid], report[:errors].inspect
+    assert_equal 3, report[:total]
+    assert_equal 'pass', report[:status]
+  end
+
+  def test_corpus_validator_rejects_duplicate_ids
+    records = make_records(2)
+    records[1]['id'] = records[0]['id']
+
+    report = FHIRPath::Conformance::CorpusValidator.validate(records)
+
+    refute report[:valid]
+    assert_match(/duplicate id/i, report[:errors].join("\n"))
+  end
+
+  def test_corpus_validator_rejects_missing_suite_commit
+    records = make_records(1)
+    records[0].delete('suite_commit')
+    records[0]['origin'].delete('suite_commit')
+
+    report = FHIRPath::Conformance::CorpusValidator.validate(records)
+
+    refute report[:valid]
+    assert_match(/suite_commit/i, report[:errors].join("\n"))
+  end
+
+  def test_corpus_validator_rejects_mutable_or_empty_suite_commit
+    ['master', 'main', 'HEAD', '1.7.69', 'v1.2.3', ''].each do |bad|
+      records = make_records(1)
+      records[0]['suite_commit'] = bad
+
+      report = FHIRPath::Conformance::CorpusValidator.validate(records)
+
+      refute report[:valid], "expected #{bad.inspect} to be rejected"
+      assert_match(/immutable SHA/i, report[:errors].join("\n"))
+    end
+  end
+
+  def test_corpus_validator_rejects_invalid_classification
+    records = make_records(1)
+    records[0]['classification'] = 'bogus'
+
+    report = FHIRPath::Conformance::CorpusValidator.validate(records)
+
+    refute report[:valid]
+    assert_match(/classification/i, report[:errors].join("\n"))
+  end
+
+  def test_corpus_validator_requires_not_run_reason_when_not_run
+    records = make_records(1)
+    records[0]['classification'] = 'not-run'
+
+    report = FHIRPath::Conformance::CorpusValidator.validate(records)
+
+    refute report[:valid]
+    assert_match(/not_run_reason/i, report[:errors].join("\n"))
+  end
+
+  def test_corpus_validator_rejects_unsupported_model
+    records = make_records(1)
+    records[0]['model'] = 'patient'
+
+    report = FHIRPath::Conformance::CorpusValidator.validate(records)
+
+    refute report[:valid]
+    assert_match(/model/i, report[:errors].join("\n"))
+  end
+
+  def test_corpus_validator_rejects_source_path_escape
+    records = make_records(1)
+    records[0]['origin']['path'] = '../outside.xml'
+
+    report = FHIRPath::Conformance::CorpusValidator.validate(records)
+
+    refute report[:valid]
+    assert_match(/escape/i, report[:errors].join("\n"))
+  end
+
+  def test_corpus_validator_rejects_unstable_ordering
+    records = make_records(3).reverse
+
+    report = FHIRPath::Conformance::CorpusValidator.validate(records)
+
+    refute report[:valid]
+    assert_match(/order/i, report[:errors].join("\n"))
+  end
+
+  def test_two_imports_produce_identical_digest
+    Dir.mktmpdir('fhirpath-import') do |root|
+      File.write(File.join(root, 'tests.xml'), <<~XML)
+        <tests><group name="core">
+          <test name="second"><expression>2 + 2</expression><output type="integer">4</output></test>
+          <test name="first"><expression>{}</expression></test>
+        </group></tests>
+      XML
+      options = { source_root: root, suite_path: 'tests.xml', suite_commit: immutable_sha }
+      first = FHIRPath::Conformance::Importer.new(**options).import
+      second = FHIRPath::Conformance::Importer.new(**options).import
+
+      assert_equal first, second
+      assert_equal FHIRPath::Conformance::CorpusValidator.validate(first)[:digest],
+                   FHIRPath::Conformance::CorpusValidator.validate(second)[:digest]
+    end
+  end
+
+  def test_corpus_validator_produces_baseline_metadata
+    records = make_records(3)
+
+    report = FHIRPath::Conformance::CorpusValidator.validate(records)
+
+    assert_equal 3, report[:total]
+    assert_equal 3, report[:record_counts]['evaluable']
+    assert_equal immutable_sha, report[:source_sha]
+    assert_match(/\Asha256:[0-9a-f]{64}\z/, report[:digest])
+    assert_equal 3, report[:capability_totals]['testBasics'][:total]
+    assert_equal 3, report[:capability_totals]['testBasics'][:counts]['evaluable']
   end
 end

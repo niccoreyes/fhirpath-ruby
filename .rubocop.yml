@@ -52,19 +52,32 @@ Metrics/ClassLength:
     - "test/parser_hardening_test.rb"
     - "test/subsetting_functions_test.rb"
     - "lib/fhirpath/conformance/importer.rb"
+    - "lib/fhirpath/conformance/corpus_validator.rb"
     - "test/conformance_pipeline_test.rb"
     - "lib/fhirpath/models_r4.rb"
+    - "lib/fhirpath/vector_runner.rb"
+    - "test/importer_semantics_test.rb"
+    - "test/vector_runner_conformance_semantics_test.rb"
+
+Metrics/ModuleLength:
+  Exclude:
+    - "lib/fhirpath/vector_runner.rb"
 
 Metrics/CyclomaticComplexity:
   Exclude:
     - "lib/fhirpath/parser.rb"
     - "lib/fhirpath/evaluator.rb"
     - "lib/fhirpath/vector_runner.rb"
+    - "lib/fhirpath/conformance/corpus_validator.rb"
 
+# Metrics/PerceivedComplexity is intentionally high for the conformance
+# error-matching logic which must distinguish class, code, and inheritance.
 Metrics/PerceivedComplexity:
   Exclude:
     - "lib/fhirpath/parser.rb"
     - "lib/fhirpath/evaluator.rb"
+    - "lib/fhirpath/conformance/corpus_validator.rb"
+    - "lib/fhirpath/vector_runner.rb"
 
 # The conformance test deliberately exercises many cases in one readable block
 # for pass/defect classification; split out per-case helpers later if needed.
