@@ -110,7 +110,7 @@ class FHIRPathConformanceFixtureResolverTest < Minitest::Test
     ext = name['_family']['extension']
     assert_equal 1, ext.length
     # Repeated child elements under an extension should be collected as an array
-    assert_equal ['first', 'second'], ext.first['valueString']
+    assert_equal %w[first second], ext.first['valueString']
   end
 
   def test_xml_converter_handles_choice_fields
@@ -143,11 +143,10 @@ class FHIRPathConformanceFixtureResolverTest < Minitest::Test
 
     assert_equal 'Patient', json['resourceType']
     assert_equal 'example', json['id']
-    # A single <contained> element yields a single resource hash (not an array).
-    assert_kind_of Hash, json['contained']
-    assert_equal 'Organization', json['contained']['resourceType']
-    assert_equal 'org1', json['contained']['id']
-    assert_equal 'Acme Healthcare', json['contained']['name']
+    assert_equal 1, json['contained'].length
+    assert_equal 'Organization', json['contained'][0]['resourceType']
+    assert_equal 'org1', json['contained'][0]['id']
+    assert_equal 'Acme Healthcare', json['contained'][0]['name']
   end
 
   def test_xml_converter_handles_xhtml_narrative

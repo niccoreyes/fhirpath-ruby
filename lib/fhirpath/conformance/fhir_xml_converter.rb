@@ -92,62 +92,37 @@ module FHIRPath
           return [typed_scalar(element), extension_array(element)] if element.attributes['value']
           return [element.to_s, nil] if local == 'div' && element.namespace == XHTML_NAMESPACE
 
-          return [contained_resource(element), nil] if local == 'contained'
+          return [contained_resources(element), nil] if local == 'contained'
 
           nested = {}
           populate(nested, element)
           [nested, nil]
         end
 
-        def extension_array(element)
-          extensions = element.elements.to_a.select { |c| EXTENSION_NAMES.include?(c.local_name) }
-          return nil if extensions.empty?
+        # Each <contained> element contains exactly one resource. Return an
+        # array with that single resource so append() always builds a flat
+        # array across multiple <contained> siblings.
+        def contained_resources(contained)
+          child = contained.elements.first
+          return [] unless child
 
-          extensions.map { |c| convert_extension(c) }
-        end
-
-        # An extension element maps to `{ 'url' => ..., 'valueXxx' => ... }`.
-        def convert_extension(extension)
-          data = {}
-          url = extension.attributes['url']
-          data['url'] = url.to_s unless url.to_s.empty?
-          extension.each_element do |child|
-            value, child_ext = scalar_or_complex(child)
-            append(data, child.local_name, value)
-            append(data, "_#{child.local_name}", { 'extension' => child_ext }) if child_ext
-          end
-          raise UnsupportedStructureError, "extension without url or value: #{extension}" if data.empty?
-
-          data
-        end
-
-        def contained_resource(contained)
-          children = contained.elements.to_a
-          unless children.length == 1
-            raise UnsupportedStructureError, "contained must hold exactly one resource: #{contained}"
-          end
-
-          child = children.first
           resource = {}
           populate(resource, child)
           resource['resourceType'] = child.local_name
-          resource
-        end
-
-        def contained_resources(contained)
-          contained.elements.to_a.map do |child|
-            resource = {}
-            populate(resource, child)
-            resource['resourceType'] = child.local_name
-            resource
-          end
+          [resource]
         end
 
         # Repeated sibling elements collapse into a JSON array.
+        # When +value+ is an array, its elements are appended individually
+        # to maintain a flat structure (critical for repeated <contained>).
         def append(hash, key, value)
           if hash.key?(key)
             existing = hash[key]
-            hash[key] = existing.is_a?(Array) ? existing + [value] : [existing, value]
+            hash[key] = if value.is_a?(Array)
+                          (existing.is_a?(Array) ? existing : [existing]) + value
+                        else
+                          existing.is_a?(Array) ? existing + [value] : [existing, value]
+                        end
           else
             hash[key] = value
           end
@@ -197,6 +172,28 @@ module FHIRPath
 
         def numeric?(raw)
           /\A[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\z/.match?(raw.to_s)
+        end
+
+        def extension_array(element)
+          extensions = element.elements.to_a.select { |c| EXTENSION_NAMES.include?(c.local_name) }
+          return nil if extensions.empty?
+
+          extensions.map { |c| convert_extension(c) }
+        end
+
+        # An extension element maps to `{ 'url' => ..., 'valueXxx' => ... }`.
+        def convert_extension(extension)
+          data = {}
+          url = extension.attributes['url']
+          data['url'] = url.to_s unless url.to_s.empty?
+          extension.each_element do |child|
+            value, child_ext = scalar_or_complex(child)
+            append(data, child.local_name, value)
+            append(data, "_#{child.local_name}", { 'extension' => child_ext }) if child_ext
+          end
+          raise UnsupportedStructureError, "extension without url or value: #{extension}" if data.empty?
+
+          data
         end
       end
     end

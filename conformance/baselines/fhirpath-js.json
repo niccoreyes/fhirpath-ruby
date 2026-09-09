@@ -2,25 +2,47 @@
   "schema_version": 1,
   "corpus": "fhirpath-js",
   "suite": "HL7/fhirpath.js",
-  "suite_commit": null,
+  "suite_commit": "8a4f5deac10bf3b491da139faaa05ef851ecc681",
   "target": "2.0.0",
   "model": "r4",
-  "total": 0,
+  "total": 23,
   "record_counts": {
-    "evaluable": 0,
+    "evaluable": 19,
     "pass": 0,
     "defect": 0,
     "unsupported": 0,
     "host-dependent": 0,
-    "not-run": 0
+    "not-run": 4
   },
   "classification_counts": {
     "pass": 0,
-    "defect": 0,
+    "defect": 19,
     "unsupported": 0,
     "host-dependent": 0,
-    "not-run": 0
+    "not-run": 4
   },
-  "capability_totals": {},
-  "corpus_digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  "capability_totals": {
+    "3. Path selection": {
+      "total": 1,
+      "counts": {
+        "pass": 0,
+        "defect": 1,
+        "unsupported": 0,
+        "host-dependent": 0,
+        "not-run": 0
+      }
+    },
+    "3.2 Paths and polymorphic items": {
+      "total": 22,
+      "counts": {
+        "pass": 0,
+        "defect": 18,
+        "unsupported": 0,
+        "host-dependent": 0,
+        "not-run": 4
+      }
+    }
+  },
+  "source_sha": "8a4f5deac10bf3b491da139faaa05ef851ecc681",
+  "corpus_digest": "sha256:1895aa121ee53f0d9f6e6be2d07cadbcf4e3cca74c3017aea9540d8c4ea3ac61"
 }
