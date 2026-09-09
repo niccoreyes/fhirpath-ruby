@@ -172,9 +172,12 @@ class FHIRPathConformancePipelineTest < Minitest::Test
           <expression>Patient.name</expression><output type="string">Peter</output>
         </test></group></tests>
       XML
+      # A structurally unsupported fixture (an integer element with a
+      # non-integer value) must fail closed rather than emit a wrong-typed
+      # resource.
       File.write(
         File.join(root, 'complex.xml'),
-        '<Patient xmlns="http://hl7.org/fhir"><active value="true"/></Patient>'
+        '<Patient xmlns="http://hl7.org/fhir"><telecom><rank value="abc"/></telecom></Patient>'
       )
 
       record = FHIRPath::Conformance::Importer.new(
@@ -183,7 +186,7 @@ class FHIRPathConformancePipelineTest < Minitest::Test
 
       assert_equal 'complex.xml', record['input_fixture']
       assert_equal 'not-run', record['classification']
-      assert_match(/matching JSON fixture/, record['not_run_reason'])
+      assert_match(/unsupported XML structure/, record['not_run_reason'])
       assert_nil record['resource']
     end
   end

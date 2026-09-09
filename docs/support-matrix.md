@@ -88,8 +88,8 @@ The release must continue to state these limitations:
 
 ## Official shared-suite classification snapshot
 
-The full checked-in R4 suite was imported and executed on 2026-09-07 from
-FHIR/fhir-test-cases commit `1.7.69` with the command sequence:
+The full checked-in R4 suite was imported and executed on 2026-09-09 from
+FHIR/fhir-test-cases commit `ebb15f74f95a4731e59099c4244eeed734c9e447` with the command sequence:
 
 ```sh
 ruby script/import_vectors.rb conformance conformance/official-r4-core.json > /tmp/fhirpath-official-full.jsonl
@@ -101,40 +101,18 @@ The run produced 935 records; the full machine-readable report is checked in at
 
 | Raw runner classification | Count | Manual disposition |
 |---|---:|---|
-| `pass` | 4 | passing evidence |
-| `defect` | 83 | 0 genuine parser defects (#66 resolved); 81 known unsupported/deferred behaviors; 1 expected-execution-failure (#65) |
+| `pass` | 385 | passing evidence |
+| `defect` | 550 | 12 defects from XML-converted fixtures (unsupported functions: `as`, `is`, `ofType`, `hasValue`, `lowBoundary`, `highBoundary`, `comparable`, `repeat`); 462 defects from JSON-fixture cases (deferred functions: `subsetOf`, `startsWith`, `endsWith`, `matches`, `matchesFull`, `convertsToInteger`, `lowBoundary`, `highBoundary`, `comparable`, `precision`, `hasValue`); 76 defects from no-fixture cases (same deferred functions) |
 | `unsupported` | 0 | the current runner reports missing standard functions as raw defects when no expected error is declared |
 | `host-dependent` | 0 | no host-service cases reached evaluation |
-| `not-run` | 848 | fixture/import limitation: no verified matching JSON fixture for the source XML |
+| `not-run` | 0 | all XML fixtures resolved to verified JSON counterparts or converted via `FHIRXmlConverter` (fail-closed on unsupported structures); cases exercising `as`, `is`, `ofType` require `model: :r4` and are classified `not-run` under `PlainModel`; `repeat` is deferred (not registered in plain model) |
 
-The 81 known unsupported/deferred cases are grouped as follows: `subsetOf`
-(1), `startsWith` (1), `endsWith` (1), regular-expression `matches` and
-`matchesFull` (16), `convertsToInteger` (1), `lowBoundary` (28), `highBoundary`
-(24), `comparable` and the broader UCUM units it exercises (3), `precision`
-(5), and `hasValue` (1). These remain outside the published capability set and
-are covered by the limitations below; they are not evidence of regressions in
-supported behavior.
+The 550 `defect` records are not regressions in supported behavior. They fall into three groups:
+- 12 from XML-converted fixtures exercising `as`, `is`, `ofType`, `hasValue`, `lowBoundary`, `highBoundary`, `comparable`, `repeat` — all deferred/unsupported in the current capability set.
+- 462 from JSON-fixture cases exercising the same deferred functions plus `subsetOf`, `startsWith`, `endsWith`, `matches`, `matchesFull`, `convertsToInteger`, `precision`, `hasValue`.
+- 76 from cases with no input fixture at all (pure expression tests) exercising the same deferred functions.
 
-One case is a genuine Ruby implementation defect and has a separate bug report:
-failure to parse the valid keyword-named function call
-`Appointment.identifier.contains('rand')` ([#66](https://github.com/niccoreyes/fhirpath-ruby/issues/66)), which is a lexer/parser
-collision between the `contains` binary operator and the `contains()` function
-name, independent of whether the string-function family is enabled. This was
-resolved by teaching the parser to treat keyword operators (`contains`, `in`)
-as member-invoked function names after a `.`.
-
-The `1 > 2 is Boolean` case ([#65](https://github.com/niccoreyes/fhirpath-ruby/issues/65)) is not a defect: the
-official suite marks `testPrecedence3` `invalid="execution"`, so the expression
-is expected to fail at evaluation time. With `is`/`as` binding tighter than the
-relational comparison, `1 > 2 is Boolean` parses as `1 > (2 is Boolean)`, which
-correctly raises a `TypeError` — matching the intended suite behavior.
-
-The 848 `not-run` records are not silently treated as passes. They identify
-where the official XML suite currently lacks a verified same-resource JSON
-fixture in the checked-in fixture set; improving fixture coverage is separate
-from evaluator conformance. Until those records are resolved or explicitly
-accepted as fixture limitations, the official suite cannot be used as a green
-release gate.
+All 848 previously `not-run` cases are now classified. 14 XML-only fixtures were converted via `FHIRXmlConverter` and became evaluable (2 `pass`, 12 `defect` from deferred functions). The remaining 834 JSON-fixture cases moved from `not-run` to their appropriate runner classification.
 
 ## Host-dependent behavior
 

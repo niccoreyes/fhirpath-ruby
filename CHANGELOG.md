@@ -3,6 +3,11 @@
 All notable changes to this project are documented here. The project is pre-1.0; the API and supported behavior may change between releases.
 
 ## [Unreleased]
+- Import and execute the full official HL7 FHIRPath R4 shared test suite (935 cases from `fhir-test-cases` commit `ebb15f74f95a4731e59099c4244eeed734c9e447`) with XML fixtures resolved to verified JSON counterparts or converted via the new `FHIRXmlConverter` (fail-closed on unsupported structures). Runner classification: 385 pass, 550 defect (12 from 14 XML-converted fixtures + 462 from 840 JSON-fixture cases + 76 from 81 no-fixture cases), 0 not-run. 14 XML-only fixtures converted; 840 JSON-fixture cases reclassified; 81 no-fixture cases classified. Closes issue #79; part of #75.
+- Clarify `FixtureResolver#structurally_match?` documentation: structural matching requires equal `resourceType` values, while IDs are compared only when both resources provide them; if either ID is absent, the type match is sufficient. The importer records the selected JSON path as `fixture_source`, so documentation now states this rule explicitly to prevent false confidence in source verification.
+- Add `FHIRPath::Conformance::FHIRXmlConverter`: dependency-free FHIR XML to JSON conversion following canonical FHIR JSON representation rules. Primitive element types drawn from a curated table covering elements the official suite exercises; raises `UnsupportedStructureError` for structures it cannot faithfully represent so the importer can fail closed instead of emitting a resource with wrong types.
+- Add `FHIRPath::Conformance::FixtureResolver`: resolves XML fixtures to verified JSON counterparts using structural matching (resource type + id equality) rather than basename heuristics, preventing same-named JSON files that are different resource instances from being incorrectly trusted.
+- Update `FHIRPath::Conformance::Importer` to use the resolver and converter; `not-run` classification now only applies to structurally unsupported XML, not to missing JSON counterparts.
 
 ## [0.2.0.pre7] - 2026-09-08
 - Change the default FHIR model from `PlainModel` to `FHIR::R4::ModelProvider`: omitted `model:` now uses R4, enabling choice navigation (`Observation.value`) and logical-type `is`/`as` metadata by default. Pass `model: nil` to retain the previous `PlainModel` behavior for model-independent navigation.

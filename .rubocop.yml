@@ -59,6 +59,9 @@ Metrics/ClassLength:
     - "lib/fhirpath/vector_runner.rb"
     - "test/importer_semantics_test.rb"
     - "test/vector_runner_conformance_semantics_test.rb"
+    - "lib/fhirpath/conformance/fhir_xml_converter.rb"
+    - "test/conformance_fixture_resolver_test.rb"
+    - "test/importer_xml_fixture_integration_test.rb"
     - "test/fhirpath_js_importer_test.rb"
     - "test/conformance_completeness_test.rb"
     - "lib/fhirpath/conformance/fhirpath_js_importer.rb"
@@ -91,5 +94,6 @@ Metrics/BlockLength:
   Exclude:
     - "test/conformance_pipeline_test.rb"
     - "fhirpath.gemspec"
+    - "test/importer_xml_fixture_integration_test.rb"
     - "test/fhirpath_js_importer_test.rb"
     - "test/conformance_completeness_test.rb"
