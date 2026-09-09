@@ -1,0 +1,187 @@
+{
+  "schema": "fhirpath-conformance-v1",
+  "suite": "HL7/fhirpath.js",
+  "suite_commit": "8a4f5deac10bf3b491da139faaa05ef851ecc681",
+  "upstream": {
+    "repository": "https://github.com/hl7/fhirpath.js",
+    "source_paths": [
+      "test/cases",
+      "test/resources"
+    ],
+    "license": "BSD-3-Clause (variant)",
+    "license_file": "LICENSE.md"
+  },
+  "target": "2.0.0",
+  "model": "r4",
+  "source": "cases/3_path_selection.yaml",
+  "load_full_suite": false,
+  "files": [
+    {
+      "path": "cases/3_path_selection.yaml",
+      "sha256": "67b2dd5dc742337bda59f2534d3dac834bb174632fa745511e2c0962177e0e4a",
+      "status": "adopted"
+    },
+    {
+      "path": "cases/4.1_literals.yaml",
+      "sha256": "24eac86ab97cda421e2faea28cd108e4d8b5beb448ab4fb8f7bba948e05ab483",
+      "status": "pending"
+    },
+    {
+      "path": "cases/5.1_existence.yaml",
+      "sha256": "64b6ba8275808852f5e00a29137076352434f2870ae9665d9d5c8cb2cf33bbd8",
+      "status": "pending"
+    },
+    {
+      "path": "cases/5.2.3_repeat.yaml",
+      "sha256": "4dfc3b252ba5b3a6efaa1926896e06ad9d5bc22009602725b11fa00ff2fb5bbf",
+      "status": "pending"
+    },
+    {
+      "path": "cases/5.2_filtering_and_projection.yaml",
+      "sha256": "6a9cc0e264f6b7f84b1e3b972b2243208c1b3faa58ee6151ae923ce5001906e3",
+      "status": "pending"
+    },
+    {
+      "path": "cases/5.3_subsetting.yaml",
+      "sha256": "c3ebf9437ca6bfced072a8c580bb79ba4cba37c6744ef43995623cda9286d3fc",
+      "status": "pending"
+    },
+    {
+      "path": "cases/5.4_combining.yaml",
+      "sha256": "02ec66c6d244637caa8b93fb615d8005299851e7ca5e1dc4261260ae2953ee4d",
+      "status": "pending"
+    },
+    {
+      "path": "cases/5.5_conversion.yaml",
+      "sha256": "e333a9a93863ca876c79e0972a127ae1e110dadf86180938774b9ee0b6804dcf",
+      "status": "pending"
+    },
+    {
+      "path": "cases/5.6_string_manipulation.yaml",
+      "sha256": "bb0e61826094796213eab6062584c5a419e4587dac163e0bceb0ed5403f91233",
+      "status": "pending"
+    },
+    {
+      "path": "cases/5.7_math.yaml",
+      "sha256": "3af200dbbdd8ae12debc9fc3b6db31c1a09d85dc754a21edb30dbc329d5acf0e",
+      "status": "pending"
+    },
+    {
+      "path": "cases/5.8_tree_navigation.yaml",
+      "sha256": "1c28e1bff481a8abc5529323533fb229c87221163ba86f544e22333dc78510db",
+      "status": "pending"
+    },
+    {
+      "path": "cases/5.9_utility_functions.yaml",
+      "sha256": "d6124259d307136e7557ddb00cf849d4d2ba90144bfa245ec7aa3d4960f69bc7",
+      "status": "pending"
+    },
+    {
+      "path": "cases/6.1_equality.yaml",
+      "sha256": "189608ee167ad60f44b2d70e8f0af8a4f011569f340c017ef451a0e414a7f17f",
+      "status": "pending"
+    },
+    {
+      "path": "cases/6.2_comparision.yaml",
+      "sha256": "d64a4d361e04be0409680da97ac214d97681530f4b63669f904a57f1bd9b1d9c",
+      "status": "pending"
+    },
+    {
+      "path": "cases/6.3_types.yaml",
+      "sha256": "d5eaf2ad594ea2e2941e5f1b9b9d2cd1a82753468a1c7ad7f1570d1b650fd077",
+      "status": "pending"
+    },
+    {
+      "path": "cases/6.4_collection.yaml",
+      "sha256": "cccabc1b2a05a7aee1a2e173412a7ead4f26249b54a9e06b7043ec9a514d8217",
+      "status": "pending"
+    },
+    {
+      "path": "cases/6.4_collections.yaml",
+      "sha256": "054247cc77caa203d57816b5826e29a4be69302c630deb455851de98b8f70404",
+      "status": "pending"
+    },
+    {
+      "path": "cases/6.5_boolean_logic.yaml",
+      "sha256": "ebd22492cddcd7ce482bfed384a46596ce83d20d462e4d35542b591cbbcd76d2",
+      "status": "pending"
+    },
+    {
+      "path": "cases/6.6_math.yaml",
+      "sha256": "35f3eeed63223b26a9ca4968a376bf4be3a79d29bffd2cab4e307ea41644679f",
+      "status": "pending"
+    },
+    {
+      "path": "cases/7_aggregate.yaml",
+      "sha256": "902390c91ec7387c7db1b72aca587dd380a5e5551813d8f162e7494984dda9bc",
+      "status": "pending"
+    },
+    {
+      "path": "cases/8_variables.yaml",
+      "sha256": "bdd24d7e05871823d20aa5580aa0f723e122a607f6dffa4880e42a76a4b4c1ff",
+      "status": "pending"
+    },
+    {
+      "path": "cases/bigint.yaml",
+      "sha256": "055d52058f56270a55259d6c18a9101c29ef2ec954a5247422c37cc5b6fe978f",
+      "status": "excluded",
+      "reason": "fhirpath.js BigInt extension beyond the standard numeric model"
+    },
+    {
+      "path": "cases/extensions.yaml",
+      "sha256": "5da6f30fd5d2f0c84d9200ec366eb6596be2ad7fbfbe779eab143b3bae93b600",
+      "status": "excluded",
+      "reason": "fhirpath.js extension tests not present in the normative specification"
+    },
+    {
+      "path": "cases/factory.yaml",
+      "sha256": "fac81a8123d189ae3837c81e8ca287cd8ad36bac4e4e0137dbe15f670222bbe8",
+      "status": "excluded",
+      "reason": "%factory environment-variable behaviour is fhirpath.js-specific"
+    },
+    {
+      "path": "cases/fhir-quantity.yaml",
+      "sha256": "84dce2fa952ca1b4cf47e7df859f1ae0dc5b237c7ca55316c8517ba646a688fc",
+      "status": "pending"
+    },
+    {
+      "path": "cases/fhir-r4.yaml",
+      "sha256": "f956cd5bd2f1660a1f36c581e6368cf731065097aa95d9372bb93a2d958b12cc",
+      "status": "pending"
+    },
+    {
+      "path": "cases/fhir-r5.yaml",
+      "sha256": "29687f78071ec126a04a32e3b8938facd8736e8a00048e7dc1fc5a3177843031",
+      "status": "pending"
+    },
+    {
+      "path": "cases/getValue.yaml",
+      "sha256": "4cabc4ce06d9bc92253f8f4366d98114905503061b3e8ee9adb66119007720bb",
+      "status": "excluded",
+      "reason": "fhirpath.js implementation-specific getValue() accessor"
+    },
+    {
+      "path": "cases/gln-validation-expression.yaml",
+      "sha256": "cb09454ec399e4dd82384b5e7c2827f0a31e6034672aead72b478618e829c253",
+      "status": "excluded",
+      "reason": "GLN validation expression requires external terminology/network"
+    },
+    {
+      "path": "cases/hasValue.yaml",
+      "sha256": "eb474887912bac8370a36fe0c843628c1eb5c4e1ac81321fb82f6b95b34cdbb8",
+      "status": "excluded",
+      "reason": "fhirpath.js implementation-specific hasValue() extension"
+    },
+    {
+      "path": "cases/htmlChecks.yaml",
+      "sha256": "98ec437cce14f6e5233e6818c6661fa77275e6601fcde1df5e21dbf1c654204d",
+      "status": "excluded",
+      "reason": "HTML rendering checks are browser/implementation-specific, not engine behaviour"
+    },
+    {
+      "path": "cases/simple.yaml",
+      "sha256": "6a8308da80f92bdec9bd9168af94c779096a352614399982eba6cbc30d010687",
+      "status": "pending"
+    }
+  ]
+}
