@@ -38,10 +38,15 @@ namespace :conformance do
 
   desc 'Import and report the fhirpath.js compatibility corpus'
   task :fhirpath_js do
-    ruby 'script/generate_conformance_report.rb',
-         'conformance/fhirpath-js/manifest.json',
-         'conformance/reports/fhirpath-js-report.json',
-         'conformance/baselines/fhirpath-js.json'
+    # Skip if fhirpath.js fixtures are not available in this checkout
+    if File.exist?('conformance/fhirpath-js/manifest.json') && Dir.exist?('conformance/fhirpath-js/resources')
+      ruby 'script/generate_conformance_report.rb',
+           'conformance/fhirpath-js/manifest.json',
+           'conformance/reports/fhirpath-js-report.json',
+           'conformance/baselines/fhirpath-js.json'
+    else
+      puts 'fhirpath.js fixtures not available; skipping conformance:fhirpath_js'
+    end
   end
 
   desc 'Run baseline regression checks for all corpora'
