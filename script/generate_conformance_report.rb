@@ -11,10 +11,19 @@ require 'json'
 require 'fileutils'
 require_relative '../lib/fhirpath/conformance/importer'
 require_relative '../lib/fhirpath/conformance/corpus_validator'
+require_relative '../lib/fhirpath/vector_runner'
 
 manifest_path = ARGV[0]
 output_path = ARGV[1]
-baseline_path = ARGV[2]
+
+# Parse --baseline flag
+baseline_path = nil
+if ARGV[2] == '--baseline'
+  baseline_path = ARGV[3]
+elsif ARGV[2] && !ARGV[2].start_with?('--')
+  # Legacy positional argument support
+  baseline_path = ARGV[2]
+end
 
 unless manifest_path && output_path
   raise ArgumentError, 'usage: generate_conformance_report.rb MANIFEST OUTPUT [--baseline BASELINE]'
@@ -36,6 +45,32 @@ importer = FHIRPath::Conformance::Importer.new(
 
 records = importer.import
 baseline = baseline_path && JSON.parse(File.read(baseline_path))
+
+# Get import-time counts from the importer (what gets imported from XML)
+import_time_counts = {
+  'evaluable' => records.count { |r| r['classification'] != 'not-run' },
+  'pass' => records.count { |r| r['classification'] == 'pass' },
+  'defect' => records.count { |r| r['classification'] == 'defect' },
+  'unsupported' => records.count { |r| r['classification'] == 'unsupported' },
+  'host-dependent' => records.count { |r| r['classification'] == 'host-dependent' },
+  'not-run' => records.count { |r| r['classification'] == 'not-run' }
+}
+
+# Run the corpus through the vector runner to get actual execution results
+# This populates classification_counts from actual evaluation.
+classification_counts = {}
+vector_path = 'conformance/.vector_records.jsonl'
+begin
+  content = "#{records.map(&:to_json).join("\n")}\n"
+  File.write(vector_path, content)
+  runner_report = FHIRPath::VectorRunner.run(vector_path)
+
+  # Build classification_counts from execution results
+  classification_counts = runner_report[:counts].dup
+ensure
+  FileUtils.rm_f(vector_path) if File.exist?(vector_path)
+end
+
 report = FHIRPath::Conformance::CorpusValidator.validate(records, baseline: baseline)
 
 # Build the output report with all required metadata keys as strings.
@@ -51,12 +86,14 @@ end
 
 report_str = stringify_keys(report)
 
-# Ensure classification_counts exists.
-unless report_str['classification_counts']
-  counts = report_str['record_counts'] || {}
-  evaluable = counts.delete('evaluable') || 0
-  report_str['classification_counts'] = counts.merge('evaluable' => evaluable)
-end
+# Remove any existing classification_counts from validation, replace with execution results
+report_str.delete('classification_counts')
+
+# Ensure classification_counts exists and is populated from execution
+report_str['classification_counts'] = classification_counts
+
+# Keep record_counts as import-time counts (from the importer)
+report_str['record_counts'] = import_time_counts
 
 # Merge manifest-level metadata (wins over any existing keys).
 metadata = {

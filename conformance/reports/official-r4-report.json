@@ -4,6 +4,7 @@
   "errors": [],
   "total": 935,
   "record_counts": {
+    "evaluable": 935,
     "pass": 0,
     "defect": 0,
     "unsupported": 0,
@@ -1106,11 +1107,10 @@
   "digest": "sha256:5a503d3ddda2c07affacb9adae0cd1023faec6500ad94a07a16f271c3f55ae30",
   "classification_counts": {
     "pass": 0,
-    "defect": 0,
+    "defect": 935,
     "unsupported": 0,
     "host-dependent": 0,
-    "not-run": 0,
-    "evaluable": 935
+    "not-run": 0
   },
   "schema_version": 1,
   "corpus": "official-r4",

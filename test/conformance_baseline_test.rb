@@ -50,7 +50,8 @@ class CheckConformanceBaselineTest < Minitest::Test
   end
 
   def test_matches_baseline_passes
-    report = @valid_baseline.merge('total' => 100, 'record_counts' => @valid_baseline['record_counts'].dup)
+    report = @valid_baseline.merge('total' => 100,
+                                   'classification_counts' => @valid_baseline['classification_counts'].dup)
     write_report(report) do |report_path|
       write_baseline(@valid_baseline) do |baseline_path|
         stdout, _stderr, status = run_script(%W[--current #{report_path} --baseline #{baseline_path}])
@@ -61,8 +62,11 @@ class CheckConformanceBaselineTest < Minitest::Test
   end
 
   def test_pass_count_increase_is_accepted
+    # Increase pass by shifting from defect (total stays same)
     report = @valid_baseline.dup
-    report['record_counts'] = report['record_counts'].merge('pass' => 35)
+    report['classification_counts'] = report['classification_counts'].merge(
+      'pass' => 35, 'defect' => 0
+    )
     write_report(report) do |report_path|
       write_baseline(@valid_baseline) do |baseline_path|
         stdout, _stderr, status = run_script(%W[--current #{report_path} --baseline #{baseline_path}])
@@ -73,8 +77,11 @@ class CheckConformanceBaselineTest < Minitest::Test
   end
 
   def test_defect_count_decrease_is_accepted
+    # Decrease defect by shifting to pass (total stays same)
     report = @valid_baseline.dup
-    report['record_counts'] = report['record_counts'].merge('defect' => 2)
+    report['classification_counts'] = report['classification_counts'].merge(
+      'pass' => 35, 'defect' => 0
+    )
     write_report(report) do |report_path|
       write_baseline(@valid_baseline) do |baseline_path|
         stdout, _stderr, status = run_script(%W[--current #{report_path} --baseline #{baseline_path}])
@@ -85,8 +92,11 @@ class CheckConformanceBaselineTest < Minitest::Test
   end
 
   def test_not_run_count_decrease_is_accepted
+    # Decrease not-run by shifting to pass (total stays same)
     report = @valid_baseline.dup
-    report['record_counts'] = report['record_counts'].merge('not-run' => 60)
+    report['classification_counts'] = report['classification_counts'].merge(
+      'pass' => 95, 'not-run' => 0
+    )
     write_report(report) do |report_path|
       write_baseline(@valid_baseline) do |baseline_path|
         stdout, _stderr, status = run_script(%W[--current #{report_path} --baseline #{baseline_path}])
@@ -98,7 +108,7 @@ class CheckConformanceBaselineTest < Minitest::Test
 
   def test_pass_count_decrease_fails
     report = @valid_baseline.dup
-    report['record_counts'] = report['record_counts'].merge('pass' => 25)
+    report['classification_counts'] = report['classification_counts'].merge('pass' => 25)
     write_report(report) do |report_path|
       write_baseline(@valid_baseline) do |baseline_path|
         _stdout, _stderr, status = run_script(%W[--current #{report_path} --baseline #{baseline_path}])
@@ -109,7 +119,7 @@ class CheckConformanceBaselineTest < Minitest::Test
 
   def test_defect_count_increase_fails
     report = @valid_baseline.dup
-    report['record_counts'] = report['record_counts'].merge('defect' => 8)
+    report['classification_counts'] = report['classification_counts'].merge('defect' => 8)
     write_report(report) do |report_path|
       write_baseline(@valid_baseline) do |baseline_path|
         _stdout, _stderr, status = run_script(%W[--current #{report_path} --baseline #{baseline_path}])
@@ -120,7 +130,7 @@ class CheckConformanceBaselineTest < Minitest::Test
 
   def test_not_run_count_increase_fails
     report = @valid_baseline.dup
-    report['record_counts'] = report['record_counts'].merge('not-run' => 70)
+    report['classification_counts'] = report['classification_counts'].merge('not-run' => 70)
     write_report(report) do |report_path|
       write_baseline(@valid_baseline) do |baseline_path|
         _stdout, _stderr, status = run_script(%W[--current #{report_path} --baseline #{baseline_path}])
@@ -162,7 +172,7 @@ class CheckConformanceBaselineTest < Minitest::Test
 
   def test_strict_mode_rejects_any_change
     report = @valid_baseline.dup
-    report['record_counts'] = report['record_counts'].merge('pass' => 31)
+    report['classification_counts'] = report['classification_counts'].merge('pass' => 31)
     write_report(report) do |report_path|
       write_baseline(@valid_baseline) do |baseline_path|
         _stdout, _stderr, status = run_script(%W[--current #{report_path} --baseline #{baseline_path} --strict])

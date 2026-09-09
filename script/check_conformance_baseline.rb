@@ -20,6 +20,7 @@ require 'fileutils'
 #   - Defect count may not increase; a decrease is an improvement.
 #   - not-run count may decrease (improvement) or stay equal; cannot increase.
 #   - Unsupported/host-dependent counts are informational and do not gate.
+#   - Classification counts from execution must sum to total.
 
 def fail(message)
   warn "FAIL: #{message}"
@@ -88,23 +89,35 @@ def count_value(counts, key)
   counts.is_a?(Hash) ? counts[key] || 0 : 0
 end
 
-current_counts = current['record_counts'] || {}
-baseline_counts = baseline ? baseline['record_counts'] || {} : nil
+# Compare classification_counts (execution results) not record_counts (import-time)
+current_classification = current['classification_counts'] || {}
+baseline_classification = baseline ? baseline['classification_counts'] || {} : nil
+
+# Validate that classification_counts sums to total
+current_sum = current_classification.values.sum
+fail "classification_counts sum (#{current_sum}) != total (#{current['total']})" if current_sum != current['total']
+
+if baseline
+  baseline_sum = baseline_classification.values.sum
+  if baseline_sum != baseline['total']
+    fail "baseline classification_counts sum (#{baseline_sum}) != total (#{baseline['total']})"
+  end
+end
 
 if baseline && current['total'] != baseline['total']
   fail "total case count changed: #{baseline['total']} -> #{current['total']}"
 end
 
-current_pass = count_value(current_counts, 'pass')
-baseline_pass = baseline ? count_value(baseline_counts, 'pass') : 0
+current_pass = count_value(current_classification, 'pass')
+baseline_pass = baseline ? count_value(baseline_classification, 'pass') : 0
 fail "pass count decreased: #{baseline_pass} -> #{current_pass}" if baseline && current_pass < baseline_pass
 
-current_defect = count_value(current_counts, 'defect')
-baseline_defect = baseline ? count_value(baseline_counts, 'defect') : 0
+current_defect = count_value(current_classification, 'defect')
+baseline_defect = baseline ? count_value(baseline_classification, 'defect') : 0
 fail "defect count increased: #{baseline_defect} -> #{current_defect}" if baseline && current_defect > baseline_defect
 
-current_not_run = count_value(current_counts, 'not-run')
-baseline_not_run = baseline ? count_value(baseline_counts, 'not-run') : 0
+current_not_run = count_value(current_classification, 'not-run')
+baseline_not_run = baseline ? count_value(baseline_classification, 'not-run') : 0
 if baseline && current_not_run > baseline_not_run
   fail "not-run count increased: #{baseline_not_run} -> #{current_not_run}"
 end
@@ -112,9 +125,9 @@ end
 if strict_mode && baseline
   fail('strict mode: corpus digest changed') if current['corpus_digest'] != baseline['corpus_digest']
 
-  %w[pass defect not-run unsupported host-dependent evaluable].each do |key|
-    curr = count_value(current_counts, key)
-    base = count_value(baseline_counts, key)
+  %w[pass defect not-run unsupported host-dependent].each do |key|
+    curr = count_value(current_classification, key)
+    base = count_value(baseline_classification, key)
     fail "strict mode: #{key} changed from #{base} to #{curr}" if curr != base
   end
 end
@@ -131,15 +144,16 @@ if baseline
     $stdout.puts "baseline-improved: #{improvements.join(', ')}"
   end
 else
-  $stdout.puts "no-baseline: first run for corpus #{current['corpus']} (use --output-baseline to create one)"
+  $stdout.puts 'no-baseline: first run for corpus (use --output-baseline to create one)'
 end
 
 $stdout.puts JSON.pretty_generate({
                                     'status' => 'pass',
-                                    'current' => { 'total' => current['total'], 'record_counts' => current_counts },
+                                    'current' => { 'total' => current['total'],
+                                                   'classification_counts' => current_classification },
                                     'baseline' => if baseline
                                                     { 'total' => baseline['total'],
-                                                      'record_counts' => baseline_counts }
+                                                      'classification_counts' => baseline_classification }
                                                   end,
                                     'improvements' => improvements
                                   })
