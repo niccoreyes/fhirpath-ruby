@@ -57,6 +57,36 @@ jobs:
           bundle exec ./script/verify_gem_install.sh pkg/fhirpath-*.gem
           bundle exec ruby script/verify_release.rb pkg/fhirpath-*.gem
 
+  conformance-gates:
+    name: Conformance gates
+    runs-on: ubuntu-latest
+    needs: verify
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref }}
+          persist-credentials: false
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - name: Validate corpus contract
+        run: bundle exec rake conformance:validate
+      - name: Generate official suite report
+        run: bundle exec rake conformance:official
+      - name: Generate fhirpath.js compatibility report
+        run: bundle exec rake conformance:fhirpath_js
+      - name: Check baseline regression
+        run: bundle exec rake conformance:baseline
+      - name: Upload conformance reports
+        uses: actions/upload-artifact@v7
+        with:
+          name: conformance-reports
+          path: conformance/reports/
+          if-no-files-found: warn
+
   coverage:
     name: Coverage gate
     runs-on: ubuntu-latest
@@ -82,7 +112,7 @@ jobs:
   package:
     name: Package release artifacts
     runs-on: ubuntu-latest
-    needs: [verify, coverage]
+    needs: [verify, conformance-gates, coverage]
     steps:
       - name: Check out tagged source
         uses: actions/checkout@v5

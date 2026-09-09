@@ -2,6 +2,7 @@
   "schema": "fhirpath-conformance-v1",
   "suite": "HL7/fhirpath.js",
   "suite_commit": "8a4f5deac10bf3b491da139faaa05ef851ecc681",
+  "corpus": "fhirpath-js",
   "upstream": {
     "repository": "https://github.com/hl7/fhirpath.js",
     "source_paths": [
