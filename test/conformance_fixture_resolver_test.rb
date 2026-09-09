@@ -88,6 +88,31 @@ class FHIRPathConformanceFixtureResolverTest < Minitest::Test
                  name['_family']['extension']
   end
 
+  def test_xml_converter_preserves_repeated_extension_children
+    xml = <<~XML
+      <Patient xmlns="http://hl7.org/fhir">
+        <name>
+          <family value="Chalmers">
+            <extension url="http://example.org/family-ext">
+              <valueString value="first"/>
+              <valueString value="second"/>
+            </extension>
+          </family>
+        </name>
+      </Patient>
+    XML
+
+    json = FHIRPath::Conformance::FHIRXmlConverter.convert(xml)
+
+    assert_equal 'Patient', json['resourceType']
+    name = json['name']
+    assert_equal 'Chalmers', name['family']
+    ext = name['_family']['extension']
+    assert_equal 1, ext.length
+    # Repeated child elements under an extension should be collected as an array
+    assert_equal ['first', 'second'], ext.first['valueString']
+  end
+
   def test_xml_converter_handles_choice_fields
     xml = <<~XML
       <Patient xmlns="http://hl7.org/fhir">
@@ -118,10 +143,11 @@ class FHIRPathConformanceFixtureResolverTest < Minitest::Test
 
     assert_equal 'Patient', json['resourceType']
     assert_equal 'example', json['id']
-    assert_equal 1, json['contained'].length
-    assert_equal 'Organization', json['contained'][0]['resourceType']
-    assert_equal 'org1', json['contained'][0]['id']
-    assert_equal 'Acme Healthcare', json['contained'][0]['name']
+    # A single <contained> element yields a single resource hash (not an array).
+    assert_kind_of Hash, json['contained']
+    assert_equal 'Organization', json['contained']['resourceType']
+    assert_equal 'org1', json['contained']['id']
+    assert_equal 'Acme Healthcare', json['contained']['name']
   end
 
   def test_xml_converter_handles_xhtml_narrative
@@ -159,7 +185,8 @@ class FHIRPathConformanceFixtureResolverTest < Minitest::Test
     json = FHIRPath::Conformance::FHIRXmlConverter.convert(xml)
 
     assert_equal 'Observation', json['resourceType']
-    assert_equal '123.456', json['valueQuantity']['value']
+    assert_kind_of BigDecimal, json['valueQuantity']['value']
+    assert_equal BigDecimal('123.456'), json['valueQuantity']['value']
     assert_equal 'mg', json['valueQuantity']['unit']
   end
 

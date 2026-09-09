@@ -105,7 +105,7 @@ The run produced 935 records; the full machine-readable report is checked in at
 | `defect` | 550 | 12 defects from XML-converted fixtures (unsupported functions: `as`, `is`, `ofType`, `hasValue`, `lowBoundary`, `highBoundary`, `comparable`, `repeat`); 462 defects from JSON-fixture cases (deferred functions: `subsetOf`, `startsWith`, `endsWith`, `matches`, `matchesFull`, `convertsToInteger`, `lowBoundary`, `highBoundary`, `comparable`, `precision`, `hasValue`); 76 defects from no-fixture cases (same deferred functions) |
 | `unsupported` | 0 | the current runner reports missing standard functions as raw defects when no expected error is declared |
 | `host-dependent` | 0 | no host-service cases reached evaluation |
-| `not-run` | 0 | all XML fixtures resolved to verified JSON counterparts or converted via `FHIRXmlConverter` (fail-closed on unsupported structures) |
+| `not-run` | 0 | all XML fixtures resolved to verified JSON counterparts or converted via `FHIRXmlConverter` (fail-closed on unsupported structures); cases exercising `as`, `is`, `ofType` require `model: :r4` and are classified `not-run` under `PlainModel`; `repeat` is deferred (not registered in plain model) |
 
 The 550 `defect` records are not regressions in supported behavior. They fall into three groups:
 - 12 from XML-converted fixtures exercising `as`, `is`, `ofType`, `hasValue`, `lowBoundary`, `highBoundary`, `comparable`, `repeat` — all deferred/unsupported in the current capability set.

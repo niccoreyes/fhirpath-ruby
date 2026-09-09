@@ -172,4 +172,39 @@ class FHIRPathImporterXmlFixtureIntegrationTest < Minitest::Test
       assert_includes record['not_run_reason'], 'unsupported XML structure'
     end
   end
+
+  # Repeated <contained> elements should produce a flat array of resources,
+  # not nested arrays. Each <contained> element contains exactly one resource.
+  def test_xml_converter_handles_repeated_contained_elements
+    xml = <<~XML
+      <Patient xmlns="http://hl7.org/fhir">
+        <id value="example"/>
+        <contained>
+          <Organization>
+            <id value="org1"/>
+            <name value="Acme Healthcare"/>
+          </Organization>
+        </contained>
+        <contained>
+          <Organization>
+            <id value="org2"/>
+            <name value="Beta Hospital"/>
+          </Organization>
+        </contained>
+      </Patient>
+    XML
+
+    json = FHIRPath::Conformance::FHIRXmlConverter.convert(xml)
+
+    assert_equal 'Patient', json['resourceType']
+    assert_equal 'example', json['id']
+    assert_equal 2, json['contained'].length,
+                 'repeated <contained> elements must yield a flat array of resources, not nested arrays'
+    assert_equal 'Organization', json['contained'][0]['resourceType']
+    assert_equal 'org1', json['contained'][0]['id']
+    assert_equal 'Acme Healthcare', json['contained'][0]['name']
+    assert_equal 'Organization', json['contained'][1]['resourceType']
+    assert_equal 'org2', json['contained'][1]['id']
+    assert_equal 'Beta Hospital', json['contained'][1]['name']
+  end
 end

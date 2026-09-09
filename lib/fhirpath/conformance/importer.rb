@@ -313,7 +313,7 @@ module FHIRPath
             'fixture_conversion' => 'xml-to-json',
             'fixture_converter' => 'FHIRPath::Conformance::FHIRXmlConverter'
           }]
-        rescue FHIRPath::Conformance::FHIRXmlConverter::UnsupportedStructureError => e
+        rescue FHIRPath::Conformance::FHIRXmlConverter::UnsupportedStructureError, REXML::ParseException => e
           [nil, { 'not_run_reason' => "unsupported XML structure: #{e.message}" }]
         end
       end

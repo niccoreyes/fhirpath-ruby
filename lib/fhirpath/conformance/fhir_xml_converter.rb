@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'bigdecimal'
 require 'rexml/document'
 
 module FHIRPath
@@ -91,7 +92,7 @@ module FHIRPath
           return [typed_scalar(element), extension_array(element)] if element.attributes['value']
           return [element.to_s, nil] if local == 'div' && element.namespace == XHTML_NAMESPACE
 
-          return [contained_resources(element), nil] if local == 'contained'
+          return [contained_resource(element), nil] if local == 'contained'
 
           nested = {}
           populate(nested, element)
@@ -112,12 +113,25 @@ module FHIRPath
           data['url'] = url.to_s unless url.to_s.empty?
           extension.each_element do |child|
             value, child_ext = scalar_or_complex(child)
-            data[child.local_name] = value
-            data["_#{child.local_name}"] = { 'extension' => child_ext } if child_ext
+            append(data, child.local_name, value)
+            append(data, "_#{child.local_name}", { 'extension' => child_ext }) if child_ext
           end
           raise UnsupportedStructureError, "extension without url or value: #{extension}" if data.empty?
 
           data
+        end
+
+        def contained_resource(contained)
+          children = contained.elements.to_a
+          unless children.length == 1
+            raise UnsupportedStructureError, "contained must hold exactly one resource: #{contained}"
+          end
+
+          child = children.first
+          resource = {}
+          populate(resource, child)
+          resource['resourceType'] = child.local_name
+          resource
         end
 
         def contained_resources(contained)
@@ -178,7 +192,7 @@ module FHIRPath
         def decimal_value(raw)
           raise UnsupportedStructureError, "non-decimal value for decimal element: #{raw}" unless numeric?(raw)
 
-          raw.to_s
+          BigDecimal(raw.to_s)
         end
 
         def numeric?(raw)
