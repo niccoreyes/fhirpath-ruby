@@ -8,7 +8,7 @@ require 'open3'
 
 class CheckConformanceBaselineTest < Minitest::Test
   def setup
-    @project_root = '/Users/niccoreyes/Github/fhirpath-ruby/.worktrees/t_9916e20b'
+    @project_root = File.expand_path('..', __dir__)
     @script = File.join(@project_root, 'script', 'check_conformance_baseline.rb')
     @valid_baseline = {
       'schema_version' => 1,
