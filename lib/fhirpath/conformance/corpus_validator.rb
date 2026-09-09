@@ -121,7 +121,11 @@ module FHIRPath
         @records.each do |record|
           next unless record.is_a?(Hash)
 
-          add_commit_error(record, record['suite_commit'], 'suite_commit')
+          if record.key?('suite_commit') && record['suite_commit'].nil?
+            @errors << "record #{label(record)}: suite_commit must not be null"
+          else
+            add_commit_error(record, record['suite_commit'], 'suite_commit')
+          end
           add_commit_error(record, record.dig('origin', 'suite_commit'), 'origin.suite_commit')
         end
       end
@@ -251,7 +255,7 @@ module FHIRPath
       end
 
       def digest
-        canonical = @records.filter_map { |record| record['id'] ? record : nil }
+        canonical = @records.select { |record| record.is_a?(Hash) && record['id'] }
                             .sort_by { |record| record['id'].to_s }
                             .map { |record| JSON.generate(canonical_structure(record)) }
                             .join("\n")

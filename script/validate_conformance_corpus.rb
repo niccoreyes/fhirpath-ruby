@@ -25,9 +25,13 @@ def baseline_payload(report)
     'corpus' => File.basename(report[:source], '.jsonl').tr('-.', '_'),
     'suite' => report[:corpus_suite],
     'suite_commit' => report[:source_sha],
+    'target' => report[:target],
+    'model' => report[:model],
     'total' => report[:total],
     'record_counts' => report[:record_counts],
+    'classification_counts' => report[:classification_counts],
     'capability_totals' => report[:capability_totals],
+    'source_sha' => report[:source_sha],
     'corpus_digest' => report[:digest]
   }
 end
@@ -70,10 +74,20 @@ path = ARGV.fetch(0) { abort usage }
 
 args = ARGV[1..] || []
 options = {}
-args.each_slice(2) { |key, value| options[key] = value }
+emit_json = false
+i = 0
+while i < args.length
+  case args[i]
+  when '--json'
+    emit_json = true
+  when '--baseline', '--output-baseline'
+    options[args[i]] = args[i + 1]
+    i += 1
+  end
+  i += 1
+end
 baseline_path = options['--baseline']
 output_path = options['--output-baseline']
-emit_json = args.include?('--json')
 
 baseline = baseline_path && JSON.parse(File.read(baseline_path))
 report = FHIRPath::Conformance::CorpusValidator.validate_file(path, baseline: baseline)

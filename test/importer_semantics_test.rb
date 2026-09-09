@@ -46,7 +46,7 @@ class FHIRPathImporterSemanticsTest < Minitest::Test
 
       record = records.first
       refute record['error'].key?('code'), 'expected error should not include code for phase matching'
-      assert_equal 'FHIRPath::Error', record['error']['class']
+      assert_equal 'FHIRPath::EvaluationError', record['error']['class']
     end
   end
 

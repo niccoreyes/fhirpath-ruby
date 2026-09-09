@@ -145,7 +145,7 @@ module FHIRPath
         when 'syntax'
           { 'class' => 'FHIRPath::ParseError' }
         else
-          { 'class' => 'FHIRPath::Error' }
+          { 'class' => 'FHIRPath::EvaluationError' }
         end
       end
 

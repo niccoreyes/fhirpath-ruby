@@ -60,7 +60,10 @@
   },
   "allOf": [
     {
-      "if": { "properties": { "classification": { "const": "not-run" } } },
+      "if": {
+        "required": ["classification"],
+        "properties": { "classification": { "const": "not-run" } }
+      },
       "then": { "required": ["not_run_reason"] }
     }
   ]
