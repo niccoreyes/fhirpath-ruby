@@ -4,6 +4,8 @@ require 'json'
 require 'rexml/document'
 require 'yaml'
 require_relative '../capability'
+require_relative 'fhir_xml_converter'
+require_relative 'fixture_resolver'
 
 module FHIRPath
   module Conformance
@@ -289,34 +291,37 @@ module FHIRPath
         when '.json'
           [JSON.parse(File.read(path)), { 'fixture_source' => fixture_path(input_fixture) }]
         when '.xml'
-          json_path = matching_json_fixture(path)
-          unless json_path
-            return [nil, {
-              'not_run_reason' => "no verified matching JSON fixture for #{fixture_path(input_fixture)}"
-            }]
-          end
-
-          [JSON.parse(File.read(json_path)), { 'fixture_source' => relative_path(json_path) }]
+          read_xml_fixture(path, input_fixture)
         else
           raise ArgumentError, "unsupported fixture format: #{input_fixture}"
         end
       end
 
-      def matching_json_fixture(xml_path)
-        candidates = [xml_path.sub(/\.xml\z/i, '.json')]
-        basename = File.basename(xml_path, File.extname(xml_path))
-        search_root = absolute_path(@fixture_root || File.dirname(@suite_path))
-        candidates.concat(Dir.glob(File.join(search_root, '**', "#{basename}.json")))
-        candidates.uniq.select { |candidate| File.file?(candidate) }.sort.find do |candidate|
-          resource = JSON.parse(File.read(candidate))
-          resource.is_a?(Hash) && resource['resourceType'].to_s == xml_resource_type(xml_path)
-        rescue JSON::ParserError
-          false
+      # Resolve an XML fixture to a verified JSON fixture when one exists,
+      # otherwise convert it to the FHIR JSON representation. Conversion is
+      # best-effort and fails closed: an unsupported XML structure is recorded
+      # as not-run with an explicit reason rather than emitting a resource with
+      # silently wrong types.
+      def read_xml_fixture(path, input_fixture)
+        json_path = fixture_resolver.resolve_json_path(input_fixture)
+        return [JSON.parse(File.read(json_path)), { 'fixture_source' => relative_path(json_path) }] if json_path
+
+        begin
+          resource = FHIRPath::Conformance::FHIRXmlConverter.convert(File.read(path))
+          [resource, {
+            'fixture_source' => fixture_path(input_fixture),
+            'fixture_conversion' => 'xml-to-json',
+            'fixture_converter' => 'FHIRPath::Conformance::FHIRXmlConverter'
+          }]
+        rescue FHIRPath::Conformance::FHIRXmlConverter::UnsupportedStructureError => e
+          [nil, { 'not_run_reason' => "unsupported XML structure: #{e.message}" }]
         end
       end
 
-      def xml_resource_type(path)
-        REXML::Document.new(File.read(path)).root.name.to_s.split(':').last
+      def fixture_resolver
+        @fixture_resolver ||= FHIRPath::Conformance::FixtureResolver.new(
+          root: absolute_path(@fixture_root || File.dirname(@suite_path))
+        )
       end
 
       def deep_copy(value)
