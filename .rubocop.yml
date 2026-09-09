@@ -64,6 +64,7 @@ Metrics/ClassLength:
     - "test/importer_xml_fixture_integration_test.rb"
     - "test/fhirpath_js_importer_test.rb"
     - "test/conformance_completeness_test.rb"
+    - "test/official_suite_completeness_test.rb"
     - "lib/fhirpath/conformance/fhirpath_js_importer.rb"
 
 Metrics/ModuleLength:
@@ -77,6 +78,7 @@ Metrics/CyclomaticComplexity:
     - "lib/fhirpath/vector_runner.rb"
     - "lib/fhirpath/conformance/corpus_validator.rb"
     - "script/check_conformance_completeness.rb"
+    - "script/check_official_suite_completeness.rb"
 
 # Metrics/PerceivedComplexity is intentionally high for the conformance
 # error-matching logic which must distinguish class, code, and inheritance.
@@ -87,6 +89,7 @@ Metrics/PerceivedComplexity:
     - "lib/fhirpath/conformance/corpus_validator.rb"
     - "lib/fhirpath/vector_runner.rb"
     - "script/check_conformance_completeness.rb"
+    - "script/check_official_suite_completeness.rb"
 
 # The conformance test deliberately exercises many cases in one readable block
 # for pass/defect classification; split out per-case helpers later if needed.
@@ -97,3 +100,4 @@ Metrics/BlockLength:
     - "test/importer_xml_fixture_integration_test.rb"
     - "test/fhirpath_js_importer_test.rb"
     - "test/conformance_completeness_test.rb"
+    - "test/official_suite_completeness_test.rb"
