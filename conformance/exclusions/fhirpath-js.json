@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "corpus": "fhirpath-js",
+  "suite": "HL7/fhirpath.js",
+  "suite_commit": "8a4f5deac10bf3b491da139faaa05ef851ecc681",
+  "entries": [
+    {
+      "path": "cases/bigint.yaml",
+      "category": "implementation-specific",
+      "reason": "fhirpath.js BigInt extension beyond the standard numeric model",
+      "owner": "#78",
+      "reviewed": "2026-09-09"
+    },
+    {
+      "path": "cases/extensions.yaml",
+      "category": "implementation-specific",
+      "reason": "fhirpath.js extension tests not present in the normative specification",
+      "owner": "#78",
+      "reviewed": "2026-09-09"
+    },
+    {
+      "path": "cases/factory.yaml",
+      "category": "implementation-specific",
+      "reason": "%factory environment-variable behaviour is fhirpath.js-specific",
+      "owner": "#78",
+      "reviewed": "2026-09-09"
+    },
+    {
+      "path": "cases/getValue.yaml",
+      "category": "implementation-specific",
+      "reason": "fhirpath.js implementation-specific getValue() accessor",
+      "owner": "#78",
+      "reviewed": "2026-09-09"
+    },
+    {
+      "path": "cases/gln-validation-expression.yaml",
+      "category": "network-dependent",
+      "reason": "GLN validation expression requires external terminology/network resolution",
+      "owner": "#78",
+      "reviewed": "2026-09-09"
+    },
+    {
+      "path": "cases/hasValue.yaml",
+      "category": "implementation-specific",
+      "reason": "fhirpath.js implementation-specific hasValue() extension",
+      "owner": "#78",
+      "reviewed": "2026-09-09"
+    },
+    {
+      "path": "cases/htmlChecks.yaml",
+      "category": "browser-only",
+      "reason": "HTML rendering checks are browser/implementation-specific, not engine behaviour",
+      "owner": "#78",
+      "reviewed": "2026-09-09"
+    },
+    {
+      "path": "cases/3_path_selection.yaml",
+      "case": "Observation.value with an R5 FHIR model",
+      "expression": "Observation.value",
+      "source_model": "r5",
+      "category": "model-release",
+      "reason": "engine supports r4/plain only; r5 model requires a host model not provided",
+      "owner": "#78",
+      "reviewed": "2026-09-09"
+    },
+    {
+      "path": "cases/3_path_selection.yaml",
+      "case": "Observation.value with an STU3 FHIR model",
+      "expression": "Observation.value",
+      "source_model": "stu3",
+      "category": "model-release",
+      "reason": "engine supports r4/plain only; stu3 model requires a host model not provided",
+      "owner": "#78",
+      "reviewed": "2026-09-09"
+    },
+    {
+      "path": "cases/3_path_selection.yaml",
+      "case": "Observation.value with an DSTU2 FHIR model",
+      "expression": "Observation.value",
+      "source_model": "dstu2",
+      "category": "model-release",
+      "reason": "engine supports r4/plain only; dstu2 model requires a host model not provided",
+      "owner": "#78",
+      "reviewed": "2026-09-09"
+    },
+    {
+      "path": "cases/3_path_selection.yaml",
+      "case": "QR with item.answer.item.answer.value (STU3)",
+      "expression": "contained.where(resourceType = 'QuestionnaireResponse').item.answer.item.answer.value",
+      "source_model": "stu3",
+      "category": "model-release",
+      "reason": "engine supports r4/plain only; stu3 model requires a host model not provided",
+      "owner": "#78",
+      "reviewed": "2026-09-09"
+    }
+  ]
+}
