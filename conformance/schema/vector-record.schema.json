@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FHIRPath conformance vector record",
+  "description": "The strict, deterministic contract for a single conformance corpus record produced by the importer and consumed by the vector runner.",
+  "type": "object",
+  "required": [
+    "id",
+    "suite",
+    "suite_commit",
+    "expression",
+    "model",
+    "host_features",
+    "target",
+    "capability",
+    "expected",
+    "resource",
+    "variables",
+    "origin"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "suite": { "type": "string", "minLength": 1 },
+    "suite_commit": {
+      "type": "string",
+      "description": "Immutable upstream commit SHA. Reject master/main/HEAD/version tags to prevent moving references.",
+      "pattern": "^[0-9a-f]{7,40}$"
+    },
+    "expression": { "type": "string" },
+    "input_fixture": { "type": ["string", "null"] },
+    "model": { "type": "string", "enum": ["plain", "r4"] },
+    "host_features": { "type": "array", "items": { "type": "string" } },
+    "target": { "type": "string", "minLength": 1 },
+    "capability": { "type": "string", "minLength": 1 },
+    "expected": { "type": "array" },
+    "resource": { "type": ["object", "null"] },
+    "variables": { "type": "object" },
+    "fixture_source": { "type": "string" },
+    "description": { "type": "string" },
+    "context": { "type": "string" },
+    "error": { "type": ["boolean", "object", "null"] },
+    "classification": {
+      "type": "string",
+      "enum": ["pass", "defect", "unsupported", "host-dependent", "not-run"]
+    },
+    "not_run_reason": { "type": "string" },
+    "actual": {},
+    "actual_error": {},
+    "line": { "type": "integer" },
+    "origin": {
+      "type": "object",
+      "required": ["suite", "suite_commit"],
+      "properties": {
+        "suite": { "type": "string" },
+        "suite_commit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+        "case": { "type": "string" },
+        "path": { "type": "string" },
+        "commit": { "type": "string" }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["classification"],
+        "properties": { "classification": { "const": "not-run" } }
+      },
+      "then": { "required": ["not_run_reason"] }
+    }
+  ]
+}
