@@ -68,7 +68,7 @@ begin
   # Build classification_counts from execution results
   classification_counts = runner_report[:counts].dup
 ensure
-  FileUtils.rm_f(vector_path) if File.exist?(vector_path)
+  FileUtils.rm_f(vector_path)
 end
 
 report = FHIRPath::Conformance::CorpusValidator.validate(records, baseline: baseline)
