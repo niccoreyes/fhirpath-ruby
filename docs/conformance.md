@@ -78,7 +78,7 @@ The importer accepts the checked-in manifest and a local checkout of its pinned 
 bundle exec ruby script/import_vectors.rb /path/to/fhir-test-cases
 ```
 
-It emits one JSON record per selected XML case. XML fixtures are never converted heuristically: when a verified same-resource JSON fixture is available, that JSON is used while `input_fixture` retains the original XML path and `fixture_source` records the normalized source. Otherwise the record is retained as `not-run` with an explicit reason. Disabled cases are also retained as `not-run` and are never evaluated.
+It emits one JSON record per selected XML case. XML fixtures are resolved to verified same-resource JSON counterparts when available (structural match: matching resource type and id), and converted via `FHIRXmlConverter` when no verified JSON fixture exists. The converter raises `UnsupportedStructureError` for structures it cannot faithfully represent; the importer records those as `not-run` with an explicit reason rather than emitting a resource with wrong types. `input_fixture` retains the original XML path and `fixture_source` records the actual source used. Otherwise the record is retained as `not-run` with an explicit reason. Disabled cases are also retained as `not-run` and are never evaluated.
 
 The same importer accepts a `fhirpath-py` YAML case file when initialized with its checkout as `source_root`. YAML is parsed with safe loading, group and `disable` state are preserved, expression lists become independent records, and each record keeps the suite commit and original fixture path. `error: true` means a FHIRPath error is expected; an unrelated Ruby `StandardError` remains a defect.
 
