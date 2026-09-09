@@ -106,7 +106,11 @@ module OfficialSuiteCompleteness
 
   # Check that not-run records carry a reason.
   def self.check_not_run_reasons(records, errors)
-    records.select { |r| r.is_a?(Hash) && r['classification'] == 'not-run' && r['not_run_reason'].to_s.empty? }.each do |record|
+    records.each do |record|
+      next unless record.is_a?(Hash)
+      next unless record['classification'] == 'not-run'
+      next unless record['not_run_reason'].to_s.empty?
+
       errors << "record #{record['id']}: not-run without a reason"
     end
   end
