@@ -4,6 +4,7 @@
   "suite_commit": "ebb15f74f95a4731e59099c4244eeed734c9e447",
   "target": "2.0.0",
   "model": "plain",
+  "corpus": "official-r4",
   "source": "r4/fhirpath/tests-fhir-r4.xml",
   "fixture_root": "r4",
   "load_full_suite": true
