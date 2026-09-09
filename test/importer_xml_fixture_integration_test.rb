@@ -136,6 +136,59 @@ class FHIRPathImporterXmlFixtureIntegrationTest < Minitest::Test
     end
   end
 
+  # Repeated <contained> elements (one resource each) must collapse into a flat
+  # array of resource hashes -- [org1, org2] -- never nested arrays such as
+  # [[org1], [org2]]. Regression coverage for repeated, not just single,
+  # <contained> elements.
+  def test_xml_converter_handles_repeated_contained_elements
+    Dir.mktmpdir('fhirpath-import') do |root|
+      FileUtils.mkdir_p(File.join(root, 'r4'))
+      File.write(File.join(root, 'tests.xml'), <<~XML)
+        <tests>
+          <group name="core">
+            <test name="two-contained" inputfile="two-contained.xml">
+              <expression>contained</expression>
+            </test>
+          </group>
+        </tests>
+      XML
+      File.write(File.join(root, 'r4', 'two-contained.xml'), <<~XML)
+        <Patient xmlns="http://hl7.org/fhir">
+          <id value="example"/>
+          <contained>
+            <Organization>
+              <id value="org1"/>
+              <name value="Acme Healthcare"/>
+            </Organization>
+          </contained>
+          <contained>
+            <Organization>
+              <id value="org2"/>
+              <name value="Globex Health"/>
+            </Organization>
+          </contained>
+        </Patient>
+      XML
+
+      records = FHIRPath::Conformance::Importer.new(
+        source_root: root,
+        suite_path: 'tests.xml',
+        suite_commit: 'abc123',
+        fixture_root: 'r4',
+        case_ids: ['two-contained']
+      ).import
+
+      contained = records.first['resource']['contained']
+      assert_equal 2, contained.length
+      refute contained.any?(Array),
+             'repeated <contained> elements must yield a flat array of resources, not nested arrays'
+      assert_equal 'Organization', contained[0]['resourceType']
+      assert_equal 'org1', contained[0]['id']
+      assert_equal 'Organization', contained[1]['resourceType']
+      assert_equal 'org2', contained[1]['id']
+    end
+  end
+
   # An unsupported XML structure must fail closed (classification not-run) with
   # an explicit reason rather than emitting a silently wrong resource.
   def test_unsupported_xml_structure_fails_closed

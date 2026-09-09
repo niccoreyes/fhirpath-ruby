@@ -120,20 +120,30 @@ module FHIRPath
           data
         end
 
+        # Each <contained> element contains exactly one resource. Return an
+        # array with that single resource so append() always builds a flat
+        # array across multiple <contained> siblings.
         def contained_resources(contained)
-          contained.elements.to_a.map do |child|
-            resource = {}
-            populate(resource, child)
-            resource['resourceType'] = child.local_name
-            resource
-          end
+          child = contained.elements.first
+          return [] unless child
+
+          resource = {}
+          populate(resource, child)
+          resource['resourceType'] = child.local_name
+          [resource]
         end
 
         # Repeated sibling elements collapse into a JSON array.
+        # When +value+ is an array, its elements are appended individually
+        # to maintain a flat structure (critical for repeated <contained>).
         def append(hash, key, value)
           if hash.key?(key)
             existing = hash[key]
-            hash[key] = existing.is_a?(Array) ? existing + [value] : [existing, value]
+            hash[key] = if value.is_a?(Array)
+                          (existing.is_a?(Array) ? existing : [existing]) + value
+                        else
+                          existing.is_a?(Array) ? existing + [value] : [existing, value]
+                        end
           else
             hash[key] = value
           end
