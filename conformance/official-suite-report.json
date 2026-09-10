@@ -1,8 +1,8 @@
 {
   "total": 935,
   "counts": {
-    "pass": 509,
-    "defect": 383,
+    "pass": 518,
+    "defect": 374,
     "unsupported": 43,
     "host-dependent": 0,
     "not-run": 0
@@ -21,8 +21,8 @@
     "HighBoundary": {
       "total": 24,
       "counts": {
-        "pass": 0,
-        "defect": 5,
+        "pass": 5,
+        "defect": 0,
         "unsupported": 19,
         "host-dependent": 0,
         "not-run": 0
@@ -31,8 +31,8 @@
     "LowBoundary": {
       "total": 28,
       "counts": {
-        "pass": 1,
-        "defect": 5,
+        "pass": 5,
+        "defect": 1,
         "unsupported": 22,
         "host-dependent": 0,
         "not-run": 0
@@ -1103,7 +1103,7 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 4,
-      "classification": "defect",
+      "classification": "pass",
       "actual": [
         "@2014-12"
       ]
@@ -1130,7 +1130,7 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 5,
-      "classification": "defect",
+      "classification": "pass",
       "actual": [
         "@2014-01-01T08:00:59.999-12:00"
       ]
@@ -1157,7 +1157,7 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 6,
-      "classification": "defect",
+      "classification": "pass",
       "actual": [
         "@2014-01-01T08:05:59.999-05:00"
       ]
@@ -1184,7 +1184,7 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 7,
-      "classification": "defect",
+      "classification": "pass",
       "actual": [
         "@2014-01-01T08:00:59.999-12:00"
       ]
@@ -1844,7 +1844,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        "#<FHIRPath::Quantity:0x00000001266c00a8>"
+        "#<FHIRPath::Quantity:0x0000000124307e90>"
       ],
       "resource": {},
       "variables": {},
@@ -1891,7 +1891,7 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 27,
-      "classification": "defect",
+      "classification": "pass",
       "actual": [
         "@T10:30:59.999"
       ]
@@ -1918,7 +1918,7 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 28,
-      "classification": "defect",
+      "classification": "pass",
       "actual": [
         "@2014-01"
       ]
@@ -1945,7 +1945,7 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 29,
-      "classification": "defect",
+      "classification": "pass",
       "actual": [
         "@2014-01-01T08:00:00.000+14:00"
       ]
@@ -1972,7 +1972,7 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 30,
-      "classification": "defect",
+      "classification": "pass",
       "actual": [
         "@2014-01-01T08:05:00.000+08:00"
       ]
@@ -2797,7 +2797,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        "#<FHIRPath::Quantity:0x00000001269e08c8>"
+        "#<FHIRPath::Quantity:0x0000000124867d18>"
       ],
       "resource": {},
       "variables": {},
@@ -2844,7 +2844,7 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 55,
-      "classification": "defect",
+      "classification": "pass",
       "actual": [
         "@T10:30:00.000"
       ]
@@ -127047,7 +127047,7 @@
       "line": 804,
       "classification": "defect",
       "actual": [
-        "#<FHIRPath::Quantity:0x0000000126fc3178>"
+        "#<FHIRPath::Quantity:0x0000000124bc3660>"
       ]
     },
     {

@@ -311,6 +311,28 @@ class FHIRPathVectorRunnerConformanceSemanticsTest < Minitest::Test
     end
   end
 
+  def test_precision_literal_expected_output_matches_its_evaluated_value
+    vectors = [
+      {
+        'id' => 'low-boundary-date-month', 'expression' => '@2014.lowBoundary(6)', 'resource' => {},
+        'expected' => ['@2014-01']
+      },
+      {
+        'id' => 'low-boundary-time-millisecond', 'expression' => '@T10:30.lowBoundary(9)',
+        'resource' => {}, 'expected' => ['@T10:30:00.000']
+      }
+    ]
+    Tempfile.create('fhirpath-vector') do |file|
+      file.write(vectors.map(&:to_json).join("\n"))
+      file.write("\n")
+      file.flush
+
+      report = FHIRPath::VectorRunner.run(file.path)
+
+      assert_equal(%w[pass pass], report[:cases].map { |result| result['classification'] })
+    end
+  end
+
   def test_unimplemented_capability_is_unsupported_not_a_defect
     vectors = [
       {
