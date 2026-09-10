@@ -289,7 +289,7 @@ class FHIRPathVectorRunnerConformanceSemanticsTest < Minitest::Test
 
       report = FHIRPath::VectorRunner.run(file.path)
 
-      assert_equal %w[pass pass], report[:cases].map { |result| result['classification'] }
+      assert_equal(%w[pass pass], report[:cases].map { |result| result['classification'] })
     end
   end
 
