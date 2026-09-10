@@ -36,6 +36,13 @@ namespace :conformance do
          'conformance/baselines/official-r4.json'
   end
 
+  desc 'Regenerate the checked-in per-case official suite report'
+  task :official_cases do
+    ruby 'script/generate_official_suite_report.rb',
+         'conformance/official-r4-core.json',
+         'conformance/official-suite-report.json'
+  end
+
   desc 'Import and report the fhirpath.js compatibility corpus'
   task :fhirpath_js do
     # Skip if fhirpath.js fixtures are not available in this checkout

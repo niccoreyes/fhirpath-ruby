@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require 'json'
+require 'bigdecimal'
 require_relative 'errors'
+require_relative 'temporal'
 require_relative 'conformance/importer'
 require_relative 'conformance/corpus_validator'
 
@@ -50,12 +52,14 @@ module FHIRPath
         # No error expected - evaluation should succeed and match expected values
         begin
           values = evaluate(vector, evaluator).to_a
-          classification = if values == vector.fetch('expected', [])
-                             'pass'
-                           else
-                             'defect'
-                           end
+          classification = expected_equal?(values, vector.fetch('expected', [])) ? 'pass' : 'defect'
           result_for(vector, line_number, classification).merge('actual' => values)
+        rescue UnsupportedFeatureError => e
+          # A capability the engine does not implement is unsupported, not a
+          # defect in a behaviour the engine claims to support.
+          error_result(vector, line_number, 'unsupported', e)
+        rescue HostError => e
+          error_result(vector, line_number, 'host-dependent', e)
         rescue StandardError => e
           error_result(vector, line_number, 'defect', e)
         end
@@ -114,6 +118,56 @@ module FHIRPath
 
     def result_for(vector, line_number, classification)
       vector.merge(result_fields(vector, line_number, classification))
+    end
+
+    # Expected values travel through JSONL, so a Decimal or temporal value that
+    # the importer normalised is read back as its JSON form (a String), and a
+    # typed suite output (`{"$type"=>"date","value"=>"@1974-01-01"}`) is a
+    # structured object rather than the value it denotes. Compare comparable
+    # forms so those records can match, while value equality stays primary.
+    def expected_equal?(values, expected)
+      actual = values.map { |value| comparand(value) }
+      wanted = expected.map { |value| comparand(value) }
+      return true if actual == wanted
+
+      JSON.generate(actual) == JSON.generate(wanted)
+    rescue StandardError
+      false
+    end
+
+    # Reduces a value to the form used for comparison: a literal's underlying
+    # Date/DateTime/Time (so a precision-carrying literal compares by instant)
+    # and a typed expected output to the value it denotes.
+    def comparand(value)
+      return value.value if value.is_a?(Temporal)
+      return value unless typed_output?(value)
+
+      resolve_typed_output(value['$type'], value['value'])
+    end
+
+    def typed_output?(value)
+      value.is_a?(Hash) && value['$type']
+    end
+
+    def resolve_typed_output(type, text)
+      case type.to_s
+      when 'boolean' then text.to_s.strip.casecmp('true').zero?
+      when 'integer' then Integer(text.to_s.strip, 10)
+      when 'decimal' then BigDecimal(text.to_s)
+      when 'date', 'dateTime', 'time' then temporal_comparand(text)
+      else text
+      end
+    rescue ArgumentError, TypeError
+      text
+    end
+
+    def temporal_comparand(text)
+      literal = text.to_s.strip
+      literal = "@#{literal}" unless literal.start_with?('@')
+      value = FHIRPath::Parser.parse(literal).ast.value
+      value.is_a?(Temporal) ? value.value : value
+    rescue StandardError
+      text
     end
 
     def result_fields(vector, line_number, classification)

@@ -1104,7 +1104,7 @@
   },
   "corpus_suite": "FHIR/fhir-test-cases",
   "source_sha": "ebb15f74f95a4731e59099c4244eeed734c9e447",
-  "digest": "sha256:5a503d3ddda2c07affacb9adae0cd1023faec6500ad94a07a16f271c3f55ae30",
+  "digest": "sha256:3242c33dd99e3947fc46271a3d220ae9d8c0c9502d44092dd259c3c142af14ec",
   "classification_counts": {
     "pass": 0,
     "defect": 935,
@@ -1118,5 +1118,5 @@
   "suite_commit": "ebb15f74f95a4731e59099c4244eeed734c9e447",
   "target": "2.0.0",
   "model": "plain",
-  "corpus_digest": "sha256:5a503d3ddda2c07affacb9adae0cd1023faec6500ad94a07a16f271c3f55ae30"
+  "corpus_digest": "sha256:3242c33dd99e3947fc46271a3d220ae9d8c0c9502d44092dd259c3c142af14ec"
 }

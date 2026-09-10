@@ -241,6 +241,20 @@ module FHIRPath
         temporal_component(receiver, node, context, node.name)
       when 'timezone', 'timezoneOffset'
         temporal_timezone(receiver, node, context, node.name)
+      when 'precision'
+        temporal_precision_function(receiver, node)
+      when 'lowBoundary'
+        temporal_boundary(receiver, node, context)
+      when 'highBoundary'
+        temporal_boundary(receiver, node, context, high: true)
+      when 'comparable'
+        comparable(receiver, node, context)
+      when 'toString'
+        to_string(receiver, node)
+      when 'convertsToString'
+        converts_to_string(receiver, node)
+      when 'toQuantity'
+        to_quantity(receiver, node)
       when 'aggregate'
         aggregate(receiver, node, context)
       when 'iif'
@@ -497,6 +511,9 @@ module FHIRPath
       return Collection.new([node.operator == :equivalent]) if equivalent && left.empty? && right.empty?
       return Collection.new([node.operator == :not_equivalent]) if equivalent && (left.empty? || right.empty?)
       return Collection.empty if left.empty? || right.empty?
+      # Equals/NotEquals on temporal values of differing precision is
+      # indeterminate and yields an empty collection (FHIRPath 2.0.0, 5.6).
+      return Collection.empty if !equivalent && temporal_precision_mismatch?(left, right)
 
       equal = if equivalent
                 collection_equivalent?(left, right)
@@ -565,6 +582,8 @@ module FHIRPath
       right_value = require_singleton(right, node.right.span)
 
       # Date/time arithmetic: Date/DateTime +/- Quantity (time dimension)
+      left_value = temporal_payload(left_value) if temporal?(left_value)
+      right_value = temporal_payload(right_value) if temporal?(right_value)
       if (left_value.is_a?(Date) || left_value.is_a?(DateTime)) && right_value.is_a?(Quantity)
         return temporal_plus_quantity(left_value, right_value, node.operator)
       end
@@ -611,6 +630,7 @@ module FHIRPath
 
     def quantity_arithmetic(left, right, operator, span)
       if left.is_a?(Quantity) && right.is_a?(Quantity)
+        return quantity_product(left, right) if operator == :multiply
         return Collection.empty unless left.compatible?(right)
 
         converted = right.convert_to(left.unit)
@@ -678,14 +698,28 @@ module FHIRPath
                when 'wk'
                  add_days(time_value, BigDecimal(value) * 7, operator)
                when 'mo'
+                 calendar_only!(quantity, time_value)
                  add_months(time_value, BigDecimal(value), operator)
                when 'a'
+                 calendar_only!(quantity, time_value)
                  add_years(time_value, BigDecimal(value), operator)
                else
                  return Collection.empty
                end
 
       Collection.new([result])
+    end
+
+    # Calendrical months and years are only supported through the FHIRPath
+    # calendar-duration keywords ("1 month"); the UCUM units `mo`/`a` are not
+    # valid for Date/DateTime arithmetic (FHIRPath 2.0.0, 5.9).
+    def calendar_only!(quantity, _time_value)
+      return if quantity.calendar?
+
+      raise EvaluationError.new(
+        "Quantity unit #{quantity.unit.inspect} is not supported for date/time arithmetic",
+        code: :unsupported_temporal_unit
+      )
     end
 
     def add_seconds(time_value, seconds, operator)
@@ -725,10 +759,23 @@ module FHIRPath
       end
     end
 
+    # Unit multiplication composes the operands' dimensions, so
+    # `2 'cm' * 2 'm'` is `0.04 'm2'` (value scaled into the composed base
+    # units). Returns empty when a dimension has no base atom.
+    def quantity_product(left, right)
+      dimensions = left.dimensions.merge(right.dimensions) { |_dimension, a, b| a + b }
+      unit = UCUM.compose(dimensions)
+      return Collection.empty unless unit
+
+      Collection.new([Quantity.new(value: left.value * right.value * left.factor * right.factor,
+                                   unit: unit)])
+    end
+
     def comparison(node, context)
       left = evaluate(node.left, context)
       right = evaluate(node.right, context)
       return Collection.empty if left.empty? || right.empty?
+      return Collection.empty if temporal_precision_mismatch?(left, right)
 
       left_value = require_singleton(left, node.left.span)
       right_value = require_singleton(right, node.right.span)
@@ -845,6 +892,89 @@ module FHIRPath
       Collection.new(matching_items)
     end
 
+    # `quantity.comparable(other)` — true when both quantities share a
+    # dimension. An empty argument yields empty; a non-Quantity argument is a
+    # type error (FHIRPath 2.0.0 utility functions).
+    def comparable(receiver, node, context)
+      argument_node = node.arguments.first
+      argument = evaluate(argument_node, context)
+      return Collection.empty if receiver.empty? || argument.empty?
+
+      left = require_singleton(receiver, node.receiver ? node.receiver.span : node.span)
+      right = require_singleton(argument, argument_node.span)
+      unless left.is_a?(Quantity) && right.is_a?(Quantity)
+        raise TypeError.new('comparable requires Quantity values', code: :expected_quantity,
+                                                                   span: node.span)
+      end
+
+      Collection.new([left.compatible?(right)])
+    end
+
+    # --- toString() / convertsToString() / toQuantity() -------------------
+    #
+    # Only the receivers the official quantity cases exercise are implemented
+    # here; the wider convertsTo*/toXxx conversion family belongs to issue #98.
+    def to_string(receiver, node)
+      return Collection.empty if receiver.empty?
+
+      value = require_singleton(receiver, node.span)
+      return Collection.new([quantity_literal_text(value)]) if value.is_a?(Quantity)
+
+      Collection.new([value.to_s])
+    end
+
+    def converts_to_string(receiver, node)
+      return Collection.empty if receiver.empty?
+
+      value = require_singleton(receiver, node.span)
+      convertibles = value.is_a?(Quantity) || value.is_a?(::String) || value.is_a?(Date) ||
+                     value.is_a?(DateTime) || value.is_a?(Time) || [true, false].include?(value) ||
+                     numeric?(value)
+      Collection.new([convertibles])
+    end
+
+    def to_quantity(receiver, node)
+      return Collection.empty if receiver.empty?
+
+      value = temporal_payload(require_singleton(receiver, node.span))
+      return Collection.empty unless value.is_a?(::String)
+
+      parsed = parse_quantity_string(value)
+      parsed ? Collection.new([parsed]) : Collection.empty
+    end
+
+    # A quantity string is `<number> '<unit>'`, `<number> <calendar duration>`,
+    # or a bare number. A bare UCUM code (`1 wk`) is not a quantity literal.
+    def parse_quantity_string(text)
+      match = /\A\s*([+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)\s*(.*?)\s*\z/.match(text)
+      return nil unless match
+
+      unit = match[2]
+      return Quantity.new(value: match[1], unit: '1') if unit.empty?
+
+      calendar = calendar_unit_code(unit)
+      return Quantity.new(value: match[1], unit: calendar, calendar: true) if calendar
+      return nil unless unit.match?(/\A'[^']+'\z/)
+
+      Quantity.new(value: match[1], unit: unit.delete_prefix("'").delete_suffix("'"))
+    rescue ArgumentError
+      nil
+    end
+
+    def calendar_unit_code(unit)
+      Parser::TEMPORAL_UNIT_MAP[unit]
+    end
+
+    # FHIRPath literal form of a quantity: `1 'wk'`.
+    def quantity_literal_text(quantity)
+      "#{decimal_text(quantity.value)} '#{quantity.unit}'"
+    end
+
+    def decimal_text(value)
+      decimal = decimal(value)
+      decimal.frac.zero? ? decimal.to_i.to_s : decimal.to_s('F')
+    end
+
     def temporal_now(receiver, _node, _context, type)
       return Collection.empty if receiver.empty?
 
@@ -862,7 +992,7 @@ module FHIRPath
     def temporal_component(receiver, node, _context, component)
       return Collection.empty if receiver.empty?
 
-      value = require_singleton(receiver, node.span)
+      value = temporal_payload(require_singleton(receiver, node.span))
       result = case component
                when 'year'
                  value.respond_to?(:year) ? value.year : nil
@@ -897,7 +1027,7 @@ module FHIRPath
     def temporal_timezone(receiver, node, _context, component)
       return Collection.empty if receiver.empty?
 
-      value = require_singleton(receiver, node.span)
+      value = temporal_payload(require_singleton(receiver, node.span))
       unless value.respond_to?(:zone) || value.respond_to?(:offset)
         raise TypeError.new("timezone not supported on #{value.class}", code: :unsupported_temporal, span: node.span)
       end
@@ -918,6 +1048,170 @@ module FHIRPath
       minutes = ((offset * 24 * 60) % 60).to_i
       sign = hours >= 0 ? '+' : '-'
       format('%s%02d:%02d', sign, hours.abs, minutes.abs)
+    end
+
+    # --- precision() / lowBoundary() / highBoundary() ---------------------
+    #
+    # Implemented for temporal values (Date, DateTime, Time, and the
+    # precision-carrying FHIRPath::Temporal). Decimal and Quantity receivers
+    # raise UnsupportedFeatureError so the conformance runner records them as
+    # unsupported rather than as defects.
+    def temporal_precision_function(receiver, node)
+      return Collection.empty if receiver.empty?
+
+      value = require_singleton(receiver, node.span)
+      precision = temporal_precision(value)
+      unless precision
+        raise UnsupportedFeatureError.new(
+          "precision() is not implemented for #{value.class}", code: :unsupported_temporal_boundary,
+                                                               span: node.span
+        )
+      end
+
+      Collection.new([precision])
+    end
+
+    # Default precision is the finest the receiver's type supports.
+    def boundary_default_precision(value)
+      temporal_kind(value) == :time ? Temporal::TIME_MILLISECOND : Temporal::MILLISECOND
+    end
+
+    def temporal_boundary(receiver, node, context, high: false)
+      return Collection.empty if receiver.empty?
+
+      value = require_singleton(receiver, node.span)
+      unless temporal?(value)
+        raise UnsupportedFeatureError.new(
+          "#{high ? 'highBoundary' : 'lowBoundary'}() is not implemented for #{value.class}",
+          code: :unsupported_temporal_boundary, span: node.span
+        )
+      end
+
+      precision = boundary_precision_argument(node, context) || boundary_default_precision(value)
+      return Collection.empty unless precision.between?(0, Temporal::MILLISECOND)
+      return Collection.empty if temporal_kind(value) == :time && precision > Temporal::TIME_MILLISECOND
+
+      Collection.new([build_boundary(value, precision, high)])
+    end
+
+    def boundary_precision_argument(node, context)
+      argument = node.arguments.first
+      return nil unless argument
+
+      value = evaluate(argument, context)
+      return nil if value.empty?
+
+      precision = require_singleton(value, argument.span)
+      unless precision.is_a?(::Integer)
+        raise TypeError.new('boundary precision must be an integer', code: :expected_integer,
+                                                                     span: argument.span)
+      end
+
+      precision
+    end
+
+    # Fills (or truncates) the components below the requested precision with
+    # the lowest / highest value they can take.
+    def build_boundary(value, precision, high)
+      source_precision = temporal_precision(value)
+      payload = temporal_payload(value)
+
+      case boundary_kind(value, precision)
+      when :date
+        date_boundary(payload, source_precision, precision, high)
+      when :datetime
+        datetime_boundary(value, payload, source_precision, precision, high)
+      else
+        time_boundary(payload, source_precision, precision, high)
+      end
+    end
+
+    def boundary_kind(value, precision)
+      return :time if temporal_kind(value) == :time
+      return :datetime if precision > Temporal::DAY
+
+      :date
+    end
+
+    def date_boundary(payload, source_precision, precision, high)
+      year = payload.year
+      month = source_precision >= Temporal::MONTH ? payload.month : nil
+      day = source_precision >= Temporal::DAY ? payload.day : nil
+      # A component below the requested precision is not part of the result:
+      # the lowest/highest value is expressed by the component itself, and
+      # lower components stay at their canonical minimum.
+      month = high ? 12 : 1 if month.nil?
+      day = high ? Date.new(year, month, -1).day : 1 if day.nil? && precision >= Temporal::DAY
+      day ||= 1
+      result = Date.new(year, month || 1, day)
+      precision == Temporal::DAY ? result : Temporal.new(result, kind: :date, precision: precision)
+    end
+
+    def datetime_boundary(value, payload, source_precision, precision, high)
+      return date_boundary(payload, source_precision, precision, high) if precision <= Temporal::DAY
+
+      hour = if source_precision >= Temporal::HOUR
+               payload.hour
+             else
+               (high ? 23 : 0)
+             end
+      minute = if source_precision >= Temporal::MINUTE
+                 payload.min
+               else
+                 (high ? 59 : 0)
+               end
+      second = if source_precision >= Temporal::SECOND
+                 payload.sec
+               else
+                 (high ? 59 : 0)
+               end
+      millisecond = if source_precision >= Temporal::MILLISECOND
+                      (payload.sec_fraction * 1000).to_i
+                    else
+                      (high ? 999 : 0)
+                    end
+
+      offset = boundary_offset(value, high)
+      result = DateTime.new(payload.year, payload.month, payload.day, hour, minute,
+                            second + Rational(millisecond, 1000), offset)
+      Temporal.new(result, kind: :datetime, precision: precision)
+    end
+
+    # An explicit offset wins; otherwise the lowest possible instant uses the
+    # eastern-most offset and the highest uses the western-most (FHIRPath
+    # 2.0.0 boundary semantics).
+    def boundary_offset(value, high)
+      explicit = value.is_a?(Temporal) ? value.timezone : nil
+      return explicit if explicit && explicit != 'Z'
+      return '+00:00' if explicit == 'Z'
+
+      high ? '-12:00' : '+14:00'
+    end
+
+    def time_boundary(payload, source_precision, precision, high)
+      hour = if source_precision >= Temporal::TIME_HOUR
+               payload.hour
+             else
+               (high ? 23 : 0)
+             end
+      minute = if source_precision >= Temporal::TIME_MINUTE
+                 payload.min
+               else
+                 (high ? 59 : 0)
+               end
+      second = if source_precision >= Temporal::TIME_SECOND
+                 payload.sec
+               else
+                 (high ? 59 : 0)
+               end
+      millisecond = if source_precision >= Temporal::TIME_MILLISECOND
+                      payload.usec / 1000
+                    else
+                      (high ? 999 : 0)
+                    end
+
+      result = Time.local(2000, 1, 1, hour, minute, second, millisecond * 1000)
+      Temporal.new(result, kind: :time, precision: precision)
     end
 
     def type_operator(node, context)
@@ -978,15 +1272,17 @@ module FHIRPath
       when 'decimal' then value.is_a?(BigDecimal) || (value.is_a?(::Float) && value.finite?)
       when 'number' then numeric?(value)
       when 'string' then value.is_a?(::String)
-      when 'date' then value.is_a?(Date)
-      when 'datetime' then value.is_a?(DateTime)
-      when 'time' then value.is_a?(Time)
+      when 'date' then temporal_kind(value) == :date
+      when 'datetime' then temporal_kind(value) == :datetime
+      when 'time' then temporal_kind(value) == :time
       when 'quantity' then value.is_a?(Quantity)
       else false
       end
     end
 
     def compare_values(left, right, span)
+      left = temporal_payload(left)
+      right = temporal_payload(right)
       if numeric?(left) && numeric?(right)
         decimal(left) <=> decimal(right)
       elsif (left.is_a?(::String) && right.is_a?(::String)) ||
@@ -1001,10 +1297,70 @@ module FHIRPath
     end
 
     def equal?(left, right)
+      left = temporal_payload(left)
+      right = temporal_payload(right)
       return decimal(left) == decimal(right) if numeric?(left) && numeric?(right)
       return false unless left.class == right.class
 
       left == right
+    end
+
+    # --- temporal value helpers -------------------------------------------
+
+    # The underlying Ruby Date/DateTime/Time of a value produced by a temporal
+    # literal; non-temporal values pass through unchanged.
+    def temporal_payload(value)
+      value.is_a?(Temporal) ? value.value : value
+    end
+
+    def temporal_kind(value)
+      case value
+      when Temporal then value.kind
+      when DateTime then :datetime
+      when Time then :time
+      when Date then :date
+      end
+    end
+
+    # Precision of a temporal value: carried by Temporal for literals whose
+    # precision a plain Ruby value cannot express, derived from the Ruby type
+    # otherwise. Returns nil for non-temporal values.
+    def temporal_precision(value)
+      case value
+      when Temporal then value.precision
+      when DateTime then value.sec_fraction.zero? ? Temporal::SECOND : Temporal::MILLISECOND
+      when Time then value.usec.zero? ? Temporal::TIME_SECOND : Temporal::TIME_MILLISECOND
+      when Date then Temporal::DAY
+      end
+    end
+
+    # True when both operands are singletons of temporal type with different
+    # kind or precision, in which case comparison/equality is indeterminate.
+    def temporal_precision_mismatch?(left, right)
+      return false unless left.singleton? && right.singleton?
+
+      left_value = left.first_item
+      right_value = right.first_item
+      return false unless temporal_kind(left_value) && temporal_kind(right_value)
+
+      temporal_kind(left_value) != temporal_kind(right_value) ||
+        temporal_comparison_precision(left_value) != temporal_comparison_precision(right_value)
+    end
+
+    # Precision that participates in comparison: a zero fractional part adds no
+    # precision, so `.0` compares at second precision (`precision()` still
+    # reports 17 for `@...T10:30:00.000`).
+    def temporal_comparison_precision(value)
+      case value
+      when Temporal then value.comparison_precision
+      when DateTime then Temporal::SECOND
+      when Time then Temporal::TIME_SECOND
+      when Date then Temporal::DAY
+      end
+    end
+
+    def temporal?(value)
+      !temporal_kind(value).nil?
     end
 
     def equivalent?(left, right)

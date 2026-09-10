@@ -46,9 +46,11 @@ class FHIRPathTypeOperatorMemberAccessTest < Minitest::Test
   def test_as_member_access_on_navigation
     resource = { 'resourceType' => 'Observation', 'valueQuantity' => { 'value' => 100, 'unit' => 'mg' } }
     result = FHIRPath.evaluate(resource, 'Observation.value.as(Quantity)').first
-    # The result is a hash when returned from the plain model
-    assert_instance_of Hash, result
-    assert_equal 100, result['value']
+    # The R4 model surfaces a FHIR Quantity element as a FHIRPath Quantity, so
+    # it can be compared and combined with quantity literals.
+    assert_instance_of FHIRPath::Quantity, result
+    assert_equal BigDecimal('100'), result.value
+    assert_equal 'mg', result.unit
   end
 
   def test_as_member_access_returns_empty_on_resource_type_mismatch

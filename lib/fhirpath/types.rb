@@ -78,21 +78,38 @@ module FHIRPath
     attr_reader :unit, :system, :code
 
     def initialize(value = nil, unit = nil, **kwargs)
-      value = kwargs.fetch(:value, value)
-      unit = kwargs.fetch(:unit, unit)
-      raise ArgumentError, 'Quantity value is required' if value.nil?
+      resolved_value = kwargs.fetch(:value, value)
+      raise ArgumentError, 'Quantity value is required' if resolved_value.nil?
 
-      decimal = value.is_a?(BigDecimal) ? value : BigDecimal(value.to_s)
-      raise ArgumentError, 'Quantity value must be finite' unless decimal.finite?
-
-      @unit = UCUM.validate(unit)
+      @unit = UCUM.validate(kwargs.fetch(:unit, unit))
       @system = (kwargs[:system] || DEFAULT_SYSTEM).to_s.dup.freeze
       @code = (kwargs[:code] || @unit).to_s.dup.freeze
-      super(decimal)
+      @calendar = kwargs.fetch(:calendar, false) == true
+      super(decimal_value(resolved_value))
     rescue ArgumentError
       raise
     rescue StandardError => e
       raise ArgumentError, "invalid Quantity value: #{e.message}"
+    end
+
+    private
+
+    # Coerces a literal or caller-supplied value into a finite BigDecimal.
+    def decimal_value(value)
+      decimal = value.is_a?(BigDecimal) ? value : BigDecimal(value.to_s)
+      raise ArgumentError, 'Quantity value must be finite' unless decimal.finite?
+
+      decimal
+    end
+
+    public
+
+    # True when the unit was written as a FHIRPath calendar duration keyword
+    # ("1 month"), as opposed to a UCUM unit ("1 'mo'"). Calendar durations are
+    # the only units allowed for Date/DateTime `+`/`-` when the duration is not
+    # a fixed number of seconds.
+    def calendar?
+      @calendar
     end
 
     def to_ruby
@@ -105,6 +122,16 @@ module FHIRPath
 
     def compatible?(other)
       other.is_a?(Quantity) && definition.dimensions == other.send(:definition).dimensions
+    end
+
+    # Dimension map of the unit, e.g. { length: 1 } for `m`.
+    def dimensions
+      definition.dimensions
+    end
+
+    # Scale of the unit relative to the base atom of its dimension.
+    def factor
+      definition.factor
     end
 
     def convert_to(target_unit)

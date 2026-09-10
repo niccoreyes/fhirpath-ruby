@@ -4,6 +4,12 @@ require 'bigdecimal'
 require 'date'
 require 'time'
 
+require_relative 'source_span'
+require_relative 'errors'
+require_relative 'types'
+require_relative 'ast'
+require_relative 'temporal'
+
 module FHIRPath
   class Token
     attr_reader :type, :value, :span
@@ -220,92 +226,190 @@ module FHIRPath
       @index += 1 # skip '@'
       temporal_start = @index
 
-      has_date = parse_date_part?
-      has_time = parse_time_part?
-      parse_timezone_part
+      year = scan_temporal_year
+      month = year ? scan_temporal_component('-') : nil
+      day = month ? scan_temporal_component('-') : nil
+      raise ArgumentError, 'invalid temporal literal' if date_separator?
 
+      time = scan_temporal_time
       text = @source[temporal_start...@index]
-      raise_error('empty temporal literal', start) if text.empty?
+      raise ArgumentError, 'empty temporal literal' if text.empty?
 
-      value, type = parse_temporal_value(text, has_date, has_time)
+      value, type = build_temporal_value(text, year, month, day, time)
       token(type, value, start)
     rescue ArgumentError => e
       raise_error("invalid temporal literal: #{e.message}", start, code: :invalid_temporal)
     end
 
-    def parse_date_part?
-      return false if eof? || !@source[@index].match?(/[0-9]/)
-
-      @index += 4 # YYYY
-      return false if eof? || @source[@index] != '-'
-
-      @index += 1
-      @index += 2 # MM
-      return false if eof? || @source[@index] != '-'
-
-      @index += 1
-      @index += 2 # DD
-      true
+    # A trailing separator with no complete two-digit component after it is a
+    # malformed literal ("@2014-1"), not a year-precision literal.
+    def date_separator?
+      @source[@index] == '-'
     end
 
-    def parse_time_part?
-      return false if eof? || @source[@index] != 'T'
+    def scan_temporal_year
+      text = @source[@index, 4]
+      return nil unless text&.match?(/\A\d{4}\z/)
+
+      @index += 4
+      text.to_i
+    end
+
+    def scan_temporal_component(separator)
+      return nil unless @source[@index] == separator
+      return nil unless @source[@index + 1, 2]&.match?(/\A\d{2}\z/)
 
       @index += 1
-      return false if eof? || !@source[@index, 2].match?(/^\d{2}$/)
+      value = @source[@index, 2].to_i
+      @index += 2
+      value
+    end
 
-      @index += 2 # HH
-      return false if eof? || @source[@index] != ':'
+    # Parses the optional "T..." tail. Returns nil when no time part is
+    # present, or a Hash. `precision: nil` means the marker only promotes a
+    # date literal to a dateTime at the date's own precision ("@2015T").
+    def scan_temporal_time
+      return nil unless @source[@index] == 'T'
 
       @index += 1
-      return false if eof? || !@source[@index, 2].match?(/^\d{2}$/)
+      hour = scan_temporal_component_at(@index)
+      if hour.nil?
+        raise ArgumentError, 'invalid temporal literal' if @source[@index]&.match?(/\d/)
 
-      @index += 2 # MM
-      return false if eof? || @source[@index] != ':'
-
-      @index += 1
-      return false if eof? || !@source[@index, 2].match?(/^\d{2}$/)
-
-      @index += 2 # SS
-
-      # Optional milliseconds
-      if !eof? && @source[@index] == '.'
-        @index += 1
-        @index += 1 while !eof? && @source[@index].match?(/[0-9]/)
+        timezone = scan_temporal_timezone
+        return { hour: nil, precision: nil, timezone: timezone }
       end
-      true
+
+      @index += 2
+      minute = scan_temporal_component(':')
+      second = minute ? scan_temporal_component(':') : nil
+      fraction = second ? scan_temporal_fraction : nil
+      # A stray ':' can never start anything else; a '.' is member access
+      # unless it introduces a fraction, which scan_temporal_fraction consumed.
+      raise ArgumentError, 'invalid temporal literal' if @source[@index] == ':'
+
+      { hour: hour, minute: minute, second: second, fraction: fraction,
+        precision: time_precision(minute, second, fraction), timezone: scan_temporal_timezone }
     end
 
-    def parse_timezone_part
-      return if eof? || !@source[@index].match?(/[Z+-]/)
+    def scan_temporal_component_at(offset)
+      text = @source[offset, 2]
+      return nil unless text&.match?(/\A\d{2}\z/)
+
+      text.to_i
+    end
+
+    def scan_temporal_fraction
+      return nil unless @source[@index] == '.'
+
+      cursor = @index + 1
+      cursor += 1 while @source[cursor]&.match?(/\d/)
+      return nil if cursor == @index + 1
+
+      digits = @source[@index...cursor]
+      @index = cursor
+      digits
+    end
+
+    def scan_temporal_timezone
+      return nil unless @source[@index]&.match?(/[Z+-]/)
 
       if @source[@index] == 'Z'
         @index += 1
-      else
-        @index += 1 # + or -
-        @index += 2 # HH
-        @index += 1 if !eof? && @source[@index] == ':'
-        @index += 2
+        return 'Z'
       end
+
+      start = @index
+      @index += 1 # + or -
+      return nil unless @source[@index, 2]&.match?(/\A\d{2}\z/)
+
+      @index += 2
+      @index += 1 if @source[@index] == ':'
+      @index += 2
+      @source[start...@index]
     end
 
-    def parse_temporal_value(text, has_date, has_time)
-      if has_date && has_time
-        [DateTime.parse(text), :datetime]
-      elsif has_date
-        [Date.parse(text), :date]
-      elsif has_time
-        time_text = text
-        time_text = time_text[1..] if time_text.start_with?('T')
-        value = if time_text.include?('Z') || time_text.match?(/[+-]\d{2}:?\d{2}$/)
-                  DateTime.parse("2000-01-01T#{time_text}").to_time
-                else
-                  Time.parse("2000-01-01T#{time_text}")
-                end
-        [value, :time]
+    def time_precision(minute, second, fraction)
+      # FHIR requires at least hour:minute, so an hour-only literal is
+      # normalised internally to HH:00 and reports minute precision.
+      return Temporal::TIME_MINUTE unless minute
+      return Temporal::TIME_MILLISECOND if fraction
+
+      second ? Temporal::TIME_SECOND : Temporal::TIME_MINUTE
+    end
+
+    def datetime_precision(minute, second, fraction)
+      return Temporal::MINUTE unless minute
+      return Temporal::MILLISECOND if fraction
+
+      second ? Temporal::SECOND : Temporal::MINUTE
+    end
+
+    def build_temporal_value(_text, year, month, day, time)
+      if year && time
+        build_datetime(year, month, day, time)
+      elsif year
+        precision = if day
+                      Temporal::DAY
+                    else
+                      (month ? Temporal::MONTH : Temporal::YEAR)
+                    end
+        value = Date.new(year, month || 1, day || 1)
+        precision == Temporal::DAY ? [value, :date] : [Temporal.new(value, kind: :date, precision: precision), :date]
+      elsif time
+        build_time(time)
       else
         raise ArgumentError, 'invalid temporal literal'
       end
+    end
+
+    def build_datetime(year, month, day, time)
+      if time[:hour].nil?
+        precision = if day
+                      Temporal::DAY
+                    else
+                      (month ? Temporal::MONTH : Temporal::YEAR)
+                    end
+        value = DateTime.new(year, month || 1, day || 1)
+        return [Temporal.new(value, kind: :datetime, precision: precision), :datetime]
+      end
+
+      precision = datetime_precision(time[:minute], time[:second], time[:fraction])
+      text = "#{date_text(year, month, day)}T#{time_text(time)}"
+      value = DateTime.parse(text)
+      if precision == Temporal::SECOND
+        [value, :datetime]
+      else
+        [Temporal.new(value, kind: :datetime, precision: precision, timezone: time[:timezone]), :datetime]
+      end
+    end
+
+    def build_time(time)
+      raise ArgumentError, 'invalid temporal literal' if time[:hour].nil?
+
+      precision = time_precision(time[:minute], time[:second], time[:fraction])
+      text = time_text(time)
+      value = if time[:timezone]
+                DateTime.parse("2000-01-01T#{text}").to_time
+              else
+                Time.parse("2000-01-01T#{text}")
+              end
+      if precision == Temporal::TIME_SECOND
+        [value, :time]
+      else
+        [Temporal.new(value, kind: :time, precision: precision, timezone: time[:timezone]), :time]
+      end
+    end
+
+    def date_text(year, month, day)
+      format('%04d-%02d-%02d', year, month || 1, day || 1)
+    end
+
+    def time_text(time)
+      text = format('%02d:%02d:%02d', time[:hour], time[:minute] || 0, time[:second] || 0)
+      text += time[:fraction] if time[:fraction]
+      text += time[:timezone] if time[:timezone]
+      text
     end
 
     def token(type, value, start)
@@ -369,7 +473,7 @@ module FHIRPath
     # Supported alongside quoted UCUM units like `'mg'` or `'wk'`.
     TEMPORAL_UNITS = %w[
       second seconds minute minutes hour hours day days week weeks month months
-      year years millisecond
+      year years millisecond milliseconds
     ].freeze
 
     # Mapping from FHIRPath temporal unit names to their UCUM equivalents.
@@ -381,7 +485,7 @@ module FHIRPath
       'week' => 'wk', 'weeks' => 'wk',
       'month' => 'mo', 'months' => 'mo',
       'year' => 'a', 'years' => 'a',
-      'millisecond' => 'ms'
+      'millisecond' => 'ms', 'milliseconds' => 'ms'
     }.freeze
 
     PRECEDENCE = {
@@ -462,25 +566,9 @@ module FHIRPath
       node = case token.type
              when :integer, :decimal
                if current.type == :string
-                 unit = advance
-                 begin
-                   value = Quantity.new(value: token.value, unit: unit.value)
-                 rescue ArgumentError => e
-                   fail_parse("invalid Quantity literal: #{e.message}", :invalid_quantity,
-                              span_between(token.span, unit.span))
-                 end
-                 AST::Literal.new(value: value, span: span_between(token.span, unit.span))
+                 quantity_literal(token, advance)
                elsif current.type == :identifier && Parser::TEMPORAL_UNITS.include?(current.value)
-                 unit = advance
-                 # Map FHIRPath temporal unit names to their UCUM equivalents
-                 ucum_unit = Parser::TEMPORAL_UNIT_MAP.fetch(unit.value, unit.value)
-                 begin
-                   value = Quantity.new(value: token.value, unit: ucum_unit)
-                 rescue ArgumentError => e
-                   fail_parse("invalid Quantity literal: #{e.message}", :invalid_quantity,
-                              span_between(token.span, unit.span))
-                 end
-                 AST::Literal.new(value: value, span: span_between(token.span, unit.span))
+                 quantity_literal(token, advance, calendar: true)
                else
                  AST::Literal.new(value: token.value, span: token.span)
                end
@@ -507,6 +595,21 @@ module FHIRPath
              end
 
       parse_postfix(node)
+    end
+
+    # Builds a Quantity literal node from a numeric token plus its unit token.
+    # FHIRPath calendar-duration keywords ("1 month", "4 days") are stored with
+    # their UCUM equivalent but keep the calendar marker so that date
+    # arithmetic can apply calendar semantics.
+    def quantity_literal(numeric_token, unit_token, calendar: false)
+      unit = unit_token.value.to_s
+      calendar ||= Parser::TEMPORAL_UNITS.include?(unit)
+      ucum_unit = Parser::TEMPORAL_UNIT_MAP.fetch(unit, unit)
+      value = Quantity.new(value: numeric_token.value, unit: ucum_unit, calendar: calendar)
+      AST::Literal.new(value: value, span: span_between(numeric_token.span, unit_token.span))
+    rescue ArgumentError => e
+      fail_parse("invalid Quantity literal: #{e.message}", :invalid_quantity,
+                 span_between(numeric_token.span, unit_token.span))
     end
 
     def parse_collection(opening)

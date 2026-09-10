@@ -88,12 +88,11 @@ The release must continue to state these limitations:
 
 ## Official shared-suite classification snapshot
 
-The full checked-in R4 suite was imported and executed on 2026-09-09 from
+The full checked-in R4 suite was imported and executed on 2026-09-10 from
 FHIR/fhir-test-cases commit `ebb15f74f95a4731e59099c4244eeed734c9e447` with the command sequence:
 
 ```sh
-ruby script/import_vectors.rb conformance conformance/official-r4-core.json > /tmp/fhirpath-official-full.jsonl
-ruby script/run_vectors.rb /tmp/fhirpath-official-full.jsonl
+bundle exec rake conformance:official_cases
 ```
 
 The run produced 935 records; the full machine-readable report is checked in at
@@ -101,18 +100,20 @@ The run produced 935 records; the full machine-readable report is checked in at
 
 | Raw runner classification | Count | Manual disposition |
 |---|---:|---|
-| `pass` | 385 | passing evidence |
-| `defect` | 550 | 12 defects from XML-converted fixtures (unsupported functions: `as`, `is`, `ofType`, `hasValue`, `lowBoundary`, `highBoundary`, `comparable`, `repeat`); 462 defects from JSON-fixture cases (deferred functions: `subsetOf`, `startsWith`, `endsWith`, `matches`, `matchesFull`, `convertsToInteger`, `lowBoundary`, `highBoundary`, `comparable`, `precision`, `hasValue`); 76 defects from no-fixture cases (same deferred functions) |
-| `unsupported` | 0 | the current runner reports missing standard functions as raw defects when no expected error is declared |
+| `pass` | 509 | passing evidence |
+| `defect` | 383 | deferred capability families (`type`, `convertsTo*`/`toXxx` conversions, string functions such as `startsWith`/`endsWith`/`matches`/`replace`, `extension`, `toString`/`convertsToString`, collection functions such as `sort`/`distinct`/`intersect`, and `union`); |
+| `unsupported` | 43 | `precision()`, `lowBoundary()`, and `highBoundary()` on Decimal and Quantity receivers raise `UnsupportedFeatureError`; the feature is not implemented for those types |
 | `host-dependent` | 0 | no host-service cases reached evaluation |
-| `not-run` | 0 | all XML fixtures resolved to verified JSON counterparts or converted via `FHIRXmlConverter` (fail-closed on unsupported structures); cases exercising `as`, `is`, `ofType` require `model: :r4` and are classified `not-run` under `PlainModel`; `repeat` is deferred (not registered in plain model) |
+| `not-run` | 0 | all XML fixtures resolved to verified JSON counterparts or converted via `FHIRXmlConverter` (fail-closed on unsupported structures) |
 
-The 550 `defect` records are not regressions in supported behavior. They fall into three groups:
-- 12 from XML-converted fixtures exercising `as`, `is`, `ofType`, `hasValue`, `lowBoundary`, `highBoundary`, `comparable`, `repeat` — all deferred/unsupported in the current capability set.
-- 462 from JSON-fixture cases exercising the same deferred functions plus `subsetOf`, `startsWith`, `endsWith`, `matches`, `matchesFull`, `convertsToInteger`, `precision`, `hasValue`.
-- 76 from cases with no input fixture at all (pure expression tests) exercising the same deferred functions.
+The 383 `defect` records are not regressions in supported behavior: every case
+that passed before this change still passes, and the defect count fell from 519
+to 383. The remaining families are tracked individually in the capability-family
+issues referenced from `docs/feature-matrix.md`.
 
-All 848 previously `not-run` cases are now classified. 14 XML-only fixtures were converted via `FHIRXmlConverter` and became evaluable (2 `pass`, 12 `defect` from deferred functions). The remaining 834 JSON-fixture cases moved from `not-run` to their appropriate runner classification.
+Typed expected outputs (`<output type="date">@1974-01-01</output>`) are
+normalised for comparison by the runner, so an evaluated temporal, Decimal, or
+Boolean value can match the typed form the suite declares.
 
 ## Host-dependent behavior
 

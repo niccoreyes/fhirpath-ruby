@@ -270,6 +270,66 @@ class FHIRPathVectorRunnerConformanceSemanticsTest < Minitest::Test
     end
   end
 
+  def test_typed_temporal_output_matches_an_evaluated_temporal_value
+    vectors = [
+      {
+        'id' => 'typed-date-case', 'expression' => '@1973-12-25 + 7 days', 'resource' => {},
+        'expected' => [{ '$type' => 'date', 'value' => '@1974-01-01' }]
+      },
+      {
+        'id' => 'typed-datetime-case', 'expression' => "@1973-12-25T00:00:00.000+10:00 + 1 's'",
+        'resource' => {},
+        'expected' => [{ '$type' => 'dateTime', 'value' => '@1973-12-25T00:00:01.000+10:00' }]
+      }
+    ]
+    Tempfile.create('fhirpath-vector') do |file|
+      file.write(vectors.map(&:to_json).join("\n"))
+      file.write("\n")
+      file.flush
+
+      report = FHIRPath::VectorRunner.run(file.path)
+
+      assert_equal(%w[pass pass], report[:cases].map { |result| result['classification'] })
+    end
+  end
+
+  def test_typed_output_that_disagrees_is_still_a_defect
+    vectors = [
+      {
+        'id' => 'typed-date-mismatch', 'expression' => '@1973-12-25 + 7 days', 'resource' => {},
+        'expected' => [{ '$type' => 'date', 'value' => '@1974-01-02' }]
+      }
+    ]
+    Tempfile.create('fhirpath-vector') do |file|
+      file.write(vectors.map(&:to_json).join("\n"))
+      file.write("\n")
+      file.flush
+
+      result = FHIRPath::VectorRunner.run(file.path)[:cases].first
+
+      assert_equal 'defect', result['classification']
+    end
+  end
+
+  def test_unimplemented_capability_is_unsupported_not_a_defect
+    vectors = [
+      {
+        'id' => 'unimplemented-case', 'expression' => '1.587.highBoundary(2)', 'resource' => {},
+        'expected' => [BigDecimal('1.59')]
+      }
+    ]
+    Tempfile.create('fhirpath-vector') do |file|
+      file.write(vectors.map(&:to_json).join("\n"))
+      file.write("\n")
+      file.flush
+
+      result = FHIRPath::VectorRunner.run(file.path)[:cases].first
+
+      assert_equal 'unsupported', result['classification']
+      assert_equal 'FHIRPath::UnsupportedFeatureError', result['actual_error']['class']
+    end
+  end
+
   def test_report_fields_include_harness_error_type
     vectors = [
       {
