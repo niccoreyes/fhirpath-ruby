@@ -123,14 +123,22 @@ module FHIRPath
     # Expected values travel through JSONL, so a Decimal or temporal value that
     # the importer normalised is read back as its JSON form (a String), and a
     # typed suite output (`{"$type"=>"date","value"=>"@1974-01-01"}`) is a
-    # structured object rather than the value it denotes. Compare comparable
-    # forms so those records can match, while value equality stays primary.
+    # structured object rather than the value it denotes. Try value equality
+    # first, then the comparable forms (a literal's underlying
+    # Date/DateTime/Time, a typed output resolved to the value it denotes), then
+    # the canonical JSON form of both representations.
     def expected_equal?(values, expected)
       actual = values.map { |value| comparand(value) }
       wanted = expected.map { |value| comparand(value) }
-      return true if actual == wanted
+      return true if values == expected || actual == wanted || same_json?(values, expected)
 
-      JSON.generate(actual) == JSON.generate(wanted)
+      same_json?(actual, wanted)
+    rescue StandardError
+      false
+    end
+
+    def same_json?(left, right)
+      JSON.generate(left) == JSON.generate(right)
     rescue StandardError
       false
     end
