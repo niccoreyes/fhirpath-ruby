@@ -22,6 +22,7 @@ module FHIRPath
       timezone timezoneOffset
       in contains is as
       precision lowBoundary highBoundary comparable
+      toString convertsToString toQuantity
     ].freeze
     DELAYED_NAMES = %w[where select exists all aggregate iif].freeze
 

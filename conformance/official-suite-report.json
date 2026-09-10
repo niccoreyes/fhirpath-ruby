@@ -1,8 +1,8 @@
 {
   "total": 935,
   "counts": {
-    "pass": 489,
-    "defect": 403,
+    "pass": 509,
+    "defect": 383,
     "unsupported": 43,
     "host-dependent": 0,
     "not-run": 0
@@ -101,8 +101,8 @@
     "testTypes": {
       "total": 99,
       "counts": {
-        "pass": 11,
-        "defect": 88,
+        "pass": 26,
+        "defect": 73,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -171,8 +171,8 @@
     "testLiterals": {
       "total": 82,
       "counts": {
-        "pass": 52,
-        "defect": 30,
+        "pass": 53,
+        "defect": 29,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -911,8 +911,8 @@
     "testToString": {
       "total": 5,
       "counts": {
-        "pass": 0,
-        "defect": 5,
+        "pass": 4,
+        "defect": 1,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -1844,7 +1844,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        "#<FHIRPath::Quantity:0x00000001268620a0>"
+        "#<FHIRPath::Quantity:0x00000001266c00a8>"
       ],
       "resource": {},
       "variables": {},
@@ -2797,7 +2797,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        "#<FHIRPath::Quantity:0x00000001264e3118>"
+        "#<FHIRPath::Quantity:0x00000001269e08c8>"
       ],
       "resource": {},
       "variables": {},
@@ -7535,19 +7535,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 86,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: convertsToString",
-        "span": {
-          "offset": 0,
-          "length": 23,
-          "end_offset": 23
-        },
-        "expression": "true.convertsToString()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testBooleanLiteralIsNotDecimal",
@@ -8603,19 +8594,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 92,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toString",
-        "span": {
-          "offset": 0,
-          "length": 15,
-          "end_offset": 15
-        },
-        "expression": "true.toString()"
-      }
+      "classification": "pass",
+      "actual": [
+        "true"
+      ]
     },
     {
       "id": "testBooleanLogicAnd1",
@@ -25096,19 +25078,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 188,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: convertsToString",
-        "span": {
-          "offset": 0,
-          "length": 22,
-          "end_offset": 22
-        },
-        "expression": "1.0.convertsToString()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testDecimalLiteralIsDecimal",
@@ -26353,18 +26326,7 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 195,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toQuantity",
-        "span": {
-          "offset": 0,
-          "length": 16,
-          "end_offset": 16
-        },
-        "expression": "1.0.toQuantity() = 1.0 '1'"
-      }
+      "actual": []
     },
     {
       "id": "testDecimalLiteralToString",
@@ -26534,18 +26496,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 196,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toString",
-        "span": {
-          "offset": 0,
-          "length": 14,
-          "end_offset": 14
-        },
-        "expression": "1.0.toString()"
-      }
+      "actual": [
+        "0.1e1"
+      ]
     },
     {
       "id": "testDecodeBase64A",
@@ -65744,19 +65697,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 426,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: convertsToString",
-        "span": {
-          "offset": 0,
-          "length": 20,
-          "end_offset": 20
-        },
-        "expression": "1.convertsToString()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testIntegerLiteralFalseConvertsToBoolean",
@@ -68060,18 +68004,7 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 439,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toQuantity",
-        "span": {
-          "offset": 0,
-          "length": 14,
-          "end_offset": 14
-        },
-        "expression": "1.toQuantity() = 1 '1'"
-      }
+      "actual": []
     },
     {
       "id": "testIntegerLiteralToString",
@@ -68240,19 +68173,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 440,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toString",
-        "span": {
-          "offset": 0,
-          "length": 12,
-          "end_offset": 12
-        },
-        "expression": "1.toString()"
-      }
+      "classification": "pass",
+      "actual": [
+        "1"
+      ]
     },
     {
       "id": "testIntersect1",
@@ -88053,19 +87977,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 557,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: convertsToString",
-        "span": {
-          "offset": 0,
-          "length": 25,
-          "end_offset": 25
-        },
-        "expression": "'test'.convertsToString()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testLiteralStringEscapes",
@@ -97754,19 +97669,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 626,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: convertsToString",
-        "span": {
-          "offset": 1,
-          "length": 22,
-          "end_offset": 23
-        },
-        "expression": "(-1).convertsToString()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testNegativeIntegerLiteralToString",
@@ -97935,19 +97841,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 627,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toString",
-        "span": {
-          "offset": 1,
-          "length": 14,
-          "end_offset": 15
-        },
-        "expression": "(-1).toString()"
-      }
+      "classification": "pass",
+      "actual": [
+        "-1"
+      ]
     },
     {
       "id": "testNotEmpty",
@@ -112009,19 +111906,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 719,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: convertsToString",
-        "span": {
-          "offset": 0,
-          "length": 25,
-          "end_offset": 25
-        },
-        "expression": "1 'wk'.convertsToString()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testQuantityLiteralWeekToString",
@@ -112191,18 +112079,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 720,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toString",
-        "span": {
-          "offset": 0,
-          "length": 17,
-          "end_offset": 17
-        },
-        "expression": "1 week.toString()"
-      }
+      "actual": [
+        "1 'wk'"
+      ]
     },
     {
       "id": "testQuantityLiteralWkToString",
@@ -112371,19 +112250,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 721,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toString",
-        "span": {
-          "offset": 0,
-          "length": 17,
-          "end_offset": 17
-        },
-        "expression": "1 'wk'.toString()"
-      }
+      "classification": "pass",
+      "actual": [
+        "1 'wk'"
+      ]
     },
     {
       "id": "testRepeat1",
@@ -125199,19 +125069,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 793,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toQuantity",
-        "span": {
-          "offset": 0,
-          "length": 18,
-          "end_offset": 18
-        },
-        "expression": "'1.0'.toQuantity() ~ 1 '1'"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testStringFalseLiteralAlsoConvertsToBoolean",
@@ -127185,18 +127046,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 804,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toQuantity",
-        "span": {
-          "offset": 0,
-          "length": 16,
-          "end_offset": 16
-        },
-        "expression": "'1'.toQuantity()"
-      }
+      "actual": [
+        "#<FHIRPath::Quantity:0x0000000126fc3178>"
+      ]
     },
     {
       "id": "testStringLiteralConvertsToDecimalFalse",
@@ -127908,19 +127760,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 808,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: convertsToString",
-        "span": {
-          "offset": 0,
-          "length": 25,
-          "end_offset": 25
-        },
-        "expression": "'true'.convertsToString()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testStringLiteralIsNotInteger",
@@ -128261,19 +128104,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 810,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toString",
-        "span": {
-          "offset": 0,
-          "length": 17,
-          "end_offset": 17
-        },
-        "expression": "'true'.toString()"
-      }
+      "classification": "pass",
+      "actual": [
+        "true"
+      ]
     },
     {
       "id": "testStringMillisecondConvertsToDateTime",
@@ -129528,19 +129362,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 817,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toQuantity",
-        "span": {
-          "offset": 0,
-          "length": 20,
-          "end_offset": 20
-        },
-        "expression": "'1 day'.toQuantity() = 1 'd'"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testStringQuantityLiteralConvertsToQuantity",
@@ -129890,19 +129715,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 819,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toQuantity",
-        "span": {
-          "offset": 0,
-          "length": 20,
-          "end_offset": 20
-        },
-        "expression": "'1 day'.toQuantity() = 1 day"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testStringQuantityMonthLiteralToQuantity",
@@ -130070,18 +129886,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 820,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toQuantity",
-        "span": {
-          "offset": 0,
-          "length": 23,
-          "end_offset": 23
-        },
-        "expression": "'1 \\'mo\\''.toQuantity() = 1 month"
-      }
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testStringQuantityWeekConvertsToQuantity",
@@ -130612,19 +130419,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 823,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toQuantity",
-        "span": {
-          "offset": 0,
-          "length": 23,
-          "end_offset": 23
-        },
-        "expression": "'1 \\'wk\\''.toQuantity() = 1 week"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testStringQuantityYearLiteralToQuantity",
@@ -130792,18 +130590,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 824,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toQuantity",
-        "span": {
-          "offset": 0,
-          "length": 22,
-          "end_offset": 22
-        },
-        "expression": "'1 \\'a\\''.toQuantity() = 1 year"
-      }
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testStringSecondConvertsToDateTime",
@@ -138209,19 +137998,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 866,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toString",
-        "span": {
-          "offset": 0,
-          "length": 12,
-          "end_offset": 12
-        },
-        "expression": "1.toString() = '1'"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testToString2",
@@ -138571,19 +138351,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 868,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toString",
-        "span": {
-          "offset": 0,
-          "length": 12,
-          "end_offset": 12
-        },
-        "expression": "0.toString() = '0'"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testToString4",
@@ -138752,19 +138523,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 869,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toString",
-        "span": {
-          "offset": 0,
-          "length": 14,
-          "end_offset": 14
-        },
-        "expression": "0.0.toString() = '0.0'"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testToString5",
@@ -138933,19 +138695,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 870,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: toString",
-        "span": {
-          "offset": 0,
-          "length": 22,
-          "end_offset": 22
-        },
-        "expression": "@2014-12-14.toString() = '2014-12-14'"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testToday1",

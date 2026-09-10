@@ -100,15 +100,15 @@ The run produced 935 records; the full machine-readable report is checked in at
 
 | Raw runner classification | Count | Manual disposition |
 |---|---:|---|
-| `pass` | 489 | passing evidence |
-| `defect` | 403 | deferred capability families (`type`, `convertsTo*`/`toXxx` conversions, string functions such as `startsWith`/`endsWith`/`matches`/`replace`, `extension`, `toString`/`convertsToString`, collection functions such as `sort`/`distinct`/`intersect`, and `union`); |
+| `pass` | 509 | passing evidence |
+| `defect` | 383 | deferred capability families (`type`, `convertsTo*`/`toXxx` conversions, string functions such as `startsWith`/`endsWith`/`matches`/`replace`, `extension`, `toString`/`convertsToString`, collection functions such as `sort`/`distinct`/`intersect`, and `union`); |
 | `unsupported` | 43 | `precision()`, `lowBoundary()`, and `highBoundary()` on Decimal and Quantity receivers raise `UnsupportedFeatureError`; the feature is not implemented for those types |
 | `host-dependent` | 0 | no host-service cases reached evaluation |
 | `not-run` | 0 | all XML fixtures resolved to verified JSON counterparts or converted via `FHIRXmlConverter` (fail-closed on unsupported structures) |
 
-The 403 `defect` records are not regressions in supported behavior: every case
+The 383 `defect` records are not regressions in supported behavior: every case
 that passed before this change still passes, and the defect count fell from 519
-to 403. The remaining families are tracked individually in the capability-family
+to 383. The remaining families are tracked individually in the capability-family
 issues referenced from `docs/feature-matrix.md`.
 
 Typed expected outputs (`<output type="date">@1974-01-01</output>`) are

@@ -249,6 +249,12 @@ module FHIRPath
         temporal_boundary(receiver, node, context, high: true)
       when 'comparable'
         comparable(receiver, node, context)
+      when 'toString'
+        to_string(receiver, node)
+      when 'convertsToString'
+        converts_to_string(receiver, node)
+      when 'toQuantity'
+        to_quantity(receiver, node)
       when 'aggregate'
         aggregate(receiver, node, context)
       when 'iif'
@@ -902,6 +908,71 @@ module FHIRPath
       end
 
       Collection.new([left.compatible?(right)])
+    end
+
+    # --- toString() / convertsToString() / toQuantity() -------------------
+    #
+    # Only the receivers the official quantity cases exercise are implemented
+    # here; the wider convertsTo*/toXxx conversion family belongs to issue #98.
+    def to_string(receiver, node)
+      return Collection.empty if receiver.empty?
+
+      value = require_singleton(receiver, node.span)
+      return Collection.new([quantity_literal_text(value)]) if value.is_a?(Quantity)
+
+      Collection.new([value.to_s])
+    end
+
+    def converts_to_string(receiver, node)
+      return Collection.empty if receiver.empty?
+
+      value = require_singleton(receiver, node.span)
+      convertibles = value.is_a?(Quantity) || value.is_a?(::String) || value.is_a?(Date) ||
+                     value.is_a?(DateTime) || value.is_a?(Time) || [true, false].include?(value) ||
+                     numeric?(value)
+      Collection.new([convertibles])
+    end
+
+    def to_quantity(receiver, node)
+      return Collection.empty if receiver.empty?
+
+      value = temporal_payload(require_singleton(receiver, node.span))
+      return Collection.empty unless value.is_a?(::String)
+
+      parsed = parse_quantity_string(value)
+      parsed ? Collection.new([parsed]) : Collection.empty
+    end
+
+    # A quantity string is `<number> '<unit>'`, `<number> <calendar duration>`,
+    # or a bare number. A bare UCUM code (`1 wk`) is not a quantity literal.
+    def parse_quantity_string(text)
+      match = /\A\s*([+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)\s*(.*?)\s*\z/.match(text)
+      return nil unless match
+
+      unit = match[2]
+      return Quantity.new(value: match[1], unit: '1') if unit.empty?
+
+      calendar = calendar_unit_code(unit)
+      return Quantity.new(value: match[1], unit: calendar, calendar: true) if calendar
+      return nil unless unit.match?(/\A'[^']+'\z/)
+
+      Quantity.new(value: match[1], unit: unit.delete_prefix("'").delete_suffix("'"))
+    rescue ArgumentError
+      nil
+    end
+
+    def calendar_unit_code(unit)
+      Parser::TEMPORAL_UNIT_MAP[unit]
+    end
+
+    # FHIRPath literal form of a quantity: `1 'wk'`.
+    def quantity_literal_text(quantity)
+      "#{decimal_text(quantity.value)} '#{quantity.unit}'"
+    end
+
+    def decimal_text(value)
+      decimal = decimal(value)
+      decimal.frac.zero? ? decimal.to_i.to_s : decimal.to_s('F')
     end
 
     def temporal_now(receiver, _node, _context, type)
