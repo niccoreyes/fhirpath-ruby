@@ -363,7 +363,26 @@ module FHIRPath
   end
 
   class Parser
-    OPERATOR_FUNCTIONS = %i[in contains].freeze
+    OPERATOR_FUNCTIONS = %i[in contains is as].freeze
+
+    # FHIRPath-specific temporal units used in quantity literals (not UCUM).
+    # Supported alongside quoted UCUM units like `'mg'` or `'wk'`.
+    TEMPORAL_UNITS = %w[
+      second seconds minute minutes hour hours day days week weeks month months
+      year years millisecond
+    ].freeze
+
+    # Mapping from FHIRPath temporal unit names to their UCUM equivalents.
+    TEMPORAL_UNIT_MAP = {
+      'second' => 's', 'seconds' => 's',
+      'minute' => 'min', 'minutes' => 'min',
+      'hour' => 'h', 'hours' => 'h',
+      'day' => 'd', 'days' => 'd',
+      'week' => 'wk', 'weeks' => 'wk',
+      'month' => 'mo', 'months' => 'mo',
+      'year' => 'a', 'years' => 'a',
+      'millisecond' => 'ms'
+    }.freeze
 
     PRECEDENCE = {
       implies: 1,
@@ -446,6 +465,17 @@ module FHIRPath
                  unit = advance
                  begin
                    value = Quantity.new(value: token.value, unit: unit.value)
+                 rescue ArgumentError => e
+                   fail_parse("invalid Quantity literal: #{e.message}", :invalid_quantity,
+                              span_between(token.span, unit.span))
+                 end
+                 AST::Literal.new(value: value, span: span_between(token.span, unit.span))
+               elsif current.type == :identifier && Parser::TEMPORAL_UNITS.include?(current.value)
+                 unit = advance
+                 # Map FHIRPath temporal unit names to their UCUM equivalents
+                 ucum_unit = Parser::TEMPORAL_UNIT_MAP.fetch(unit.value, unit.value)
+                 begin
+                   value = Quantity.new(value: token.value, unit: ucum_unit)
                  rescue ArgumentError => e
                    fail_parse("invalid Quantity literal: #{e.message}", :invalid_quantity,
                               span_between(token.span, unit.span))
