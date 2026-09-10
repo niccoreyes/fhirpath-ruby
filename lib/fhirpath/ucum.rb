@@ -2,6 +2,8 @@
 
 require 'bigdecimal'
 
+require_relative 'ucum_units'
+
 module FHIRPath
   # Dependency-free, deliberately bounded UCUM support used by Quantity.
   # Unknown atoms are rejected; callers should not interpret this subset as
@@ -17,35 +19,8 @@ module FHIRPath
 
     MAX_EXPONENT = 12
 
-    UNIT_ATOMS = {
-      '1' => [{}, '1'],
-      'm' => [{ length: 1 }, '1'],
-      'cm' => [{ length: 1 }, '0.01'],
-      'mm' => [{ length: 1 }, '0.001'],
-      'km' => [{ length: 1 }, '1000'],
-      'g' => [{ mass: 1 }, '1'],
-      'kg' => [{ mass: 1 }, '1000'],
-      'mg' => [{ mass: 1 }, '0.001'],
-      'Mg' => [{ mass: 1 }, '1000000'],
-      'ug' => [{ mass: 1 }, '0.000001'],
-      'ng' => [{ mass: 1 }, '0.000000001'],
-      'L' => [{ volume: 1 }, '1'],
-      'mL' => [{ volume: 1 }, '0.001'],
-      'ML' => [{ volume: 1 }, '1000000'],
-      'uL' => [{ volume: 1 }, '0.000001'],
-      'mol' => [{ amount: 1 }, '1'],
-      'mmol' => [{ amount: 1 }, '0.001'],
-      'umol' => [{ amount: 1 }, '0.000001'],
-      's' => [{ time: 1 }, '1'],
-      'min' => [{ time: 1 }, '60'],
-      'h' => [{ time: 1 }, '3600'],
-      # FHIRPath temporal units (not standard UCUM)
-      'd' => [{ time: 1 }, '86400'],
-      'wk' => [{ time: 1 }, '604800'],
-      'mo' => [{ time: 1 }, '2629746'],
-      'a' => [{ time: 1 }, '31556952'],
-      'ms' => [{ time: 1 }, '0.001']
-    }.freeze
+    # Base atoms used to render a composed (multiplied) unit.
+    BASE_ATOMS = { length: 'm', mass: 'g', volume: 'L', amount: 'mol', time: 's' }.freeze
 
     module_function
 
@@ -54,6 +29,28 @@ module FHIRPath
       definition(text)
       text.freeze
     end
+
+    # Renders a dimension map as a UCUM product of base atoms, e.g.
+    # { length: 2 } => "m2". Returns nil when a dimension has no base atom or
+    # an exponent outside the supported budget.
+    def compose(dimensions)
+      return '1' if dimensions.empty?
+
+      parts = dimensions.reject { |_dimension, power| power.zero? }
+                        .sort_by { |dimension, _power| dimension.to_s }
+                        .map { |dimension, power| compose_atom(dimension, power) }
+      return nil if parts.any?(&:nil?)
+
+      parts.join('*')
+    end
+
+    def compose_atom(dimension, power)
+      atom = BASE_ATOMS[dimension]
+      return nil if atom.nil? || power.abs > MAX_EXPONENT
+
+      power == 1 ? atom : "#{atom}#{power}"
+    end
+    private_class_method :compose_atom
 
     def definition(unit)
       raise ArgumentError, 'Quantity unit must not be blank' if unit.empty?
@@ -103,16 +100,32 @@ module FHIRPath
     private_class_method :product_definition
 
     def atom_definition(atom_with_exponent, original, exponent_sign)
-      match = /\A([^\^]+)(?:\^(-?\d+))?\z/.match(atom_with_exponent)
-      raise ArgumentError, "unsupported Quantity unit: #{original}" unless match && UNIT_ATOMS.key?(match[1])
+      atom, exponent_text = decompose_atom(atom_with_exponent)
+      raise ArgumentError, "unsupported Quantity unit: #{original}" unless atom
 
-      exponent = (match[2] || '1').to_i * exponent_sign
+      exponent = (exponent_text || '1').to_i * exponent_sign
       raise ArgumentError, "Quantity unit exponent exceeds #{MAX_EXPONENT}" if exponent.abs > MAX_EXPONENT
 
-      atom_dimensions, atom_factor = UNIT_ATOMS.fetch(match[1])
+      atom_dimensions, atom_factor = UNIT_ATOMS.fetch(atom)
       [atom_dimensions, atom_factor, exponent]
     end
     private_class_method :atom_definition
+
+    # Splits an atom into its symbol and exponent. UCUM allows the exponent to
+    # be written either explicitly (`m^2`) or as a digit suffix (`m2`), and
+    # multi-character atoms such as `min` or `mmol` win over the suffix form.
+    def decompose_atom(text)
+      match = /\A([^^]+)\^(-?\d+)\z/.match(text)
+      return [match[1], match[2]] if match && UNIT_ATOMS.key?(match[1])
+
+      return [text, nil] if UNIT_ATOMS.key?(text)
+
+      suffix = /\A(.+?)([+-]?\d+)\z/.match(text)
+      return [nil, nil] unless suffix && UNIT_ATOMS.key?(suffix[1])
+
+      [suffix[1], suffix[2]]
+    end
+    private_class_method :decompose_atom
 
     def unitless_definition
       UnitDefinition.new(dimensions: {}, factor: BigDecimal('1'))
