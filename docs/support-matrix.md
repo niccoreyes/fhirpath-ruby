@@ -100,16 +100,20 @@ The run produced 935 records; the full machine-readable report is checked in at
 
 | Raw runner classification | Count | Manual disposition |
 |---|---:|---|
-| `pass` | 462 | passing evidence |
-| `defect` | 430 | deferred capability families (`type`, `convertsTo*`/`toXxx` conversions, string functions such as `startsWith`/`endsWith`/`matches`/`replace`, `extension`, `toString`/`convertsToString`, collection functions such as `sort`/`distinct`/`intersect`, and `union`); plus differences that need expected-output normalisation the runner does not yet perform (expected values carrying a `$type`, e.g. `<output type="date">@1974-01-01</output>`, are compared as structured objects) |
+| `pass` | 473 | passing evidence |
+| `defect` | 419 | deferred capability families (`type`, `convertsTo*`/`toXxx` conversions, string functions such as `startsWith`/`endsWith`/`matches`/`replace`, `extension`, `toString`/`convertsToString`, collection functions such as `sort`/`distinct`/`intersect`, and `union`); plus cases where a FHIR `Quantity` element is compared without being mapped to a `FHIRPath::Quantity` value (resource-model mapping) |
 | `unsupported` | 43 | `precision()`, `lowBoundary()`, and `highBoundary()` on Decimal and Quantity receivers raise `UnsupportedFeatureError`; the feature is not implemented for those types |
 | `host-dependent` | 0 | no host-service cases reached evaluation |
 | `not-run` | 0 | all XML fixtures resolved to verified JSON counterparts or converted via `FHIRXmlConverter` (fail-closed on unsupported structures) |
 
-The 430 `defect` records are not regressions in supported behavior: every case
+The 419 `defect` records are not regressions in supported behavior: every case
 that passed before this change still passes, and the defect count fell from 519
-to 430. The remaining families are tracked individually in the capability-family
+to 419. The remaining families are tracked individually in the capability-family
 issues referenced from `docs/feature-matrix.md`.
+
+Typed expected outputs (`<output type="date">@1974-01-01</output>`) are
+normalised for comparison by the runner, so an evaluated temporal, Decimal, or
+Boolean value can match the typed form the suite declares.
 
 ## Host-dependent behavior
 
