@@ -225,6 +225,12 @@ module FHIRPath
       when 'contains'
         # `contains` as a function: receiver.contains(value) -> receiver contains value
         membership_collection(receiver, node.arguments.first, context)
+      when 'is'
+        # `is` as a function: receiver.is(Type) -> receiver is Type
+        type_check(receiver, node.arguments.first, context, strict: true, span: node.span)
+      when 'as'
+        # `as` as a function: receiver.as(Type) -> receiver as Type
+        type_check(receiver, node.arguments.first, context, strict: false, span: node.span)
       when 'today'
         temporal_now(receiver, node, context, :date)
       when 'now'
@@ -557,6 +563,15 @@ module FHIRPath
 
       left_value = require_singleton(left, node.left.span)
       right_value = require_singleton(right, node.right.span)
+
+      # Date/time arithmetic: Date/DateTime +/- Quantity (time dimension)
+      if (left_value.is_a?(Date) || left_value.is_a?(DateTime)) && right_value.is_a?(Quantity)
+        return temporal_plus_quantity(left_value, right_value, node.operator)
+      end
+      if right_value.is_a?(Date) || right_value.is_a?(DateTime)
+        return temporal_plus_quantity(left_value, right_value, node.operator)
+      end
+
       if left_value.is_a?(Quantity) || right_value.is_a?(Quantity)
         return quantity_arithmetic(left_value, right_value, node.operator, node.span)
       end
@@ -637,6 +652,77 @@ module FHIRPath
 
       raise TypeError.new('Quantity arithmetic requires a compatible Quantity or scalar',
                           code: :incompatible_quantity, span: span)
+    end
+
+    # Date/DateTime arithmetic with Quantity. Only supports + and - operators
+    # with time-dimension quantities (seconds, minutes, hours, days, weeks,
+    # months, years, milliseconds).
+    def temporal_plus_quantity(time_value, quantity, operator)
+      return Collection.empty unless %i[plus minus].include?(operator)
+      return Collection.empty unless quantity.is_a?(Quantity)
+      return Collection.empty unless time_value.is_a?(Date) || time_value.is_a?(DateTime)
+
+      unit = quantity.unit
+      value = quantity.value
+
+      result = case unit
+               when 's', 'ms'
+                 offset = unit == 'ms' ? BigDecimal(value) / 1000 : BigDecimal(value)
+                 add_seconds(time_value, offset, operator)
+               when 'min'
+                 add_seconds(time_value, BigDecimal(value) * 60, operator)
+               when 'h'
+                 add_seconds(time_value, BigDecimal(value) * 3600, operator)
+               when 'd'
+                 add_days(time_value, BigDecimal(value), operator)
+               when 'wk'
+                 add_days(time_value, BigDecimal(value) * 7, operator)
+               when 'mo'
+                 add_months(time_value, BigDecimal(value), operator)
+               when 'a'
+                 add_years(time_value, BigDecimal(value), operator)
+               else
+                 return Collection.empty
+               end
+
+      Collection.new([result])
+    end
+
+    def add_seconds(time_value, seconds, operator)
+      sign = operator == :minus ? -1 : 1
+      if time_value.is_a?(DateTime)
+        # Use Rational for exact fractional-day arithmetic
+        offset_days = Rational(seconds.to_i, 86_400)
+        time_value + (sign * offset_days)
+      elsif time_value.is_a?(Date)
+        dt = DateTime.new(time_value.year, time_value.month, time_value.day)
+        offset_days = Rational(seconds.to_i, 86_400)
+        (dt + (sign * offset_days)).to_date
+      else
+        raise TypeError.new('expected a Date or DateTime value',
+                            code: :expected_temporal, span: current.span)
+      end
+    end
+
+    def add_days(time_value, days, operator)
+      sign = operator == :minus ? -1 : 1
+      time_value + (sign * days)
+    end
+
+    def add_months(time_value, months, operator)
+      sign = operator == :minus ? -1 : 1
+      count = months.to_i.abs
+      count.times.reduce(time_value) do |result, _|
+        sign.positive? ? result.next_month : result.prev_month
+      end
+    end
+
+    def add_years(time_value, years, operator)
+      sign = operator == :minus ? -1 : 1
+      count = years.to_i.abs
+      count.times.reduce(time_value) do |result, _|
+        sign.positive? ? result.next_year : result.prev_year
+      end
     end
 
     def comparison(node, context)
@@ -844,6 +930,29 @@ module FHIRPath
       return Collection.new([matches]) if node.operator == :is
 
       matches ? Collection.new([value]) : Collection.empty
+    end
+
+    # Handles `is(Type)` and `as(Type)` when invoked as member functions.
+    # The `strict` flag controls whether non-matching values raise an error
+    # (`is`) or return empty (`as`).
+    def type_check(receiver, type_arg_node, _context, strict:, span:)
+      unless type_arg_node.is_a?(AST::Identifier)
+        raise TypeError.new('type operator requires a type name', code: :expected_type, span: type_arg_node.span)
+      end
+
+      type_name = type_arg_node.name.downcase
+      return Collection.empty if receiver.empty?
+
+      value = require_singleton(receiver, span)
+      matches = logical_type?(value, type_name) || model_logical_type?(receiver, type_name)
+
+      if strict
+        # `is` as a function returns a boolean
+        Collection.new([matches])
+      else
+        # `as` as a function returns the value if it matches, empty otherwise
+        matches ? Collection.new([value]) : Collection.empty
+      end
     end
 
     def type_name_from(node, span)

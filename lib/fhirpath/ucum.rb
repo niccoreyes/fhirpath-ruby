@@ -38,7 +38,13 @@ module FHIRPath
       'umol' => [{ amount: 1 }, '0.000001'],
       's' => [{ time: 1 }, '1'],
       'min' => [{ time: 1 }, '60'],
-      'h' => [{ time: 1 }, '3600']
+      'h' => [{ time: 1 }, '3600'],
+      # FHIRPath temporal units (not standard UCUM)
+      'd' => [{ time: 1 }, '86400'],
+      'wk' => [{ time: 1 }, '604800'],
+      'mo' => [{ time: 1 }, '2629746'],
+      'a' => [{ time: 1 }, '31556952'],
+      'ms' => [{ time: 1 }, '0.001']
     }.freeze
 
     module_function
