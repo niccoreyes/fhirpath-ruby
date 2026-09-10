@@ -1,9 +1,9 @@
 {
   "total": 935,
   "counts": {
-    "pass": 385,
-    "defect": 550,
-    "unsupported": 0,
+    "pass": 462,
+    "defect": 430,
+    "unsupported": 43,
     "host-dependent": 0,
     "not-run": 0
   },
@@ -11,8 +11,8 @@
     "Comparable": {
       "total": 3,
       "counts": {
-        "pass": 0,
-        "defect": 3,
+        "pass": 3,
+        "defect": 0,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -21,9 +21,9 @@
     "HighBoundary": {
       "total": 24,
       "counts": {
-        "pass": 0,
-        "defect": 24,
-        "unsupported": 0,
+        "pass": 5,
+        "defect": 0,
+        "unsupported": 19,
         "host-dependent": 0,
         "not-run": 0
       }
@@ -31,9 +31,9 @@
     "LowBoundary": {
       "total": 28,
       "counts": {
-        "pass": 0,
-        "defect": 28,
-        "unsupported": 0,
+        "pass": 5,
+        "defect": 1,
+        "unsupported": 22,
         "host-dependent": 0,
         "not-run": 0
       }
@@ -41,9 +41,9 @@
     "Precision": {
       "total": 5,
       "counts": {
-        "pass": 0,
-        "defect": 5,
-        "unsupported": 0,
+        "pass": 4,
+        "defect": 0,
+        "unsupported": 1,
         "host-dependent": 0,
         "not-run": 0
       }
@@ -101,8 +101,8 @@
     "testTypes": {
       "total": 99,
       "counts": {
-        "pass": 0,
-        "defect": 99,
+        "pass": 11,
+        "defect": 88,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -171,8 +171,8 @@
     "testLiterals": {
       "total": 82,
       "counts": {
-        "pass": 31,
-        "defect": 51,
+        "pass": 47,
+        "defect": 35,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -321,8 +321,8 @@
     "testEquality": {
       "total": 28,
       "counts": {
-        "pass": 25,
-        "defect": 3,
+        "pass": 26,
+        "defect": 2,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -411,8 +411,8 @@
     "testInheritance": {
       "total": 24,
       "counts": {
-        "pass": 3,
-        "defect": 21,
+        "pass": 12,
+        "defect": 12,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -441,8 +441,8 @@
     "testGreaterThan": {
       "total": 27,
       "counts": {
-        "pass": 23,
-        "defect": 4,
+        "pass": 26,
+        "defect": 1,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -451,8 +451,8 @@
     "testGreatorOrEqual": {
       "total": 27,
       "counts": {
-        "pass": 23,
-        "defect": 4,
+        "pass": 26,
+        "defect": 1,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -541,8 +541,8 @@
     "testLessOrEqual": {
       "total": 27,
       "counts": {
-        "pass": 23,
-        "defect": 4,
+        "pass": 26,
+        "defect": 1,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -551,8 +551,8 @@
     "testLessThan": {
       "total": 27,
       "counts": {
-        "pass": 23,
-        "defect": 4,
+        "pass": 26,
+        "defect": 1,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -591,8 +591,8 @@
     "testMinus": {
       "total": 6,
       "counts": {
-        "pass": 5,
-        "defect": 1,
+        "pass": 4,
+        "defect": 2,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -621,8 +621,8 @@
     "testNEquality": {
       "total": 24,
       "counts": {
-        "pass": 19,
-        "defect": 5,
+        "pass": 20,
+        "defect": 4,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -652,8 +652,8 @@
       "total": 2,
       "counts": {
         "pass": 0,
-        "defect": 2,
-        "unsupported": 0,
+        "defect": 1,
+        "unsupported": 1,
         "host-dependent": 0,
         "not-run": 0
       }
@@ -661,8 +661,8 @@
     "testPlus": {
       "total": 27,
       "counts": {
-        "pass": 5,
-        "defect": 22,
+        "pass": 8,
+        "defect": 19,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -681,8 +681,8 @@
     "testObservations": {
       "total": 10,
       "counts": {
-        "pass": 1,
-        "defect": 9,
+        "pass": 2,
+        "defect": 8,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -711,8 +711,8 @@
     "testQuantity": {
       "total": 11,
       "counts": {
-        "pass": 3,
-        "defect": 8,
+        "pass": 8,
+        "defect": 3,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -961,8 +961,8 @@
     "testType": {
       "total": 30,
       "counts": {
-        "pass": 1,
-        "defect": 29,
+        "pass": 3,
+        "defect": 27,
         "unsupported": 0,
         "host-dependent": 0,
         "not-run": 0
@@ -1011,10 +1011,7 @@
       "target": "2.0.0",
       "capability": "Comparable",
       "expected": [
-        {
-          "$type": null,
-          "value": "true"
-        }
+        true
       ],
       "resource": {},
       "variables": {},
@@ -1025,19 +1022,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 1,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: [in_i]",
-        "span": {
-          "offset": 18,
-          "length": 10,
-          "end_offset": 28
-        },
-        "expression": "1 'cm'.comparable(1 '[in_i]')"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "Comparable2",
@@ -1050,10 +1038,7 @@
       "target": "2.0.0",
       "capability": "Comparable",
       "expected": [
-        {
-          "$type": null,
-          "value": "false"
-        }
+        false
       ],
       "resource": {},
       "variables": {},
@@ -1064,19 +1049,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 2,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: [s]",
-        "span": {
-          "offset": 18,
-          "length": 7,
-          "end_offset": 25
-        },
-        "expression": "1 'cm'.comparable(1 '[s]')"
-      }
+      "classification": "pass",
+      "actual": [
+        false
+      ]
     },
     {
       "id": "Comparable3",
@@ -1089,10 +1065,7 @@
       "target": "2.0.0",
       "capability": "Comparable",
       "expected": [
-        {
-          "$type": null,
-          "value": "false"
-        }
+        false
       ],
       "resource": {},
       "variables": {},
@@ -1103,19 +1076,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 3,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: comparable",
-        "span": {
-          "offset": 0,
-          "length": 24,
-          "end_offset": 24
-        },
-        "expression": "1 'cm'.comparable(1 's')"
-      }
+      "classification": "pass",
+      "actual": [
+        false
+      ]
     },
     {
       "id": "HighBoundaryDateMonth",
@@ -1128,10 +1092,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "@2014-12"
-        }
+        "@2014-12"
       ],
       "resource": {},
       "variables": {},
@@ -1142,19 +1103,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 4,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 5,
-          "end_offset": 5
-        },
-        "expression": "@2014.highBoundary(6)"
-      }
+      "classification": "pass",
+      "actual": [
+        "@2014-12"
+      ]
     },
     {
       "id": "HighBoundaryDateTimeMillisecond1",
@@ -1167,10 +1119,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "@2014-01-01T08:00:59.999-12:00"
-        }
+        "@2014-01-01T08:00:59.999-12:00"
       ],
       "resource": {},
       "variables": {},
@@ -1181,19 +1130,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 5,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
-        "span": {
-          "offset": 0,
-          "length": 31,
-          "end_offset": 31
-        },
-        "expression": "@2014-01-01T08.highBoundary(17)"
-      }
+      "classification": "pass",
+      "actual": [
+        "@2014-01-01T08:00:59.999-12:00"
+      ]
     },
     {
       "id": "HighBoundaryDateTimeMillisecond2",
@@ -1206,10 +1146,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "@2014-01-01T08:05:59.999-05:00"
-        }
+        "@2014-01-01T08:05:59.999-05:00"
       ],
       "resource": {},
       "variables": {},
@@ -1220,19 +1157,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 6,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
-        "span": {
-          "offset": 0,
-          "length": 40,
-          "end_offset": 40
-        },
-        "expression": "@2014-01-01T08:05-05:00.highBoundary(17)"
-      }
+      "classification": "pass",
+      "actual": [
+        "@2014-01-01T08:05:59.999-05:00"
+      ]
     },
     {
       "id": "HighBoundaryDateTimeMillisecond3",
@@ -1245,10 +1173,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "@2014-01-01T08:00:59.999-12:00"
-        }
+        "@2014-01-01T08:00:59.999-12:00"
       ],
       "resource": {},
       "variables": {},
@@ -1259,19 +1184,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 7,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
-        "span": {
-          "offset": 0,
-          "length": 31,
-          "end_offset": 31
-        },
-        "expression": "@2014-01-01T08.highBoundary(17)"
-      }
+      "classification": "pass",
+      "actual": [
+        "@2014-01-01T08:00:59.999-12:00"
+      ]
     },
     {
       "id": "HighBoundaryDecimal",
@@ -1284,10 +1200,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "1.58750000"
-        }
+        "0.15875e1"
       ],
       "resource": {},
       "variables": {},
@@ -1298,12 +1211,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 8,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 21,
@@ -1323,10 +1236,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "1.59"
-        }
+        "0.159e1"
       ],
       "resource": {},
       "variables": {},
@@ -1337,12 +1247,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 9,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 21,
@@ -1362,10 +1272,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "1.50000"
-        }
+        "0.15e1"
       ],
       "resource": {},
       "variables": {},
@@ -1376,12 +1283,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 10,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for Integer",
         "span": {
           "offset": 0,
           "length": 17,
@@ -1401,10 +1308,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "12.59"
-        }
+        "0.1259e2"
       ],
       "resource": {},
       "variables": {},
@@ -1415,12 +1319,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 11,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 22,
@@ -1440,10 +1344,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "12.5005"
-        }
+        "0.125005e2"
       ],
       "resource": {},
       "variables": {},
@@ -1454,12 +1355,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 12,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 22,
@@ -1479,10 +1380,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "120.50"
-        }
+        "0.1205e3"
       ],
       "resource": {},
       "variables": {},
@@ -1493,12 +1391,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 13,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for Integer",
         "span": {
           "offset": 0,
           "length": 19,
@@ -1518,10 +1416,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "-120.50"
-        }
+        "-0.1205e3"
       ],
       "resource": {},
       "variables": {},
@@ -1532,12 +1427,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 14,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for Integer",
         "span": {
           "offset": 1,
           "length": 19,
@@ -1557,10 +1452,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "0.0"
-        }
+        "0.0"
       ],
       "resource": {},
       "variables": {},
@@ -1571,12 +1463,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 15,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 22,
@@ -1596,10 +1488,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "0.0"
-        }
+        "0.0"
       ],
       "resource": {},
       "variables": {},
@@ -1610,12 +1499,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 16,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 1,
           "length": 22,
@@ -1635,10 +1524,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "1.587500"
-        }
+        "0.15875e1"
       ],
       "resource": {},
       "variables": {},
@@ -1649,12 +1535,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 17,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 21,
@@ -1683,12 +1569,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 18,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 22,
@@ -1708,10 +1594,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "-1.58650000"
-        }
+        "-0.15865e1"
       ],
       "resource": {},
       "variables": {},
@@ -1722,12 +1605,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 19,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 1,
           "length": 22,
@@ -1747,10 +1630,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "-1.58"
-        }
+        "-0.158e1"
       ],
       "resource": {},
       "variables": {},
@@ -1761,12 +1641,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 20,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 1,
           "length": 23,
@@ -1786,10 +1666,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "-1.586500"
-        }
+        "-0.15865e1"
       ],
       "resource": {},
       "variables": {},
@@ -1800,12 +1677,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 21,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 1,
           "length": 23,
@@ -1834,12 +1711,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 22,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 22,
@@ -1859,10 +1736,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "1.50000000"
-        }
+        "0.15e1"
       ],
       "resource": {},
       "variables": {},
@@ -1873,12 +1747,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 23,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for Integer",
         "span": {
           "offset": 0,
           "length": 16,
@@ -1898,10 +1772,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "2"
-        }
+        2
       ],
       "resource": {},
       "variables": {},
@@ -1912,12 +1783,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 24,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for Integer",
         "span": {
           "offset": 0,
           "length": 17,
@@ -1937,10 +1808,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "1.58750000"
-        }
+        "0.15875e1"
       ],
       "resource": {},
       "variables": {},
@@ -1951,12 +1819,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 25,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 20,
@@ -1976,10 +1844,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "1.58750000 'm'"
-        }
+        "#<FHIRPath::Quantity:0x00000001246464a8>"
       ],
       "resource": {},
       "variables": {},
@@ -1990,12 +1855,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 26,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: highBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "highBoundary() is not implemented for FHIRPath::Quantity",
         "span": {
           "offset": 0,
           "length": 25,
@@ -2015,10 +1880,7 @@
       "target": "2.0.0",
       "capability": "HighBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "@T10:30:59.999"
-        }
+        "@T10:30:59.999"
       ],
       "resource": {},
       "variables": {},
@@ -2029,19 +1891,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 27,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 7,
-          "end_offset": 7
-        },
-        "expression": "@T10:30.highBoundary(9)"
-      }
+      "classification": "pass",
+      "actual": [
+        "@T10:30:59.999"
+      ]
     },
     {
       "id": "LowBoundaryDateMonth",
@@ -2054,10 +1907,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "@2014-01"
-        }
+        "@2014-01"
       ],
       "resource": {},
       "variables": {},
@@ -2068,19 +1918,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 28,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 5,
-          "end_offset": 5
-        },
-        "expression": "@2014.lowBoundary(6)"
-      }
+      "classification": "pass",
+      "actual": [
+        "@2014-01"
+      ]
     },
     {
       "id": "LowBoundaryDateTimeMillisecond1",
@@ -2093,10 +1934,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "@2014-01-01T08:00:00.000+14:00"
-        }
+        "@2014-01-01T08:00:00.000+14:00"
       ],
       "resource": {},
       "variables": {},
@@ -2107,19 +1945,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 29,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
-        "span": {
-          "offset": 0,
-          "length": 30,
-          "end_offset": 30
-        },
-        "expression": "@2014-01-01T08.lowBoundary(17)"
-      }
+      "classification": "pass",
+      "actual": [
+        "@2014-01-01T08:00:00.000+14:00"
+      ]
     },
     {
       "id": "LowBoundaryDateTimeMillisecond2",
@@ -2132,10 +1961,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "@2014-01-01T08:05:00.000+08:00"
-        }
+        "@2014-01-01T08:05:00.000+08:00"
       ],
       "resource": {},
       "variables": {},
@@ -2146,19 +1972,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 30,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
-        "span": {
-          "offset": 0,
-          "length": 39,
-          "end_offset": 39
-        },
-        "expression": "@2014-01-01T08:05+08:00.lowBoundary(17)"
-      }
+      "classification": "pass",
+      "actual": [
+        "@2014-01-01T08:05:00.000+08:00"
+      ]
     },
     {
       "id": "LowBoundaryDateTimeMillisecond3",
@@ -2171,10 +1988,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "@2014-01-01"
-        }
+        "2014-01-01"
       ],
       "resource": {},
       "variables": {},
@@ -2185,19 +1999,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 31,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
-        "span": {
-          "offset": 0,
-          "length": 29,
-          "end_offset": 29
-        },
-        "expression": "@2014-01-01T08.lowBoundary(8)"
-      }
+      "classification": "pass",
+      "actual": [
+        "2014-01-01"
+      ]
     },
     {
       "id": "LowBoundaryDecimal1",
@@ -2210,10 +2015,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "1.586500"
-        }
+        "0.15865e1"
       ],
       "resource": {},
       "variables": {},
@@ -2224,12 +2026,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 32,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 20,
@@ -2249,10 +2051,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "12.58"
-        }
+        "0.1258e2"
       ],
       "resource": {},
       "variables": {},
@@ -2263,12 +2062,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 33,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 21,
@@ -2288,10 +2087,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "12.4995"
-        }
+        "0.124995e2"
       ],
       "resource": {},
       "variables": {},
@@ -2302,12 +2098,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 34,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 21,
@@ -2327,10 +2123,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "119.50"
-        }
+        "0.1195e3"
       ],
       "resource": {},
       "variables": {},
@@ -2341,12 +2134,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 35,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for Integer",
         "span": {
           "offset": 0,
           "length": 18,
@@ -2366,10 +2159,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "-120.50"
-        }
+        "-0.1205e3"
       ],
       "resource": {},
       "variables": {},
@@ -2380,12 +2170,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 36,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for Integer",
         "span": {
           "offset": 1,
           "length": 20,
@@ -2405,10 +2195,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "0.0"
-        }
+        "0.0"
       ],
       "resource": {},
       "variables": {},
@@ -2419,12 +2206,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 37,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 21,
@@ -2444,10 +2231,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "-0.0"
-        }
+        "-0.0"
       ],
       "resource": {},
       "variables": {},
@@ -2458,12 +2242,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 38,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 1,
           "length": 23,
@@ -2483,10 +2267,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "1.58"
-        }
+        "0.158e1"
       ],
       "resource": {},
       "variables": {},
@@ -2497,12 +2278,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 39,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 20,
@@ -2531,12 +2312,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 40,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 21,
@@ -2556,10 +2337,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "1"
-        }
+        1
       ],
       "resource": {},
       "variables": {},
@@ -2570,12 +2348,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 41,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 20,
@@ -2604,12 +2382,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 42,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 21,
@@ -2638,12 +2416,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 43,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 21,
@@ -2663,10 +2441,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "0.50000000"
-        }
+        "0.5e0"
       ],
       "resource": {},
       "variables": {},
@@ -2682,11 +2457,11 @@
       "actual_error": {
         "class": "FHIRPath::UnknownFunctionError",
         "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "message": "unknown function: toDecimal",
         "span": {
           "offset": 0,
-          "length": 27,
-          "end_offset": 27
+          "length": 13,
+          "end_offset": 13
         },
         "expression": "1.toDecimal().lowBoundary()"
       }
@@ -2702,10 +2477,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "0"
-        }
+        0
       ],
       "resource": {},
       "variables": {},
@@ -2716,12 +2488,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 45,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for Integer",
         "span": {
           "offset": 0,
           "length": 16,
@@ -2741,10 +2513,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "0.50000"
-        }
+        "0.5e0"
       ],
       "resource": {},
       "variables": {},
@@ -2755,12 +2524,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 46,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for Integer",
         "span": {
           "offset": 0,
           "length": 16,
@@ -2780,10 +2549,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "1.58650000"
-        }
+        "0.15865e1"
       ],
       "resource": {},
       "variables": {},
@@ -2794,12 +2560,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 47,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 19,
@@ -2819,10 +2585,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "-1.587500"
-        }
+        "-0.15875e1"
       ],
       "resource": {},
       "variables": {},
@@ -2833,12 +2596,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 48,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 1,
           "length": 22,
@@ -2858,10 +2621,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "-1.59"
-        }
+        "-0.159e1"
       ],
       "resource": {},
       "variables": {},
@@ -2872,12 +2632,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 49,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 1,
           "length": 22,
@@ -2906,12 +2666,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 50,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 1,
           "length": 23,
@@ -2931,10 +2691,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "-2"
-        }
+        -2
       ],
       "resource": {},
       "variables": {},
@@ -2945,12 +2702,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 51,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 1,
           "length": 22,
@@ -2979,12 +2736,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 52,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 1,
           "length": 23,
@@ -3004,10 +2761,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "-1.58750000"
-        }
+        "-0.15875e1"
       ],
       "resource": {},
       "variables": {},
@@ -3018,12 +2772,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 53,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for BigDecimal",
         "span": {
           "offset": 1,
           "length": 21,
@@ -3043,10 +2797,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "1.58650000 'cm'"
-        }
+        "#<FHIRPath::Quantity:0x0000000124702a90>"
       ],
       "resource": {},
       "variables": {},
@@ -3057,12 +2808,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 54,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for FHIRPath::Quantity",
         "span": {
           "offset": 0,
           "length": 25,
@@ -3082,10 +2833,7 @@
       "target": "2.0.0",
       "capability": "LowBoundary",
       "expected": [
-        {
-          "$type": null,
-          "value": "@T10:30:00.000"
-        }
+        "@T10:30:00.000"
       ],
       "resource": {},
       "variables": {},
@@ -3096,19 +2844,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 55,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 7,
-          "end_offset": 7
-        },
-        "expression": "@T10:30.lowBoundary(9)"
-      }
+      "classification": "pass",
+      "actual": [
+        "@T10:30:00.000"
+      ]
     },
     {
       "id": "PrecisionDateTimeMilliseconds",
@@ -3121,10 +2860,7 @@
       "target": "2.0.0",
       "capability": "Precision",
       "expected": [
-        {
-          "$type": null,
-          "value": "17"
-        }
+        17
       ],
       "resource": {},
       "variables": {},
@@ -3135,19 +2871,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 56,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: precision",
-        "span": {
-          "offset": 0,
-          "length": 36,
-          "end_offset": 36
-        },
-        "expression": "@2014-01-05T10:30:00.000.precision()"
-      }
+      "classification": "pass",
+      "actual": [
+        17
+      ]
     },
     {
       "id": "PrecisionDecimal",
@@ -3160,10 +2887,7 @@
       "target": "2.0.0",
       "capability": "Precision",
       "expected": [
-        {
-          "$type": null,
-          "value": "5"
-        }
+        5
       ],
       "resource": {},
       "variables": {},
@@ -3174,12 +2898,12 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 57,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: precision",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "precision() is not implemented for BigDecimal",
         "span": {
           "offset": 0,
           "length": 19,
@@ -3199,10 +2923,7 @@
       "target": "2.0.0",
       "capability": "Precision",
       "expected": [
-        {
-          "$type": null,
-          "value": "9"
-        }
+        9
       ],
       "resource": {},
       "variables": {},
@@ -3213,19 +2934,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 58,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: precision",
-        "span": {
-          "offset": 0,
-          "length": 26,
-          "end_offset": 26
-        },
-        "expression": "@T10:30:00.000.precision()"
-      }
+      "classification": "pass",
+      "actual": [
+        9
+      ]
     },
     {
       "id": "PrecisionTimeMinutes",
@@ -3238,10 +2950,7 @@
       "target": "2.0.0",
       "capability": "Precision",
       "expected": [
-        {
-          "$type": null,
-          "value": "4"
-        }
+        4
       ],
       "resource": {},
       "variables": {},
@@ -3252,19 +2961,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 59,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 7,
-          "end_offset": 7
-        },
-        "expression": "@T10:30.precision()"
-      }
+      "classification": "pass",
+      "actual": [
+        4
+      ]
     },
     {
       "id": "PrecisionYear",
@@ -3277,10 +2977,7 @@
       "target": "2.0.0",
       "capability": "Precision",
       "expected": [
-        {
-          "$type": null,
-          "value": "4"
-        }
+        4
       ],
       "resource": {},
       "variables": {},
@@ -3291,19 +2988,10 @@
         "path": "r4/fhirpath/tests-fhir-r4.xml"
       },
       "line": 60,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 5,
-          "end_offset": 5
-        },
-        "expression": "@2014.precision()"
-      }
+      "classification": "pass",
+      "actual": [
+        4
+      ]
     },
     {
       "id": "from-zulip-1",
@@ -8028,19 +7716,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 87,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 5,
-          "length": 2,
-          "end_offset": 7
-        },
-        "expression": "true.is(Decimal).not()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testBooleanLiteralIsNotInteger",
@@ -8209,19 +7888,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 88,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 5,
-          "length": 2,
-          "end_offset": 7
-        },
-        "expression": "true.is(Integer).not()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testBooleanLiteralIsNotSystemQuantity",
@@ -8393,13 +8063,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::TypeError",
+        "code": "expected_type",
+        "message": "type operator requires a type name",
         "span": {
-          "offset": 5,
-          "length": 2,
-          "end_offset": 7
+          "offset": 8,
+          "length": 15,
+          "end_offset": 23
         },
         "expression": "true.is(System.Quantity).not()"
       }
@@ -23157,19 +22827,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 175,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 12,
-          "length": 2,
-          "end_offset": 14
-        },
-        "expression": "@2013-04-05.is(Integer).not()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testDateNotEqual",
@@ -23508,19 +23169,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 177,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 21,
-          "length": 7,
-          "end_offset": 28
-        },
-        "expression": "Patient.birthDate != @T12:14"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testDateNotEqualTimeSecond",
@@ -24731,10 +24383,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 184,
-      "classification": "defect",
-      "actual": [
-        false
-      ]
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testDecimalLiteralConvertsToBoolean",
@@ -25627,19 +25277,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 189,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 4,
-          "length": 2,
-          "end_offset": 6
-        },
-        "expression": "1.0.is(Decimal)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testDecimalLiteralIsNotQuantity",
@@ -25811,13 +25452,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::TypeError",
+        "code": "expected_type",
+        "message": "type operator requires a type name",
         "span": {
-          "offset": 4,
-          "length": 2,
-          "end_offset": 6
+          "offset": 7,
+          "length": 15,
+          "end_offset": 22
         },
         "expression": "1.0.is(System.Quantity).not()"
       }
@@ -35985,10 +35626,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 248,
-      "classification": "defect",
-      "actual": [
-        false
-      ]
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testEquality2",
@@ -37620,18 +37259,7 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 258,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: [lb_av]",
-        "span": {
-          "offset": 20,
-          "length": 13,
-          "end_offset": 33
-        },
-        "expression": "Observation.value = 185 '[lb_av]'"
-      }
+      "actual": []
     },
     {
       "id": "testEquality3",
@@ -41329,18 +40957,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 280,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: [lb_av]",
-        "span": {
-          "offset": 20,
-          "length": 13,
-          "end_offset": 33
-        },
-        "expression": "Observation.value ~ 185 '[lb_av]'"
-      }
+      "actual": [
+        false
+      ]
     },
     {
       "id": "testEquivalent23",
@@ -46645,18 +46264,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 311,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 15,
-          "length": 2,
-          "end_offset": 17
-        },
-        "expression": "Patient.gender.as(string)"
-      }
+      "actual": [
+        "male"
+      ]
     },
     {
       "id": "testFHIRPathAsFunction12",
@@ -46826,18 +46436,7 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 312,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 15,
-          "length": 2,
-          "end_offset": 17
-        },
-        "expression": "Patient.gender.as(code)"
-      }
+      "actual": []
     },
     {
       "id": "testFHIRPathAsFunction13",
@@ -47004,19 +46603,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 313,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 15,
-          "length": 2,
-          "end_offset": 17
-        },
-        "expression": "Patient.gender.as(id)"
-      }
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testFHIRPathAsFunction14",
@@ -47156,19 +46744,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 314,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 17,
-          "length": 2,
-          "end_offset": 19
-        },
-        "expression": "ValueSet.version.as(string)"
-      }
+      "classification": "pass",
+      "actual": [
+        "20150622"
+      ]
     },
     {
       "id": "testFHIRPathAsFunction15",
@@ -47306,19 +46885,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 315,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 17,
-          "length": 2,
-          "end_offset": 19
-        },
-        "expression": "ValueSet.version.as(code)"
-      }
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testFHIRPathAsFunction16",
@@ -48278,16 +47846,16 @@
         "class": "FHIRPath::EvaluationError"
       },
       "line": 321,
-      "classification": "defect",
+      "classification": "pass",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::SingletonError",
+        "code": "singleton_required",
+        "message": "a singleton value was required",
         "span": {
-          "offset": 13,
-          "length": 2,
-          "end_offset": 15
+          "offset": 0,
+          "length": 26,
+          "end_offset": 26
         },
         "expression": "Patient.name.as(HumanName).use"
       }
@@ -48635,15 +48203,8 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 15,
-          "length": 2,
-          "end_offset": 17
-        },
-        "expression": "Patient.gender.as(string1)"
+        "class": "StandardError",
+        "message": "expected error but evaluation succeeded"
       }
     },
     {
@@ -48989,18 +48550,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 325,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 15,
-          "length": 2,
-          "end_offset": 17
-        },
-        "expression": "Patient.gender.is(code)"
-      }
+      "actual": [
+        false
+      ]
     },
     {
       "id": "testFHIRPathIsFunction10",
@@ -49270,19 +48822,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 327,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 15,
-          "length": 2,
-          "end_offset": 17
-        },
-        "expression": "Patient.gender.is(string)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testFHIRPathIsFunction3",
@@ -49451,19 +48994,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 328,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 15,
-          "length": 2,
-          "end_offset": 17
-        },
-        "expression": "Patient.gender.is(id)"
-      }
+      "classification": "pass",
+      "actual": [
+        false
+      ]
     },
     {
       "id": "testFHIRPathIsFunction4",
@@ -49617,18 +49151,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 329,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 18,
-          "length": 2,
-          "end_offset": 20
-        },
-        "expression": "Questionnaire.url.is(uri)"
-      }
+      "actual": [
+        false
+      ]
     },
     {
       "id": "testFHIRPathIsFunction5",
@@ -49781,19 +49306,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 330,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 18,
-          "length": 2,
-          "end_offset": 20
-        },
-        "expression": "Questionnaire.url.is(url)"
-      }
+      "classification": "pass",
+      "actual": [
+        false
+      ]
     },
     {
       "id": "testFHIRPathIsFunction6",
@@ -49933,19 +49449,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 331,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 17,
-          "length": 2,
-          "end_offset": 19
-        },
-        "expression": "ValueSet.version.is(string)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testFHIRPathIsFunction7",
@@ -50085,19 +49592,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 332,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 17,
-          "length": 2,
-          "end_offset": 19
-        },
-        "expression": "ValueSet.version.is(code)"
-      }
+      "classification": "pass",
+      "actual": [
+        false
+      ]
     },
     {
       "id": "testFHIRPathIsFunction8",
@@ -53865,18 +53363,7 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 355,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: [lb_av]",
-        "span": {
-          "offset": 20,
-          "length": 13,
-          "end_offset": 33
-        },
-        "expression": "Observation.value > 100 '[lb_av]'"
-      }
+      "actual": []
     },
     {
       "id": "testGreaterThan23",
@@ -54043,19 +53530,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 356,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 8,
-          "end_offset": 8
-        },
-        "expression": "@2018-03 > @2018-03-01"
-      }
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testGreaterThan24",
@@ -54222,10 +53698,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 357,
-      "classification": "defect",
-      "actual": [
-        false
-      ]
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testGreaterThan25",
@@ -54392,19 +53866,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 358,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 7,
-          "end_offset": 7
-        },
-        "expression": "@T10:30 > @T10:30:00"
-      }
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testGreaterThan26",
@@ -58450,18 +57913,7 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 382,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: [lb_av]",
-        "span": {
-          "offset": 21,
-          "length": 13,
-          "end_offset": 34
-        },
-        "expression": "Observation.value >= 100 '[lb_av]'"
-      }
+      "actual": []
     },
     {
       "id": "testGreatorOrEqual23",
@@ -58628,19 +58080,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 383,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 8,
-          "end_offset": 8
-        },
-        "expression": "@2018-03 >= @2018-03-01"
-      }
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testGreatorOrEqual24",
@@ -58807,10 +58248,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 384,
-      "classification": "defect",
-      "actual": [
-        false
-      ]
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testGreatorOrEqual25",
@@ -58977,19 +58416,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 385,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 7,
-          "end_offset": 7
-        },
-        "expression": "@T10:30 >= @T10:30:00"
-      }
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testGreatorOrEqual26",
@@ -66672,19 +66100,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 428,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 2,
-          "length": 2,
-          "end_offset": 4
-        },
-        "expression": "1.is(Integer)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testIntegerLiteralIsNotDecimal",
@@ -66853,19 +66272,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 429,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 2,
-          "length": 2,
-          "end_offset": 4
-        },
-        "expression": "1.is(Decimal).not()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testIntegerLiteralIsNotQuantity",
@@ -67034,19 +66444,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 430,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 2,
-          "length": 2,
-          "end_offset": 4
-        },
-        "expression": "1.is(Quantity).not()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testIntegerLiteralIsNotString",
@@ -67215,19 +66616,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 431,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 2,
-          "length": 2,
-          "end_offset": 4
-        },
-        "expression": "1.is(String).not()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testIntegerLiteralIsSystemInteger",
@@ -67399,13 +66791,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::TypeError",
+        "code": "expected_type",
+        "message": "type operator requires a type name",
         "span": {
-          "offset": 2,
-          "length": 2,
-          "end_offset": 4
+          "offset": 5,
+          "length": 14,
+          "end_offset": 19
         },
         "expression": "1.is(System.Integer)"
       }
@@ -73343,18 +72735,7 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 466,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: [lb_av]",
-        "span": {
-          "offset": 21,
-          "length": 13,
-          "end_offset": 34
-        },
-        "expression": "Observation.value <= 200 '[lb_av]'"
-      }
+      "actual": []
     },
     {
       "id": "testLessOrEqual23",
@@ -73521,19 +72902,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 467,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 8,
-          "end_offset": 8
-        },
-        "expression": "@2018-03 <= @2018-03-01"
-      }
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testLessOrEqual24",
@@ -73700,10 +73070,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 468,
-      "classification": "defect",
-      "actual": [
-        true
-      ]
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testLessOrEqual25",
@@ -73870,19 +73238,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 469,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 7,
-          "end_offset": 7
-        },
-        "expression": "@T10:30 <= @T10:30:00"
-      }
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testLessOrEqual26",
@@ -77928,18 +77285,7 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 493,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: [lb_av]",
-        "span": {
-          "offset": 20,
-          "length": 13,
-          "end_offset": 33
-        },
-        "expression": "Observation.value < 200 '[lb_av]'"
-      }
+      "actual": []
     },
     {
       "id": "testLessThan23",
@@ -78106,19 +77452,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 494,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 8,
-          "end_offset": 8
-        },
-        "expression": "@2018-03 < @2018-03-01"
-      }
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testLessThan24",
@@ -78285,10 +77620,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 495,
-      "classification": "defect",
-      "actual": [
-        true
-      ]
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testLessThan25",
@@ -78455,19 +77788,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 496,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 7,
-          "end_offset": 7
-        },
-        "expression": "@T10:30 < @T10:30:00"
-      }
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testLessThan26",
@@ -80546,19 +79868,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 508,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 12,
-          "length": 2,
-          "end_offset": 14
-        },
-        "expression": "@2015-02-04.is(Date)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testLiteralDateMonth",
@@ -80727,19 +80040,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 509,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 8,
-          "end_offset": 8
-        },
-        "expression": "@2015-02.is(Date)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testLiteralDateTimeDay",
@@ -80908,19 +80212,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 510,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 13,
-          "length": 2,
-          "end_offset": 15
-        },
-        "expression": "@2015-02-04T.is(DateTime)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testLiteralDateTimeHour",
@@ -81089,19 +80384,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 511,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 15,
-          "length": 2,
-          "end_offset": 17
-        },
-        "expression": "@2015-02-04T14.is(DateTime)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testLiteralDateTimeMillisecond",
@@ -81270,19 +80556,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 512,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 25,
-          "length": 2,
-          "end_offset": 27
-        },
-        "expression": "@2015-02-04T14:34:28.123.is(DateTime)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testLiteralDateTimeMinute",
@@ -81451,19 +80728,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 513,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 18,
-          "length": 2,
-          "end_offset": 20
-        },
-        "expression": "@2015-02-04T14:34.is(DateTime)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testLiteralDateTimeMonth",
@@ -81632,19 +80900,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 514,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 9,
-          "end_offset": 9
-        },
-        "expression": "@2015-02T.is(DateTime)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testLiteralDateTimeSecond",
@@ -82673,19 +81932,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 520,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 27,
-          "length": 2,
-          "end_offset": 29
-        },
-        "expression": "@2015-02-04T14:34:28+10:00.is(DateTime)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testLiteralDateTimeUTC",
@@ -82854,19 +82104,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 521,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 22,
-          "length": 2,
-          "end_offset": 24
-        },
-        "expression": "@2015-02-04T14:34:28Z.is(DateTime)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testLiteralDateTimeYear",
@@ -83035,19 +82276,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 522,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 6,
-          "end_offset": 6
-        },
-        "expression": "@2015T.is(DateTime)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testLiteralDateYear",
@@ -83216,19 +82448,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 523,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 5,
-          "end_offset": 5
-        },
-        "expression": "@2015.is(Date)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testLiteralDecimal00",
@@ -88093,13 +87316,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
+        "class": "FHIRPath::UnknownFunctionError",
+        "code": "unknown_function",
+        "message": "unknown function: convertsToQuantity",
         "span": {
-          "offset": 2,
-          "length": 4,
-          "end_offset": 6
+          "offset": 0,
+          "length": 27,
+          "end_offset": 27
         },
         "expression": "4 days.convertsToQuantity()"
       }
@@ -89167,19 +88390,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 559,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 4,
-          "end_offset": 4
-        },
-        "expression": "@T14.is(Time)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testLiteralTimeMillisecond",
@@ -89348,19 +88562,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 560,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 15,
-          "length": 2,
-          "end_offset": 17
-        },
-        "expression": "@T14:34:28.123.is(Time)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testLiteralTimeMinute",
@@ -89529,19 +88734,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 561,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_temporal",
-        "message": "invalid temporal literal: invalid temporal literal",
-        "span": {
-          "offset": 0,
-          "length": 7,
-          "end_offset": 7
-        },
-        "expression": "@T14:34.is(Time)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testLiteralTimeSecond",
@@ -89886,15 +89082,8 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 17,
-          "length": 2,
-          "end_offset": 19
-        },
-        "expression": "@T14:34:28+10:00.is(Time)"
+        "class": "StandardError",
+        "message": "expected error but evaluation succeeded"
       }
     },
     {
@@ -90068,15 +89257,8 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 12,
-          "length": 2,
-          "end_offset": 14
-        },
-        "expression": "@T14:34:28Z.is(Time)"
+        "class": "StandardError",
+        "message": "expected error but evaluation succeeded"
       }
     },
     {
@@ -92592,18 +91774,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 591,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: month",
-        "span": {
-          "offset": 14,
-          "length": 9,
-          "end_offset": 23
-        },
-        "expression": "@1974-12-25 - 1 'month'"
-      }
+      "actual": [
+        "1974-11-25"
+      ]
     },
     {
       "id": "testMinus6",
@@ -92773,18 +91946,11 @@
         "class": "FHIRPath::EvaluationError"
       },
       "line": 592,
-      "classification": "pass",
+      "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::TypeError",
-        "code": "incompatible_quantity",
-        "message": "Quantity arithmetic requires a compatible Quantity or scalar",
-        "span": {
-          "offset": 0,
-          "length": 20,
-          "end_offset": 20
-        },
-        "expression": "@1974-12-25 - 1 'cm'"
+        "class": "StandardError",
+        "message": "expected error but evaluation succeeded"
       }
     },
     {
@@ -95012,10 +94178,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 605,
-      "classification": "defect",
-      "actual": [
-        true
-      ]
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testNEquality14",
@@ -103696,12 +102860,12 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 656,
-      "classification": "defect",
+      "classification": "unsupported",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::UnknownFunctionError",
-        "code": "unknown_function",
-        "message": "unknown function: lowBoundary",
+        "class": "FHIRPath::UnsupportedFeatureError",
+        "code": "unsupported_temporal_boundary",
+        "message": "lowBoundary() is not implemented for String",
         "span": {
           "offset": 63,
           "length": 19,
@@ -104933,18 +104097,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 663,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 16,
-          "length": 4,
-          "end_offset": 20
-        },
-        "expression": "@1973-12-25 + 7 days"
-      }
+      "actual": [
+        "1974-01-01"
+      ]
     },
     {
       "id": "testPlusDate10",
@@ -105117,18 +104272,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 664,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 16,
-          "length": 5,
-          "end_offset": 21
-        },
-        "expression": "@1973-12-25 + 1 month"
-      }
+      "actual": [
+        "1974-01-25"
+      ]
     },
     {
       "id": "testPlusDate11",
@@ -105301,18 +104447,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 665,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 16,
-          "length": 4,
-          "end_offset": 20
-        },
-        "expression": "@1973-12-25 + 1 week"
-      }
+      "actual": [
+        "1974-01-01"
+      ]
     },
     {
       "id": "testPlusDate12",
@@ -105485,18 +104622,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 666,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 16,
-          "length": 4,
-          "end_offset": 20
-        },
-        "expression": "@1973-12-25 + 1 year"
-      }
+      "actual": [
+        "1974-12-25"
+      ]
     },
     {
       "id": "testPlusDate13",
@@ -105669,18 +104797,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 667,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: d",
-        "span": {
-          "offset": 14,
-          "length": 5,
-          "end_offset": 19
-        },
-        "expression": "@1973-12-25 + 1 'd'"
-      }
+      "actual": [
+        "1973-12-26"
+      ]
     },
     {
       "id": "testPlusDate14",
@@ -105850,17 +104969,12 @@
         "class": "FHIRPath::EvaluationError"
       },
       "line": 668,
-      "classification": "defect",
+      "classification": "pass",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: mo",
-        "span": {
-          "offset": 14,
-          "length": 6,
-          "end_offset": 20
-        },
+        "class": "FHIRPath::EvaluationError",
+        "code": "unsupported_temporal_unit",
+        "message": "Quantity unit \"mo\" is not supported for date/time arithmetic",
         "expression": "@1973-12-25 + 1 'mo'"
       }
     },
@@ -106035,18 +105149,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 669,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: wk",
-        "span": {
-          "offset": 14,
-          "length": 6,
-          "end_offset": 20
-        },
-        "expression": "@1973-12-25 + 1 'wk'"
-      }
+      "actual": [
+        "1974-01-01"
+      ]
     },
     {
       "id": "testPlusDate16",
@@ -106216,17 +105321,12 @@
         "class": "FHIRPath::EvaluationError"
       },
       "line": 670,
-      "classification": "defect",
+      "classification": "pass",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: a",
-        "span": {
-          "offset": 14,
-          "length": 5,
-          "end_offset": 19
-        },
+        "class": "FHIRPath::EvaluationError",
+        "code": "unsupported_temporal_unit",
+        "message": "Quantity unit \"a\" is not supported for date/time arithmetic",
         "expression": "@1973-12-25 + 1 'a'"
       }
     },
@@ -106398,17 +105498,12 @@
         "class": "FHIRPath::EvaluationError"
       },
       "line": 671,
-      "classification": "defect",
+      "classification": "pass",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: a",
-        "span": {
-          "offset": 14,
-          "length": 5,
-          "end_offset": 19
-        },
+        "class": "FHIRPath::EvaluationError",
+        "code": "unsupported_temporal_unit",
+        "message": "Quantity unit \"a\" is not supported for date/time arithmetic",
         "expression": "@1975-12-25 + 1 'a'"
       }
     },
@@ -106583,18 +105678,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 672,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::TypeError",
-        "code": "incompatible_quantity",
-        "message": "Quantity arithmetic requires a compatible Quantity or scalar",
-        "span": {
-          "offset": 0,
-          "length": 38,
-          "end_offset": 38
-        },
-        "expression": "@1973-12-25T00:00:00.000+10:00 + 1 's'"
-      }
+      "actual": [
+        "1973-12-25T00:00:01+10:00"
+      ]
     },
     {
       "id": "testPlusDate19",
@@ -106767,18 +105853,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 673,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::TypeError",
-        "code": "incompatible_quantity",
-        "message": "Quantity arithmetic requires a compatible Quantity or scalar",
-        "span": {
-          "offset": 0,
-          "length": 40,
-          "end_offset": 40
-        },
-        "expression": "@1973-12-25T00:00:00.000+10:00 + 0.1 's'"
-      }
+      "actual": [
+        "1973-12-25T00:00:00+10:00"
+      ]
     },
     {
       "id": "testPlusDate2",
@@ -106951,18 +106028,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 674,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 18,
-          "length": 4,
-          "end_offset": 22
-        },
-        "expression": "@1973-12-25 + 7.7 days"
-      }
+      "actual": [
+        "1974-01-01"
+      ]
     },
     {
       "id": "testPlusDate20",
@@ -107135,18 +106203,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 675,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: ms",
-        "span": {
-          "offset": 33,
-          "length": 7,
-          "end_offset": 40
-        },
-        "expression": "@1973-12-25T00:00:00.000+10:00 + 10 'ms'"
-      }
+      "actual": [
+        "1973-12-25T00:00:00+10:00"
+      ]
     },
     {
       "id": "testPlusDate21",
@@ -107319,18 +106378,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 676,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::TypeError",
-        "code": "incompatible_quantity",
-        "message": "Quantity arithmetic requires a compatible Quantity or scalar",
-        "span": {
-          "offset": 0,
-          "length": 40,
-          "end_offset": 40
-        },
-        "expression": "@1973-12-25T00:00:00.000+10:00 + 1 'min'"
-      }
+      "actual": [
+        "1973-12-25T00:01:00+10:00"
+      ]
     },
     {
       "id": "testPlusDate22",
@@ -107503,18 +106553,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 677,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::TypeError",
-        "code": "incompatible_quantity",
-        "message": "Quantity arithmetic requires a compatible Quantity or scalar",
-        "span": {
-          "offset": 0,
-          "length": 38,
-          "end_offset": 38
-        },
-        "expression": "@1973-12-25T00:00:00.000+10:00 + 1 'h'"
-      }
+      "actual": [
+        "1973-12-25T01:00:00+10:00"
+      ]
     },
     {
       "id": "testPlusDate3",
@@ -107687,18 +106728,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 678,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 35,
-          "length": 4,
-          "end_offset": 39
-        },
-        "expression": "@1973-12-25T00:00:00.000+10:00 + 7 days"
-      }
+      "actual": [
+        "1974-01-01T00:00:00+10:00"
+      ]
     },
     {
       "id": "testPlusDate4",
@@ -107871,18 +106903,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 679,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 37,
-          "length": 4,
-          "end_offset": 41
-        },
-        "expression": "@1973-12-25T00:00:00.000+10:00 + 7.7 days"
-      }
+      "actual": [
+        "1974-01-01T16:48:00+10:00"
+      ]
     },
     {
       "id": "testPlusDate5",
@@ -108055,18 +107078,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 680,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 35,
-          "length": 6,
-          "end_offset": 41
-        },
-        "expression": "@1973-12-25T00:00:00.000+10:00 + 1 second"
-      }
+      "actual": [
+        "1973-12-25T00:00:01+10:00"
+      ]
     },
     {
       "id": "testPlusDate6",
@@ -108239,18 +107253,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 681,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 36,
-          "length": 11,
-          "end_offset": 47
-        },
-        "expression": "@1973-12-25T00:00:00.000+10:00 + 10 millisecond"
-      }
+      "actual": [
+        "1973-12-25T00:00:00+10:00"
+      ]
     },
     {
       "id": "testPlusDate7",
@@ -108423,18 +107428,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 682,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 35,
-          "length": 6,
-          "end_offset": 41
-        },
-        "expression": "@1973-12-25T00:00:00.000+10:00 + 1 minute"
-      }
+      "actual": [
+        "1973-12-25T00:01:00+10:00"
+      ]
     },
     {
       "id": "testPlusDate8",
@@ -108607,18 +107603,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 683,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 35,
-          "length": 4,
-          "end_offset": 39
-        },
-        "expression": "@1973-12-25T00:00:00.000+10:00 + 1 hour"
-      }
+      "actual": [
+        "1973-12-25T01:00:00+10:00"
+      ]
     },
     {
       "id": "testPlusDate9",
@@ -108791,18 +107778,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 684,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 16,
-          "length": 3,
-          "end_offset": 19
-        },
-        "expression": "@1973-12-25 + 1 day"
-      }
+      "actual": [
+        "1973-12-26"
+      ]
     },
     {
       "id": "testPolarityPrecedence",
@@ -109343,18 +108321,7 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 689,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 18,
-          "length": 2,
-          "end_offset": 20
-        },
-        "expression": "Observation.value.as(Quantity).unit"
-      }
+      "actual": []
     },
     {
       "id": "testPolymorphismAsAFunction",
@@ -109626,19 +108593,8 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 692,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 18,
-          "length": 2,
-          "end_offset": 20
-        },
-        "expression": "Observation.value.as(Period).start"
-      }
+      "classification": "pass",
+      "actual": []
     },
     {
       "id": "testPolymorphismB",
@@ -109823,18 +108779,7 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 694,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 18,
-          "length": 2,
-          "end_offset": 20
-        },
-        "expression": "Observation.value.is(Quantity)"
-      }
+      "actual": []
     },
     {
       "id": "testPolymorphismIsA2",
@@ -110102,18 +109047,7 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 697,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 18,
-          "length": 2,
-          "end_offset": 20
-        },
-        "expression": "Observation.value.is(Period).not()"
-      }
+      "actual": []
     },
     {
       "id": "testPower1",
@@ -112176,19 +111110,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 714,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 2,
-          "length": 4,
-          "end_offset": 6
-        },
-        "expression": "7 days = 1 week"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testQuantity6",
@@ -112357,19 +111282,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 715,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 2,
-          "length": 4,
-          "end_offset": 6
-        },
-        "expression": "7 days = 1 'wk'"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testQuantity7",
@@ -112538,19 +111454,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 716,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 2,
-          "length": 4,
-          "end_offset": 6
-        },
-        "expression": "6 days < 1 week"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testQuantity8",
@@ -112719,19 +111626,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 717,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
-        "span": {
-          "offset": 2,
-          "length": 4,
-          "end_offset": 6
-        },
-        "expression": "8 days > 1 week"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testQuantity9",
@@ -112900,19 +111798,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 718,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: m2",
-        "span": {
-          "offset": 21,
-          "length": 10,
-          "end_offset": 31
-        },
-        "expression": "2.0 'cm' * 2.0 'm' = 0.040 'm2'"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testQuantityLiteralConvertsToString",
@@ -113084,13 +111973,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: wk",
+        "class": "FHIRPath::UnknownFunctionError",
+        "code": "unknown_function",
+        "message": "unknown function: convertsToString",
         "span": {
           "offset": 0,
-          "length": 6,
-          "end_offset": 6
+          "length": 25,
+          "end_offset": 25
         },
         "expression": "1 'wk'.convertsToString()"
       }
@@ -113265,13 +112154,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
+        "class": "FHIRPath::UnknownFunctionError",
+        "code": "unknown_function",
+        "message": "unknown function: toString",
         "span": {
-          "offset": 2,
-          "length": 4,
-          "end_offset": 6
+          "offset": 0,
+          "length": 17,
+          "end_offset": 17
         },
         "expression": "1 week.toString()"
       }
@@ -113446,13 +112335,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: wk",
+        "class": "FHIRPath::UnknownFunctionError",
+        "code": "unknown_function",
+        "message": "unknown function: toString",
         "span": {
           "offset": 0,
-          "length": 6,
-          "end_offset": 6
+          "length": 17,
+          "end_offset": 17
         },
         "expression": "1 'wk'.toString()"
       }
@@ -125918,19 +124807,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 791,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 6,
-          "length": 2,
-          "end_offset": 8
-        },
-        "expression": "'1.0'.is(Decimal).not()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testStringDecimalLiteralIsNotSystemQuantity",
@@ -126102,13 +124982,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::TypeError",
+        "code": "expected_type",
+        "message": "type operator requires a type name",
         "span": {
-          "offset": 6,
-          "length": 2,
-          "end_offset": 8
+          "offset": 9,
+          "length": 15,
+          "end_offset": 24
         },
         "expression": "'1.0'.is(System.Quantity).not()"
       }
@@ -127728,19 +126608,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 801,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 4,
-          "length": 2,
-          "end_offset": 6
-        },
-        "expression": "'1'.is(Decimal).not()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testStringIntegerLiteralIsNotQuantity",
@@ -127912,13 +126783,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::TypeError",
+        "code": "expected_type",
+        "message": "type operator requires a type name",
         "span": {
-          "offset": 4,
-          "length": 2,
-          "end_offset": 6
+          "offset": 7,
+          "length": 15,
+          "end_offset": 22
         },
         "expression": "'1'.is(System.Quantity).not()"
       }
@@ -129179,19 +128050,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 809,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 4,
-          "length": 2,
-          "end_offset": 6
-        },
-        "expression": "'1'.is(Integer).not()"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testStringLiteralToString",
@@ -130630,13 +129492,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "invalid_quantity",
-        "message": "invalid Quantity literal: unsupported Quantity unit: d",
+        "class": "FHIRPath::UnknownFunctionError",
+        "code": "unknown_function",
+        "message": "unknown function: toQuantity",
         "span": {
-          "offset": 23,
-          "length": 5,
-          "end_offset": 28
+          "offset": 0,
+          "length": 20,
+          "end_offset": 20
         },
         "expression": "'1 day'.toQuantity() = 1 'd'"
       }
@@ -130992,13 +129854,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
+        "class": "FHIRPath::UnknownFunctionError",
+        "code": "unknown_function",
+        "message": "unknown function: toQuantity",
         "span": {
-          "offset": 25,
-          "length": 3,
-          "end_offset": 28
+          "offset": 0,
+          "length": 20,
+          "end_offset": 20
         },
         "expression": "'1 day'.toQuantity() = 1 day"
       }
@@ -131171,13 +130033,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
+        "class": "FHIRPath::UnknownFunctionError",
+        "code": "unknown_function",
+        "message": "unknown function: toQuantity",
         "span": {
-          "offset": 28,
-          "length": 5,
-          "end_offset": 33
+          "offset": 0,
+          "length": 23,
+          "end_offset": 23
         },
         "expression": "'1 \\'mo\\''.toQuantity() = 1 month"
       }
@@ -131714,13 +130576,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
+        "class": "FHIRPath::UnknownFunctionError",
+        "code": "unknown_function",
+        "message": "unknown function: toQuantity",
         "span": {
-          "offset": 28,
-          "length": 4,
-          "end_offset": 32
+          "offset": 0,
+          "length": 23,
+          "end_offset": 23
         },
         "expression": "'1 \\'wk\\''.toQuantity() = 1 week"
       }
@@ -131893,13 +130755,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "trailing_input",
-        "message": "trailing input after expression",
+        "class": "FHIRPath::UnknownFunctionError",
+        "code": "unknown_function",
+        "message": "unknown function: toQuantity",
         "span": {
-          "offset": 27,
-          "length": 4,
-          "end_offset": 31
+          "offset": 0,
+          "length": 22,
+          "end_offset": 22
         },
         "expression": "'1 \\'a\\''.toQuantity() = 1 year"
       }
@@ -143109,19 +141971,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 887,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 15,
-          "length": 2,
-          "end_offset": 17
-        },
-        "expression": "Patient.active.is(boolean)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testType12",
@@ -143291,18 +142144,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 888,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 15,
-          "length": 2,
-          "end_offset": 17
-        },
-        "expression": "Patient.active.is(Boolean).not()"
-      }
+      "actual": [
+        false
+      ]
     },
     {
       "id": "testType13",
@@ -143474,13 +142318,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::TypeError",
+        "code": "expected_type",
+        "message": "type operator requires a type name",
         "span": {
-          "offset": 15,
-          "length": 2,
-          "end_offset": 17
+          "offset": 18,
+          "length": 12,
+          "end_offset": 30
         },
         "expression": "Patient.active.is(FHIR.boolean)"
       }
@@ -143655,13 +142499,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::TypeError",
+        "code": "expected_type",
+        "message": "type operator requires a type name",
         "span": {
-          "offset": 15,
-          "length": 2,
-          "end_offset": 17
+          "offset": 18,
+          "length": 14,
+          "end_offset": 32
         },
         "expression": "Patient.active.is(System.Boolean).not()"
       }
@@ -144196,18 +143040,9 @@
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 893,
       "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 8,
-          "length": 2,
-          "end_offset": 10
-        },
-        "expression": "Patient.is(Patient)"
-      }
+      "actual": [
+        false
+      ]
     },
     {
       "id": "testType18",
@@ -144379,13 +143214,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::TypeError",
+        "code": "expected_type",
+        "message": "type operator requires a type name",
         "span": {
-          "offset": 8,
-          "length": 2,
-          "end_offset": 10
+          "offset": 11,
+          "length": 12,
+          "end_offset": 23
         },
         "expression": "Patient.is(FHIR.Patient)"
       }
@@ -145465,13 +144300,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::TypeError",
+        "code": "expected_type",
+        "message": "type operator requires a type name",
         "span": {
-          "offset": 8,
-          "length": 2,
-          "end_offset": 10
+          "offset": 11,
+          "length": 14,
+          "end_offset": 25
         },
         "expression": "Patient.is(System.Patient).not()"
       }
@@ -146367,19 +145202,10 @@
       "fixture_conversion": "xml-to-json",
       "fixture_converter": "FHIRPath::Conformance::FHIRXmlConverter",
       "line": 905,
-      "classification": "defect",
-      "actual": null,
-      "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
-        "span": {
-          "offset": 5,
-          "length": 2,
-          "end_offset": 7
-        },
-        "expression": "true.is(Boolean)"
-      }
+      "classification": "pass",
+      "actual": [
+        true
+      ]
     },
     {
       "id": "testType6",
@@ -146551,13 +145377,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::TypeError",
+        "code": "expected_type",
+        "message": "type operator requires a type name",
         "span": {
-          "offset": 5,
-          "length": 2,
-          "end_offset": 7
+          "offset": 8,
+          "length": 14,
+          "end_offset": 22
         },
         "expression": "true.is(System.Boolean)"
       }
@@ -147145,13 +145971,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::TypeError",
+        "code": "expected_type",
+        "message": "type operator requires a type name",
         "span": {
-          "offset": 30,
-          "length": 2,
-          "end_offset": 32
+          "offset": 33,
+          "length": 12,
+          "end_offset": 45
         },
         "expression": "Parameters.parameter[3].value.is(FHIR.decimal)"
       }
@@ -147205,13 +146031,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::TypeError",
+        "code": "expected_type",
+        "message": "type operator requires a type name",
         "span": {
-          "offset": 30,
-          "length": 2,
-          "end_offset": 32
+          "offset": 33,
+          "length": 11,
+          "end_offset": 44
         },
         "expression": "Parameters.parameter[0].value.is(FHIR.string)"
       }
@@ -147265,13 +146091,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::TypeError",
+        "code": "expected_type",
+        "message": "type operator requires a type name",
         "span": {
-          "offset": 30,
-          "length": 2,
-          "end_offset": 32
+          "offset": 33,
+          "length": 12,
+          "end_offset": 45
         },
         "expression": "Parameters.parameter[1].value.is(FHIR.integer)"
       }
@@ -147325,13 +146151,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::TypeError",
+        "code": "expected_type",
+        "message": "type operator requires a type name",
         "span": {
-          "offset": 30,
-          "length": 2,
-          "end_offset": 32
+          "offset": 33,
+          "length": 9,
+          "end_offset": 42
         },
         "expression": "Parameters.parameter[2].value.is(FHIR.uuid)"
       }
@@ -147385,13 +146211,13 @@
       "classification": "defect",
       "actual": null,
       "actual_error": {
-        "class": "FHIRPath::ParseError",
-        "code": "unexpected_token",
-        "message": "expected a function name",
+        "class": "FHIRPath::TypeError",
+        "code": "expected_type",
+        "message": "type operator requires a type name",
         "span": {
-          "offset": 30,
-          "length": 2,
-          "end_offset": 32
+          "offset": 33,
+          "length": 8,
+          "end_offset": 41
         },
         "expression": "Parameters.parameter[2].value.is(FHIR.uri)"
       }

@@ -50,12 +50,14 @@ module FHIRPath
         # No error expected - evaluation should succeed and match expected values
         begin
           values = evaluate(vector, evaluator).to_a
-          classification = if values == vector.fetch('expected', [])
-                             'pass'
-                           else
-                             'defect'
-                           end
+          classification = expected_equal?(values, vector.fetch('expected', [])) ? 'pass' : 'defect'
           result_for(vector, line_number, classification).merge('actual' => values)
+        rescue UnsupportedFeatureError => e
+          # A capability the engine does not implement is unsupported, not a
+          # defect in a behaviour the engine claims to support.
+          error_result(vector, line_number, 'unsupported', e)
+        rescue HostError => e
+          error_result(vector, line_number, 'host-dependent', e)
         rescue StandardError => e
           error_result(vector, line_number, 'defect', e)
         end
@@ -114,6 +116,18 @@ module FHIRPath
 
     def result_for(vector, line_number, classification)
       vector.merge(result_fields(vector, line_number, classification))
+    end
+
+    # Expected values travel through JSONL, so a Decimal or temporal value that
+    # the importer normalised is read back as its JSON form (a String). Compare
+    # the canonical JSON form of both sides as a fallback so those records can
+    # match, while value equality stays the primary test.
+    def expected_equal?(values, expected)
+      return true if values == expected
+
+      JSON.generate(values) == JSON.generate(expected)
+    rescue StandardError
+      false
     end
 
     def result_fields(vector, line_number, classification)

@@ -270,6 +270,25 @@ class FHIRPathVectorRunnerConformanceSemanticsTest < Minitest::Test
     end
   end
 
+  def test_unimplemented_capability_is_unsupported_not_a_defect
+    vectors = [
+      {
+        'id' => 'unimplemented-case', 'expression' => '1.587.highBoundary(2)', 'resource' => {},
+        'expected' => [BigDecimal('1.59')]
+      }
+    ]
+    Tempfile.create('fhirpath-vector') do |file|
+      file.write(vectors.map(&:to_json).join("\n"))
+      file.write("\n")
+      file.flush
+
+      result = FHIRPath::VectorRunner.run(file.path)[:cases].first
+
+      assert_equal 'unsupported', result['classification']
+      assert_equal 'FHIRPath::UnsupportedFeatureError', result['actual_error']['class']
+    end
+  end
+
   def test_report_fields_include_harness_error_type
     vectors = [
       {

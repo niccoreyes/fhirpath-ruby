@@ -3,7 +3,9 @@
 require 'json'
 require 'rexml/document'
 require 'yaml'
+require 'bigdecimal'
 require_relative '../capability'
+require_relative '../parser'
 require_relative 'fhir_xml_converter'
 require_relative 'fixture_resolver'
 
@@ -264,8 +266,11 @@ module FHIRPath
       end
 
       def parse_output(output)
+        type = output.attributes['type'].to_s
         value = output.text.to_s
-        case output.attributes['type'].to_s
+        return parse_untyped_output(value) if type.empty?
+
+        case type
         when 'boolean' then value.strip.casecmp('true').zero?
         when 'integer' then Integer(value.strip, 10)
         when 'decimal' then value.strip
@@ -273,6 +278,31 @@ module FHIRPath
         else
           { '$type' => output.attributes['type'], 'value' => value }
         end
+      end
+
+      # Some official-suite <output> elements omit the `type` attribute and
+      # carry the FHIRPath literal directly. Normalise those to the same Ruby
+      # values the evaluator produces, otherwise the case can never match.
+      def parse_untyped_output(text)
+        stripped = text.strip
+        return true if stripped == 'true'
+        return false if stripped == 'false'
+        return Integer(stripped, 10) if stripped.match?(/\A-?\d+\z/)
+        return BigDecimal(stripped) if stripped.match?(/\A-?\d+\.\d+\z/)
+        return parse_untyped_literal(stripped) if untyped_literal?(stripped)
+
+        text
+      end
+
+      def untyped_literal?(text)
+        text.start_with?('@') || text.match?(/\A-?\d+(?:\.\d+)?\s+'[^']+'\z/)
+      end
+
+      def parse_untyped_literal(text)
+        node = FHIRPath::Parser.parse(text).ast
+        node.is_a?(FHIRPath::AST::Literal) ? node.value : text
+      rescue FHIRPath::ParseError
+        text
       end
 
       def fixture_for(input_fixture, fallback = {})
