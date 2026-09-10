@@ -20,7 +20,7 @@ module FHIRPath
       today now time
       year month day hour minute second millisecond
       timezone timezoneOffset
-      in contains
+      in contains is as
     ].freeze
     DELAYED_NAMES = %w[where select exists all aggregate iif].freeze
 
@@ -50,7 +50,7 @@ module FHIRPath
 
     def self.standard_arity(name)
       return 0..1 if name == 'exists'
-      return 1 if name == 'all' || %w[where select take skip ofType in contains].include?(name)
+      return 1 if name == 'all' || %w[where select take skip ofType in contains is as].include?(name)
       return 1..2 if name == 'aggregate'
       return 2..3 if name == 'iif'
 
