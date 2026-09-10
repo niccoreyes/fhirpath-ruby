@@ -79,7 +79,7 @@ The release must continue to state these limitations:
 
 - complete official HL7 shared-suite conformance and its importer;
 - complete UCUM conformance, units outside the explicitly supported subset, derived-unit composition such as `60 'km' / 1 'h'`, `Quantity × Quantity`, calendar-duration arithmetic, and temporal arithmetic with Quantity;
-- `subsetOf`, `startsWith`, `endsWith`, `matches`, `matchesFull`, `convertsToInteger`, `lowBoundary`, `highBoundary`, `comparable`, `precision`, and `hasValue` (including the broader temporal/UCUM behavior those official cases exercise);
+- `startsWith`, `endsWith`, `matches`, `matchesFull`, `convertsToInteger`, `lowBoundary`, `highBoundary`, `comparable`, `precision`, and `hasValue` (including the broader temporal/UCUM behavior those official cases exercise);
 - advanced conversion, math, string, regular-expression, and navigation functions beyond the explicitly listed implementations;
 - complex literals and additional standard value types;
 - standard environment variables beyond explicitly supplied external constants;
@@ -102,7 +102,7 @@ The run produced 935 records; the full machine-readable report is checked in at
 | Raw runner classification | Count | Manual disposition |
 |---|---:|---|
 | `pass` | 385 | passing evidence |
-| `defect` | 550 | 12 defects from XML-converted fixtures (unsupported functions: `as`, `is`, `ofType`, `hasValue`, `lowBoundary`, `highBoundary`, `comparable`, `repeat`); 462 defects from JSON-fixture cases (deferred functions: `subsetOf`, `startsWith`, `endsWith`, `matches`, `matchesFull`, `convertsToInteger`, `lowBoundary`, `highBoundary`, `comparable`, `precision`, `hasValue`); 76 defects from no-fixture cases (same deferred functions) |
+| `defect` | 550 | 12 defects from XML-converted fixtures (unsupported functions: `as`, `is`, `ofType`, `hasValue`, `lowBoundary`, `highBoundary`, `comparable`, `repeat`); 462 defects from JSON-fixture cases (deferred functions: `startsWith`, `endsWith`, `matches`, `matchesFull`, `convertsToInteger`, `lowBoundary`, `highBoundary`, `comparable`, `precision`, `hasValue`); 76 defects from no-fixture cases (same deferred functions) |
 | `unsupported` | 0 | the current runner reports missing standard functions as raw defects when no expected error is declared |
 | `host-dependent` | 0 | no host-service cases reached evaluation |
 | `not-run` | 0 | all XML fixtures resolved to verified JSON counterparts or converted via `FHIRXmlConverter` (fail-closed on unsupported structures); cases exercising `as`, `is`, `ofType` require `model: :r4` and are classified `not-run` under `PlainModel`; `repeat` is deferred (not registered in plain model) |

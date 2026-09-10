@@ -13,7 +13,9 @@ module FHIRPath
 
   class FunctionRegistry
     STANDARD_NAMES = %w[
-      where select first last tail take skip ofType
+      where select first last tail take skip ofType distinct
+      intersect exclude repeat sort single
+      subsetOf supersetOf
       exists count empty not all
       allTrue anyTrue allFalse anyFalse
       sum avg max min aggregate iif
@@ -44,13 +46,16 @@ module FHIRPath
       return [:expression] if %w[where select exists all].include?(name)
       return %i[expression expression expression] if name == 'iif'
       return %i[expression any] if name == 'aggregate'
+      return [:expression] if name == 'repeat'
+      return [:expression] if %w[intersect exclude subsetOf supersetOf].include?(name)
 
       []
     end
 
     def self.standard_arity(name)
-      return 0..1 if name == 'exists'
-      return 1 if name == 'all' || %w[where select take skip ofType in contains].include?(name)
+      return 0..1 if %w[exists sort].include?(name)
+      return 1 if name == 'all' || %w[where select take skip ofType in contains intersect exclude repeat subsetOf
+                                      supersetOf].include?(name)
       return 1..2 if name == 'aggregate'
       return 2..3 if name == 'iif'
 

@@ -203,6 +203,22 @@ module FHIRPath
         exists(receiver, node.arguments.first, context)
       when 'count'
         Collection.new([receiver.count])
+      when 'distinct'
+        distinct(receiver)
+      when 'intersect'
+        intersect(receiver, node, context)
+      when 'exclude'
+        exclude(receiver, node, context)
+      when 'repeat'
+        repeat(receiver, node, context)
+      when 'single'
+        single(receiver)
+      when 'sort'
+        sort(receiver, node, context)
+      when 'subsetOf'
+        subset_of(receiver, node, context)
+      when 'supersetOf'
+        superset_of(receiver, node, context)
       when 'sum'
         sum(receiver, node)
       when 'avg'
@@ -688,6 +704,134 @@ module FHIRPath
         result << candidate unless result.any? { |existing| equal?(existing, candidate) }
       end
       Collection.new(result)
+    end
+
+    def distinct(receiver)
+      return Collection.empty if receiver.empty?
+
+      result = []
+      receiver.items.each do |item|
+        result << item unless result.any? { |existing| equal?(existing, item) }
+      end
+      Collection.new(result)
+    end
+
+    def intersect(receiver, node, context)
+      return Collection.empty if receiver.empty?
+
+      argument = node.arguments.first
+      other = evaluate(argument, context)
+      return Collection.empty if other.empty?
+
+      result = []
+      receiver.items.each do |item|
+        next unless other.items.any? { |candidate| equal?(item, candidate) }
+
+        result << item unless result.any? { |existing| equal?(existing, item) }
+      end
+      Collection.new(result)
+    end
+
+    def exclude(receiver, node, context)
+      return Collection.empty if receiver.empty?
+
+      argument = node.arguments.first
+      other = evaluate(argument, context)
+      return Collection.new(receiver.items) if other.empty?
+
+      result = []
+      receiver.items.each do |item|
+        next if other.items.any? { |candidate| equal?(item, candidate) }
+
+        result << item unless result.any? { |existing| equal?(existing, item) }
+      end
+      Collection.new(result)
+    end
+
+    def repeat(receiver, node, context)
+      argument = node.arguments.first
+      value = evaluate(argument, context)
+      return Collection.empty if value.empty?
+
+      count = require_singleton(value, argument.span)
+      unless count.is_a?(::Integer)
+        raise TypeError.new('repeat count must be an integer', code: :expected_integer, span: argument.span)
+      end
+      return Collection.empty if count <= 0
+
+      result = []
+      count.times { result.concat(receiver.items) }
+      Collection.new(result)
+    end
+
+    def single(receiver)
+      return Collection.empty if receiver.empty?
+
+      return Collection.empty if receiver.count > 1
+
+      Collection.new([receiver.first_item])
+    end
+
+    def sort(receiver, node, context)
+      return Collection.empty if receiver.empty?
+      return Collection.new(receiver.items) if receiver.one?
+
+      items = receiver.items.dup
+
+      if node.arguments.empty?
+        # Default sort: uses FHIRPath comparison semantics
+        items.sort! { |a, b| compare_values(a, b, node.span) }
+      else
+        # Sort with expression: evaluate expression for each item and sort by result
+        sort_expr = node.arguments.first
+        # Check for descending sort indicated by unary minus prefix
+        descending = false
+        expr_to_evaluate = sort_expr
+
+        if sort_expr.is_a?(AST::UnaryExpression) && sort_expr.operator == :minus
+          descending = true
+          expr_to_evaluate = sort_expr.operand
+        end
+
+        items.sort! do |a, b|
+          a_context = context.derive(focus: Collection.new([a]))
+          b_context = context.derive(focus: Collection.new([b]))
+          a_val = evaluate(expr_to_evaluate, a_context)
+          b_val = evaluate(expr_to_evaluate, b_context)
+          a_single = require_singleton(a_val, expr_to_evaluate.span)
+          b_single = require_singleton(b_val, expr_to_evaluate.span)
+          comparison_result = compare_values(a_single, b_single, expr_to_evaluate.span)
+          descending ? -comparison_result : comparison_result
+        end
+      end
+
+      Collection.new(items)
+    end
+
+    def subset_of(receiver, node, context)
+      other = evaluate(node.arguments.first, context)
+
+      # Empty collection is a subset of any collection
+      return Collection.new([true]) if receiver.empty?
+      return Collection.new([false]) if other.empty?
+
+      receiver.items.each do |item|
+        return Collection.new([false]) unless other.items.any? { |candidate| equal?(item, candidate) }
+      end
+      Collection.new([true])
+    end
+
+    def superset_of(receiver, node, context)
+      other = evaluate(node.arguments.first, context)
+
+      # A collection is a superset of any collection if it contains all its elements.
+      # An empty collection is a superset of an empty collection.
+      return Collection.new([true]) if other.empty?
+
+      other.items.each do |item|
+        return Collection.new([false]) unless receiver.items.any? { |candidate| equal?(item, candidate) }
+      end
+      Collection.new([true])
     end
 
     def membership(node, context)
