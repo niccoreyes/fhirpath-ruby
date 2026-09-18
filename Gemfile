@@ -9,4 +9,4 @@ gemspec
 gem 'benchmark', '~> 0.4'
 gem 'minitest', '~> 6.0'
 gem 'rake', '~> 13.0'
-gem 'rubocop', '~> 1.90.0'
+gem 'rubocop', '~> 1.91.0'
