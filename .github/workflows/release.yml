@@ -134,7 +134,7 @@ jobs:
           bundle exec ruby script/run_vectors.rb conformance/core.jsonl > pkg/conformance.json
           sha256sum pkg/fhirpath-*.gem pkg/conformance.json > pkg/SHA256SUMS.txt
       - name: Upload release artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-assets
           path: pkg/
